@@ -25,4 +25,4 @@ hs_err_pid*
 # IntelliJ idea files
 *.idea
 .idea/
-project2.iml
+*.iml
