@@ -3,7 +3,7 @@ package org.nyu.crypto.dto;
 public class Key {
 
     /**
-     * This class represents a key
+     * This class represents a Key
      * b.mazey@nyu.edu
      */
 

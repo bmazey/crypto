@@ -40,7 +40,7 @@ public class KeyGenerator {
 
         HashMap<String, ArrayList<Integer>> result = new HashMap<>();
 
-        // this is dumb - clean this up later ...
+        // TODO - clean this up; is there a better way to do this?
         for (String key : map.keySet()) {
             result.put(key, new ArrayList<>());
         }
@@ -59,6 +59,5 @@ public class KeyGenerator {
         }
 
         return result;
-
     }
 }
