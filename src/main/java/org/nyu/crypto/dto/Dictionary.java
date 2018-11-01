@@ -3,7 +3,7 @@ package org.nyu.crypto.dto;
 public class Dictionary {
 
     /**
-     * This class represents a Dictionary POJO
+     * This class represents a Dictionary
      * b.mazey@nyu.edu
      */
 
