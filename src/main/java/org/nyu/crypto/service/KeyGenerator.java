@@ -20,7 +20,7 @@ public class KeyGenerator {
     private HashMap<String, ArrayList<Integer>> key;
 
     // this is set to 106 because Random.nextInt(inclusive, exclusive) ...
-    final int KEYSPACE = 106;
+    private final int KEYSPACE = 106;
 
     public HashMap<String, ArrayList<Integer>> getKey() {
         if (key == null) { key = generateKey(); }
