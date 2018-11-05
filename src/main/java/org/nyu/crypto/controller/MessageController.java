@@ -20,6 +20,6 @@ public class MessageController {
     @RequestMapping(value="/api/message", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getMessage() {
-        return ResponseEntity.ok(messageGenerator.generateMessage());
+        return ResponseEntity.ok(messageGenerator.generateMessageDto());
     }
 }
