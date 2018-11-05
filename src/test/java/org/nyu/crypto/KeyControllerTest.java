@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -43,19 +45,29 @@ public class KeyControllerTest {
         Object jsonObject = parser.parse(result.getResponse().getContentAsString());
         JSONObject responseJson = (JSONObject)jsonObject;
 
-        // TODO assert that the keyspace for each letter in the generated key matches what's defined in frequency.json
-
         HashMap<String, Integer> frequencies = new FrequencyGenerator().generateFrequency();
+        ArrayList<Integer> list_values = new ArrayList<>();
+        Boolean duplicate = false;
 
         for(Iterator iterator = responseJson.keySet().iterator(); iterator.hasNext();){
             String key = (String) iterator.next();
             JSONArray temp = (JSONArray) responseJson.get(key);
             int freq = frequencies.get(key);
+            for (int i = 0; i<temp.size(); i++){
+                if (!list_values.contains((int) (long) temp.get(i))) {
+                    list_values.add((int) (long) temp.get(i));
+                }
+                else {
+                    duplicate = true;
+                }
+            }
             assert temp.size() == freq;
+            temp.clear();
         }
-
-        // TODO assert that every number from 0 - 105 is represented in the generated key
-
-
+        assert list_values.size() == 106 && !duplicate;
+        Collections.sort(list_values);
+        for (int i = 0; i<106; i++){
+            assert list_values.get(i) == i;
+        }
     }
 }
