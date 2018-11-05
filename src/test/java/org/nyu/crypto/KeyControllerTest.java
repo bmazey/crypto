@@ -1,10 +1,12 @@
 package org.nyu.crypto;
 
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nyu.crypto.service.FrequencyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,6 +14,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+
+import java.util.HashMap;
+import java.util.Iterator;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -40,6 +45,17 @@ public class KeyControllerTest {
 
         // TODO assert that the keyspace for each letter in the generated key matches what's defined in frequency.json
 
+        HashMap<String, Integer> frequencies = new FrequencyGenerator().generateFrequency();
+
+        for(Iterator iterator = responseJson.keySet().iterator(); iterator.hasNext();){
+            String key = (String) iterator.next();
+            JSONArray temp = (JSONArray) responseJson.get(key);
+            int freq = frequencies.get(key);
+            assert temp.size() == freq;
+        }
+
         // TODO assert that every number from 0 - 105 is represented in the generated key
+
+
     }
 }
