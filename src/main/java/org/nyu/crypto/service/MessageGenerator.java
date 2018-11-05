@@ -2,6 +2,7 @@ package org.nyu.crypto.service;
 
 
 import org.nyu.crypto.dto.Dictionary;
+import org.nyu.crypto.dto.Message;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,12 @@ public class MessageGenerator {
         }
 
         return messageBuilder.subSequence(0, 500).toString();
+    }
+
+    public Message generateMessageDto() {
+        Message messageDto = new Message();
+        messageDto.setMessage(generateMessage());
+        return messageDto;
     }
 
     public String generateSubsetMessage() {

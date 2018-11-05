@@ -1,5 +1,10 @@
 package org.nyu.crypto.dto;
 
 public class Message {
-    // TODO - make a dto to represent a message
+
+    private String message;
+
+    public String getMessage() {return message;}
+
+    public void setMessage(String message) {this.message = message;}
 }
