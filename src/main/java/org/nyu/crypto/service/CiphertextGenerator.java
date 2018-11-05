@@ -1,6 +1,26 @@
 package org.nyu.crypto.service;
 
+import org.nyu.crypto.dto.Ciphertext;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
 public class CiphertextGenerator {
 
-    // TODO - make this service!
+    @Autowired
+    private Encryptor encryptor;
+
+    @Autowired
+    private KeyGenerator keyGenerator;
+
+    @Autowired
+    private MessageGenerator messageGenerator;
+
+    public Ciphertext getCipherMod() {
+
+        Ciphertext ciphertext = new Ciphertext();
+        //TODO: persist the key with an ID which can be retrieved for random ciphers
+        ciphertext.setCiphertext(encryptor.encryptMod(keyGenerator.generateKey(), messageGenerator.generateMessage()));
+        return ciphertext;
+    }
 }
