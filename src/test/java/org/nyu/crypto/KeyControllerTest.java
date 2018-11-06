@@ -33,7 +33,7 @@ public class KeyControllerTest {
     private JSONParser parser = new JSONParser();
 
     @Test
-    public void keyControllerGet() throws Exception {
+    public void keyControllerGets() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
                 .andDo(print())
@@ -43,42 +43,9 @@ public class KeyControllerTest {
         Object jsonObject = parser.parse(result.getResponse().getContentAsString());
         JSONObject responseJson = (JSONObject)jsonObject;
 
-        HashMap<String, Integer> frequencies = new FrequencyGenerator().generateFrequency();
-        ArrayList<Integer> list_values = new ArrayList<>();
-        int count= 0;
-        Boolean duplicate = false;
         Set<Long> possible_keys = new HashSet<Long>();
 
-        // Checks the length of the key , whether it is 106
-        for (Object key : responseJson.keySet()) {
-            JSONArray temp = (JSONArray) responseJson.get(key);
-            for (int i = 0; i<temp.size() - 1 ; i++) {
-                possible_keys.add((long) temp.get(i));
-            }
-        }
-
-        possible_keys.add(119L);
-
-        Assert.assertNotEquals(106, possible_keys.size());
-    }
-
-    @Test
-    public void keyControllerGetEquals() throws Exception {
-
-        MvcResult result = this.mockMvc.perform(get("/api/key"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject)jsonObject;
-
-        HashMap<String, Integer> frequencies = new FrequencyGenerator().generateFrequency();
-        ArrayList<Integer> list_values = new ArrayList<>();
-        int count= 0;
-        Boolean duplicate = false;
-        Set<Long> possible_keys = new HashSet<Long>();
-
+        // Checks the the size of total keyspace, should be 106
         for (Object key : responseJson.keySet()) {
             JSONArray temp = (JSONArray) responseJson.get(key);
             for (int i = 0; i<temp.size(); i++) {
@@ -91,6 +58,31 @@ public class KeyControllerTest {
         } catch(AssertionError e) {
             System.out.println("Size Equality Assertion Error");
         }
-
     }
+
+    @Test
+    public void keyControllerFrequencies() throws Exception {
+
+        MvcResult result = this.mockMvc.perform(get("/api/key"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+
+        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
+        JSONObject responseJson = (JSONObject) jsonObject;
+
+        HashMap<String, Integer> frequencies = new FrequencyGenerator().generateFrequency();
+
+        // Checks the size of each key, "space" should be 19, etc.
+        for (Object key : responseJson.keySet()){
+            JSONArray temp = (JSONArray) responseJson.get(key);
+            int freq = frequencies.get(key);
+            try {
+                Assert.assertEquals(temp.size(), freq);
+            } catch(AssertionError e){
+                System.out.println("Frequency Assertion Error for key: " + key.toString());
+            }
+        }
+    }
+
 }
