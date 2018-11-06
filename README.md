@@ -25,4 +25,4 @@
 
 <h1>Project Two</h1>
 
-Coming soon!
+[http://crypto2.us-east-2.elasticbeanstalk.com/swagger-ui.html]
