@@ -1,5 +1,6 @@
 package org.nyu.crypto.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.bytebuddy.implementation.bind.MethodDelegationBinder;
 import org.nyu.crypto.dto.Key;
 import org.nyu.crypto.dto.Simulation;
@@ -36,29 +37,14 @@ public class Simulator {
         Simulation[] simulations = new Simulation[10];
 
         // Use reflection to get the assign the key
-        Class cls = Class.forName("org.nyu.crypto.dto.Key");
-        Object keyObject = cls.newInstance();
         HashMap<String, ArrayList<Integer>> map = keyGenerator.generateKey();
-        for (String s: map.keySet()) {
-            int length = map.get(s).size();
-            if (s.equalsIgnoreCase("space")) {
-                s = "Space";
-            } else {
-                s = s.toUpperCase();
-            }
-            try{
-                Method method = cls.getDeclaredMethod("set"+s, int[].class);
-                method.invoke(keyObject, map.get(s).toArray(new Integer[length]));
-            } catch(Exception e) {
-                e.printStackTrace();
-                System.out.print(s);
-            }
-        }
+        ObjectMapper objectMapper = new ObjectMapper();
+        Key key = objectMapper.convertValue(map, Key.class);
         // For every simulation set the same key
-        for (Simulation simulation : simulations) {
-            simulation = new Simulation();
-            simulation.setKey((Key) keyObject);
-            simulation.setMessage(messageGenerator.generateMessageDto());
+        for (int loop = 0; loop < simulations.length;loop++) {
+            simulations[loop] = new Simulation();
+            simulations[loop].setKey(key);
+            simulations[loop].setMessage(messageGenerator.generateMessageDto());
             //simulation.setCiphertext();
         }
         return simulations;
