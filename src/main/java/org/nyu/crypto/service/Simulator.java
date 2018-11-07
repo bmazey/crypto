@@ -1,7 +1,10 @@
 package org.nyu.crypto.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.bytebuddy.implementation.bind.MethodDelegationBinder;
+import org.nyu.crypto.dto.Ciphertext;
 import org.nyu.crypto.dto.Key;
+import org.nyu.crypto.dto.Message;
 import org.nyu.crypto.dto.Simulation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import static org.springframework.cache.interceptor.SimpleKeyGenerator.generateKey;
+
 @Service
 public class Simulator {
 
@@ -18,7 +23,7 @@ public class Simulator {
      * we need a service for GET '/api/simulation'
      * this service should have a method that returns a Simulation dto.
      * we need to generate a key, generate a plaintext message, encrypt it to get the ciphertext, then build and return
-     * our Simluation dto.
+     * our Simulation dto.
      */
 
     @Autowired
@@ -29,6 +34,11 @@ public class Simulator {
 
     @Autowired
     private MessageGenerator messageGenerator;
+
+    @Autowired
+    Encryptor encryptor;
+
+    private ObjectMapper mapper;
 
     public Simulation[] createSimulationTexts() throws Exception{
 
@@ -62,5 +72,40 @@ public class Simulator {
             //simulation.setCiphertext();
         }
         return simulations;
+    }
+
+    public Simulation createSimulation() {
+
+        /**
+         * We need to generate a key, generate a message, and then use both of those to create a ciphertext.
+         * Then we build a Simulation DTO and return it.
+         */
+
+        // set up the base classes for our final Simulation DTO
+        Simulation simulation = new Simulation();
+        Ciphertext ciphertext = new Ciphertext();
+        Message message = new Message();
+
+        // create a new randomly generated key
+        HashMap<String, ArrayList<Integer>> map = keyGenerator.generateKey();
+
+        // create a new randomly generated plaintext message
+        String plaintext = messageGenerator.generateMessage();
+        message.setMessage(plaintext);
+
+        // use the key to encrypt the plaintext, generating ciphertext.
+        int[] cipher = encryptor.encrypt(map, plaintext);
+        ciphertext.setCiphertext(cipher);
+
+        // finally, build dto - use object marshaller
+        // TODO - is it a problem that we're marshalling here?
+        mapper = new ObjectMapper();
+        Key key = mapper.convertValue(map, Key.class);
+
+        simulation.setKey(key);
+        simulation.setCiphertext(ciphertext);
+        simulation.setMessage(message);
+
+        return simulation;
     }
 }

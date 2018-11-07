@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class CiphertextGenerator {
 
+    // TODO - check if there is redundancy between this and Encryptor.
+
     @Autowired
     private Encryptor encryptor;
 
