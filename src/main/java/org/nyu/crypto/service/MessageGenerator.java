@@ -24,12 +24,12 @@ public class MessageGenerator {
         StringBuilder messageBuilder = new StringBuilder();
         Dictionary dictionary = dictionaryGenerator.generateDictionary();
 
-        while(messageBuilder.length() < 500) {
+        while(messageBuilder.length() < MESSAGE_SPACE) {
             messageBuilder.append(dictionary.getWords()[r.nextInt(dictionary.getWords().length)]);
             messageBuilder.append(" ");
         }
 
-        return messageBuilder.subSequence(0, 500).toString();
+        return messageBuilder.subSequence(0, MESSAGE_SPACE).toString();
     }
 
     public Message generateMessageDto() {
