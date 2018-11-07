@@ -23,15 +23,18 @@ public class StrategyHillClimbing {
 
     public Message decrypt(Ciphertext ciphertext) {
 
+
         HashMap<String, Integer> frequencyMap = frequencyGenerator.generateFrequency();
         Message message = new Message();
+
+        //Initial Random Key guess before using greedy algorithm
         HashMap<String, ArrayList<Integer>> map = keyGenerator.generateKey();
         ObjectMapper objectMapper = new ObjectMapper();
         Key key = objectMapper.convertValue(map, Key.class);
         return message;
     }
 
-    private void randomKeyLayer() {
+    private void randomInitialKeyLayer() {
 
         //TODO: Implement key generation
         //After a key is rejected the key must be changed by exchanging the values
