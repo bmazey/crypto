@@ -16,7 +16,7 @@ public class DictionaryGenerator {
 
     private ObjectMapper objectMapper;
     private Random r;
-    private final int DICT_SIZE=70;
+    private final int SIZE = 70;
 
     public Dictionary generateDictionaryDto() {
         Dictionary dictionary = new Dictionary();
@@ -30,28 +30,17 @@ public class DictionaryGenerator {
         return dictionary;
 
     }
+
     public Dictionary generateDictionaryDto(int dictionaryLength){
-        Dictionary dictionary = new Dictionary();
-        objectMapper = new ObjectMapper();
+        Dictionary dictionary = generateDictionaryDto();
 
-        try {
-            File dictionaryFile = new ClassPathResource("dictionary.json").getFile();
+        ArrayList<String> shuffledWords =  new ArrayList<String>(Arrays.asList(dictionary.getWords()));
+        Collections.shuffle(shuffledWords);
 
-            dictionary = objectMapper.readValue(dictionaryFile,Dictionary.class );
-            ArrayList<String> shuffledWords =  new ArrayList<String>(Arrays.asList(dictionary.getWords()));
+        ArrayList<String> shuffledWordsSubList=new ArrayList<String>(shuffledWords.subList(0,dictionaryLength));
 
-            Collections.shuffle(shuffledWords);
+        dictionary.setWords(shuffledWordsSubList.toArray(new String[shuffledWordsSubList.size()]));
 
-            ArrayList<String> shuffledWordsSubList=new ArrayList<String>(shuffledWords.subList(0,dictionaryLength));
-
-
-            dictionary.setWords(shuffledWordsSubList.toArray(new String[shuffledWordsSubList.size()]));
-            System.out.println(dictionary.getWords().length);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-        //Part to return a subset of length
         return dictionary;
     }
 }
