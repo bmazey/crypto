@@ -25,7 +25,6 @@ public class MessageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-
     @Test
     public void messageControllerTest() throws Exception {
 
