@@ -55,14 +55,13 @@ public class SimulationControllerTest {
         // Generates the message as string
         String message = responseJson.get("message").toString();
 
-        // Converts ciphertext into int[]
-        JSONArray temp = (JSONArray) responseJson.get("ciphertext");
-        int[] cipher_int = new int[SPACE];
-        for (int i = 0; i<cipher_int.length; i++) {
-            cipher_int[i] = (int) (long) temp.get(i);
+        JSONArray temp = (JSONArray)responseJson.get("ciphertext");
+        int[] cipher = new int[SPACE];
+        for (int i = 0; i < cipher.length; i++) {
+            cipher[i] = (int)(long)temp.get(i);
         }
 
-        String plaintext = decryptor.decrypt(map, cipher_int);
+        String plaintext = decryptor.decrypt(map, cipher);
 
         Assert.assertEquals(message, plaintext, message);
 
