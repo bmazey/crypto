@@ -54,7 +54,7 @@ public class SimulationControllerTest {
 
         String plaintext = decryptor.decrypt(key, ciphertext);
 
-        Assert.assertEquals(message, plaintext, message);
+        Assert.assertEquals(message, plaintext);
 
     }
 }
