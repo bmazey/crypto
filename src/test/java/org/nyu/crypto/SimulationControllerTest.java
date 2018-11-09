@@ -31,7 +31,7 @@ public class SimulationControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    Decryptor decryptor;
+    private Decryptor decryptor;
 
     private JSONParser parser = new JSONParser();
 
