@@ -1,9 +1,7 @@
 package org.nyu.crypto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +31,7 @@ public class SimulationControllerTest {
     @Autowired
     private Decryptor decryptor;
 
-    private JSONParser parser = new JSONParser();
+    private ObjectMapper mapper = new ObjectMapper();
 
     private final int SPACE = 500;
 
@@ -46,24 +44,10 @@ public class SimulationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject)jsonObject;
+        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
 
-        // Creates Map of the key from responseJson
-        HashMap<String, ArrayList<Integer>> map  = (JSONObject)responseJson.get("key");
+        HashMap<String, ArrayList<Integer>> key = mapper.readValue(json.get("key").toString(), HashMap.class);
 
-        // Generates the message as string
-        String message = responseJson.get("message").toString();
-
-        JSONArray temp = (JSONArray)responseJson.get("ciphertext");
-        int[] cipher = new int[SPACE];
-        for (int i = 0; i < cipher.length; i++) {
-            cipher[i] = (int)(long) temp.get(i);
-        }
-
-        String plaintext = decryptor.decrypt(map, cipher);
-
-        Assert.assertEquals(message, plaintext, message);
-
+        // TODO finish
     }
 }
