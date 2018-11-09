@@ -38,7 +38,7 @@ public class KeyControllerTest {
     private JSONParser parser = new JSONParser();
 
     @Test
-    public void keyControllerGets() throws Exception {
+    public void keyControllerGet() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
                 .andDo(print())

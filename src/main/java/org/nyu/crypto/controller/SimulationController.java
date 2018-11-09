@@ -25,7 +25,7 @@ public class SimulationController {
     @ResponseBody
     public ResponseEntity<?> getSimulations() throws  Exception{
 
-        return  ResponseEntity.ok(simulator.createSimulationTexts());
+        return  ResponseEntity.ok(simulator.createSimulation());
     }
 
 }
