@@ -5,28 +5,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.constraints.Size;
 
 @RestController
 public class DicitionaryController {
+
     @Autowired
     DictionaryGenerator dictionaryGenerator;
 
-
-
-
-    @RequestMapping(value="/api/dictionary",method = RequestMethod.GET)
+    @RequestMapping(value="/api/dictionary", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getDictionaryGenerator() {
-
+    public ResponseEntity<?> getDictionary() {
         return ResponseEntity.ok(dictionaryGenerator.generateDictionaryDto());
     }
 
-    //TODO- Not working properly, need to read up on how to solve this without using a validation Model
-    @RequestMapping(value="/api/dictionary",method = RequestMethod.GET,params = {"size"})
+    //TODO - need to validate
+    @RequestMapping(value="/api/dictionary/{size}", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getDictionaryGenerator(@RequestParam("size") @Size(min=1,max=70,message="Invalid Size")int size) {
-
+    public ResponseEntity<?> getSubsetDictionary(@PathVariable("size") int size) {
         return ResponseEntity.ok(dictionaryGenerator.generateDictionaryDto(size));
     }
+
 }
