@@ -22,7 +22,7 @@ public class MessageGenerator {
     public String generateMessage() {
         r = new Random();
         StringBuilder messageBuilder = new StringBuilder();
-        Dictionary dictionary = dictionaryGenerator.generateDictionary();
+        Dictionary dictionary = dictionaryGenerator.generateDictionaryDto();
 
         while(messageBuilder.length() < 500) {
             messageBuilder.append(dictionary.getWords()[r.nextInt(dictionary.getWords().length)]);
@@ -41,7 +41,7 @@ public class MessageGenerator {
     public String generateSubsetMessage() {
         r = new Random();
         StringBuilder messageBuilder = new StringBuilder();
-        Dictionary dictionary = dictionaryGenerator.generateDictionary();
+        Dictionary dictionary = dictionaryGenerator.generateDictionaryDto();
 
         /**
          * I really like the idea of having a method that can shorten the size of the dictionary as I believe there

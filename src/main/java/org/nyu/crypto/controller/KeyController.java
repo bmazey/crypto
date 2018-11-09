@@ -22,6 +22,6 @@ public class KeyController {
     @ResponseBody
     public ResponseEntity<?> getKey() {
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
-        return ResponseEntity.ok(key);
+        return ResponseEntity.ok(keyGenerator.generateKeyDto());
     }
 }

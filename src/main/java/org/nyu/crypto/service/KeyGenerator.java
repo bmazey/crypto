@@ -17,6 +17,9 @@ public class KeyGenerator {
     @Autowired
     private FrequencyGenerator frequencyGenerator;
 
+    @Autowired
+    private KeyGenerator keyGenerator;
+
     private HashMap<String, ArrayList<Integer>> key;
 
     // this is set to 106 because Random.nextInt(inclusive, exclusive) ...
@@ -31,6 +34,11 @@ public class KeyGenerator {
         this.key = key;
     }
 
+    public KeyGenerator generateKeyDto(){
+        //TODO- Code the conversion to DTO
+
+        return keyGenerator;
+    }
 
     public HashMap<String, ArrayList<Integer>> generateKey() {
 
@@ -41,6 +49,7 @@ public class KeyGenerator {
         HashMap<String, ArrayList<Integer>> result = new HashMap<>();
 
         // TODO - clean this up; is there a better way to do this?
+        //TODO - Yes we can use shuffling to clean up the code
         for (String key : map.keySet()) {
             result.put(key, new ArrayList<>());
         }
@@ -60,4 +69,5 @@ public class KeyGenerator {
 
         return result;
     }
+
 }
