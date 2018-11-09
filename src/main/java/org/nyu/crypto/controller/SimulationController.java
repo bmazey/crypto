@@ -1,8 +1,6 @@
 package org.nyu.crypto.controller;
 
 
-import org.nyu.crypto.dto.Ciphertext;
-import org.nyu.crypto.dto.Simulation;
 import org.nyu.crypto.service.Simulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
