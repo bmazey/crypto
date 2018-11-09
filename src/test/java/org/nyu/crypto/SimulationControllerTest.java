@@ -53,12 +53,10 @@ public class SimulationControllerTest {
         HashMap<String, ArrayList<Integer>> keymap = key_object;
 
         // Generates the message as string
-        JSONObject message_object = (JSONObject) responseJson.get("message");
-        String message = message_object.get("message").toString();
+        String message = responseJson.get("message").toString();
 
         // Converts ciphertext into int[]
-        JSONObject ciphertext_object = (JSONObject) responseJson.get("ciphertext");
-        JSONArray temp = (JSONArray) ciphertext_object.get("ciphertext");
+        JSONArray temp = (JSONArray) responseJson.get("ciphertext");
         int[] cipher_int = new int[SPACE];
         for (int i = 0; i<cipher_int.length; i++) {
             cipher_int[i] = (int) (long) temp.get(i);
