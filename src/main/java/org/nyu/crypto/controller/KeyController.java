@@ -16,7 +16,7 @@ import java.util.HashMap;
 public class KeyController {
 
     @Autowired
-    KeyGenerator keyGenerator;
+    private KeyGenerator keyGenerator;
 
     @RequestMapping(value = "/api/key", method = RequestMethod.GET)
     @ResponseBody

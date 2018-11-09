@@ -1,10 +1,8 @@
 package org.nyu.crypto;
 
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.junit.Assert;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nyu.crypto.service.FrequencyGenerator;
@@ -31,13 +29,15 @@ public class KeyControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    FrequencyGenerator frequencyGenerator;
+    private FrequencyGenerator frequencyGenerator;
+
+    ObjectMapper mapper = new ObjectMapper();
 
     private final int KEYSPACE = 106;
 
-    private JSONParser parser = new JSONParser();
 
     @Test
+    @SuppressWarnings("unchecked")
     public void keyControllerGet() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
@@ -45,23 +45,21 @@ public class KeyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject)jsonObject;
+        HashMap<String, ArrayList<Integer>> map = mapper.readValue(result.getResponse().getContentAsString(), HashMap.class);
 
-        Set<Long> possible_keys = new HashSet<Long>();
+        HashSet<Integer> set = new HashSet<>();
 
-        // Checks the the size of total keyspace, should be 106
-        for (Object key : responseJson.keySet()) {
-            JSONArray temp = (JSONArray) responseJson.get(key);
-            for (int i = 0; i<temp.size(); i++) {
-                possible_keys.add((long) temp.get(i));
-            }
+        for (String key : map.keySet()) {
+            ArrayList<Integer> list = map.get(key);
+            set.addAll(list);
         }
 
-        assert possible_keys.size() == KEYSPACE;
+        // Checks the the size of total keyspace, should be 106
+        assert set.size() == KEYSPACE;
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void keyControllerFrequencies() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
@@ -69,17 +67,15 @@ public class KeyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject) jsonObject;
-
         HashMap<String, Integer> frequencies = frequencyGenerator.generateFrequency();
 
+        HashMap<String, ArrayList<Integer>> map = mapper.readValue(result.getResponse().getContentAsString(), HashMap.class);
+
         // Checks the size of each key, "space" should be 19, etc.
-        for (Object key : responseJson.keySet()){
-            JSONArray temp = (JSONArray) responseJson.get(key);
-            int freq = frequencies.get(key.toString());
-            assert temp.size() == freq;
+        for (String key : map.keySet()){
+            ArrayList<Integer> list = map.get(key);
+            int freq = frequencies.get(key);
+            assert list.size() == freq;
         }
     }
-
 }

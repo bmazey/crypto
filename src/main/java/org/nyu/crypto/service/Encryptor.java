@@ -1,5 +1,7 @@
 package org.nyu.crypto.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.nyu.crypto.dto.Key;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.Random;
 
 @Service
 public class Encryptor {
+
+    private ObjectMapper mapper;
 
     public int[] encrypt(HashMap<String, ArrayList<Integer>> keyMap, String plaintext){
 
@@ -33,6 +37,13 @@ public class Encryptor {
 
         return ciphertextArray;
 
+    }
+
+    public int[] encrypt(Key key, String plaintext) {
+        mapper = new ObjectMapper();
+        HashMap<String, ArrayList<Integer>> map = mapper.convertValue(key, HashMap.class);
+
+        return encrypt(map, plaintext);
     }
 
     public int[] encryptMod(HashMap<String, ArrayList<Integer>> keyMap, String plaintext) {

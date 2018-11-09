@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 public class DicitionaryController {
 
     @Autowired
-    DictionaryGenerator dictionaryGenerator;
+    private DictionaryGenerator dictionaryGenerator;
 
     @RequestMapping(value="/api/dictionary", method = RequestMethod.GET)
     @ResponseBody

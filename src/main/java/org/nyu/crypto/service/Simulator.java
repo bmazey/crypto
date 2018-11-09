@@ -40,6 +40,7 @@ public class Simulator {
 
     private ObjectMapper mapper;
 
+    // FIXME
     public Simulation[] createSimulationTexts() throws Exception{
 
         // Simulation of an array of 10
@@ -53,7 +54,7 @@ public class Simulator {
         for (int loop = 0; loop < simulations.length;loop++) {
             simulations[loop] = new Simulation();
             simulations[loop].setKey(key);
-            simulations[loop].setMessage(messageGenerator.generateMessageDto());
+            simulations[loop].setMessage(messageGenerator.generateMessage());
             //simulation.setCiphertext();
         }
         return simulations;
@@ -68,28 +69,18 @@ public class Simulator {
 
         // set up the base classes for our final Simulation DTO
         Simulation simulation = new Simulation();
-        Ciphertext ciphertext = new Ciphertext();
-        Message message = new Message();
 
         // create a new randomly generated key
-        HashMap<String, ArrayList<Integer>> map = keyGenerator.generateKey();
+        Key key = keyGenerator.generateKeyDto();
+        simulation.setKey(key);
 
         // create a new randomly generated plaintext message
         String plaintext = messageGenerator.generateMessage();
-        message.setMessage(plaintext);
+        simulation.setMessage(plaintext);
 
         // use the key to encrypt the plaintext, generating ciphertext.
-        int[] cipher = encryptor.encrypt(map, plaintext);
-        ciphertext.setCiphertext(cipher);
-
-        // finally, build dto - use object marshaller
-        // TODO - is it a problem that we're marshalling here?
-        mapper = new ObjectMapper();
-        Key key = mapper.convertValue(map, Key.class);
-
-        simulation.setKey(key);
-        simulation.setCiphertext(ciphertext);
-        simulation.setMessage(message);
+        int[] cipher = encryptor.encrypt(key, plaintext);
+        simulation.setCiphertext(cipher);
 
         return simulation;
     }

@@ -1,9 +1,7 @@
 package org.nyu.crypto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +15,6 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,13 +29,14 @@ public class SimulationControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    Decryptor decryptor;
+    private Decryptor decryptor;
 
-    private JSONParser parser = new JSONParser();
+    private ObjectMapper mapper = new ObjectMapper();
 
     private final int SPACE = 500;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void simulationControllerGet() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/simulation"))
@@ -47,26 +44,15 @@ public class SimulationControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject)jsonObject;
+        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
 
-        // Creates Map of the key from responseJson
-        JSONObject key_object = (JSONObject) responseJson.get("key");
-        HashMap<String, ArrayList<Integer>> keymap = key_object;
+        HashMap<String, ArrayList<Integer>> key = mapper.readValue(json.get("key").toString(), HashMap.class);
 
-        // Generates the message as string
-        JSONObject message_object = (JSONObject) responseJson.get("message");
-        String message = message_object.get("message").toString();
+        String message = json.get("message").toString();
 
-        // Converts ciphertext into int[]
-        JSONObject ciphertext_object = (JSONObject) responseJson.get("ciphertext");
-        JSONArray temp = (JSONArray) ciphertext_object.get("ciphertext");
-        int[] cipher_int = new int[SPACE];
-        for (int i = 0; i<cipher_int.length; i++) {
-            cipher_int[i] = (int) (long) temp.get(i);
-        }
+        int[] ciphertext = mapper.readValue(json.get("ciphertext").toString(), int[].class);
 
-        String plaintext = decryptor.decrypt(keymap, cipher_int);
+        String plaintext = decryptor.decrypt(key, ciphertext);
 
         Assert.assertEquals(message, plaintext, message);
 
