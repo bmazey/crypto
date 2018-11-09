@@ -1,6 +1,7 @@
 package org.nyu.crypto;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,10 +31,13 @@ public class KeyControllerTest {
     @Autowired
     private FrequencyGenerator frequencyGenerator;
 
+    ObjectMapper mapper = new ObjectMapper();
+
     private final int KEYSPACE = 106;
 
 
     @Test
+    @SuppressWarnings("unchecked")
     public void keyControllerGet() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
@@ -41,19 +45,21 @@ public class KeyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
+        HashMap<String, ArrayList<Integer>> map = mapper.readValue(result.getResponse().getContentAsString(), HashMap.class);
 
         HashSet<Integer> set = new HashSet<>();
 
-        // Checks the the size of total keyspace, should be 106
-        while (json.keys().hasNext()) {
-
+        for (String key : map.keySet()) {
+            ArrayList<Integer> list = map.get(key);
+            set.addAll(list);
         }
 
+        // Checks the the size of total keyspace, should be 106
         assert set.size() == KEYSPACE;
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void keyControllerFrequencies() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
@@ -61,17 +67,15 @@ public class KeyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject) jsonObject;
-
         HashMap<String, Integer> frequencies = frequencyGenerator.generateFrequency();
 
+        HashMap<String, ArrayList<Integer>> map = mapper.readValue(result.getResponse().getContentAsString(), HashMap.class);
+
         // Checks the size of each key, "space" should be 19, etc.
-        for (Object key : responseJson.keySet()){
-            JSONArray temp = (JSONArray) responseJson.get(key);
-            int freq = frequencies.get(key.toString());
-            assert temp.size() == freq;
+        for (String key : map.keySet()){
+            ArrayList<Integer> list = map.get(key);
+            int freq = frequencies.get(key);
+            assert list.size() == freq;
         }
     }
-
 }
