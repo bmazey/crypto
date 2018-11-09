@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-public class DicitionaryController {
+public class DictionaryController {
 
     @Autowired
     private DictionaryGenerator dictionaryGenerator;
