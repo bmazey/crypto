@@ -17,12 +17,11 @@ public class SimulationController {
      */
 
     @Autowired
-    Simulator simulator;
+    private Simulator simulator;
 
     @RequestMapping(value="/api/simulation", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getSimulations() throws  Exception{
-
+    public ResponseEntity<?> getSimulation() throws  Exception{
         return  ResponseEntity.ok(simulator.createSimulation());
     }
 

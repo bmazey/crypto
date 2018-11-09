@@ -40,6 +40,7 @@ public class Simulator {
 
     private ObjectMapper mapper;
 
+    // FIXME
     public Simulation[] createSimulationTexts() throws Exception{
 
         // Simulation of an array of 10

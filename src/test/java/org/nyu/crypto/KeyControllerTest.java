@@ -31,7 +31,7 @@ public class KeyControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    FrequencyGenerator frequencyGenerator;
+    private FrequencyGenerator frequencyGenerator;
 
     private final int KEYSPACE = 106;
 

@@ -20,8 +20,8 @@ public class CiphertextGenerator {
 
     public Ciphertext getCipherMod() {
 
-        Ciphertext ciphertext = new Ciphertext();
         //TODO: persist the key with an ID which can be retrieved for random ciphers
+        Ciphertext ciphertext = new Ciphertext();
         ciphertext.setCiphertext(encryptor.encryptMod(keyGenerator.generateKey(), messageGenerator.generateMessage()));
         return ciphertext;
     }

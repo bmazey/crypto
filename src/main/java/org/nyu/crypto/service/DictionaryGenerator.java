@@ -35,9 +35,10 @@ public class DictionaryGenerator {
         ArrayList<String> shuffledWords =  new ArrayList<String>(Arrays.asList(dictionary.getWords()));
         Collections.shuffle(shuffledWords);
 
-        ArrayList<String> shuffledWordsSubList=new ArrayList<String>(shuffledWords.subList(0,dictionaryLength));
+        ArrayList<String> shuffledWordsSubList=new ArrayList<String>(shuffledWords.subList(0, dictionaryLength));
 
-        dictionary.setWords(shuffledWordsSubList.toArray(new String[shuffledWordsSubList.size()]));
+        // SEE https://stackoverflow.com/questions/174093/toarraynew-myclass0-or-toarraynew-myclassmylist-size
+        dictionary.setWords(shuffledWordsSubList.toArray(new String[0]));
 
         return dictionary;
     }
