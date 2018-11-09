@@ -42,7 +42,7 @@ public class KeyControllerTest {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
                 .andDo(print())
-                .andExpect(status().isOk())
+                 .andExpect(status().isOk())
                 .andReturn();
 
         HashMap<String, ArrayList<Integer>> map = mapper.readValue(result.getResponse().getContentAsString(), HashMap.class);
