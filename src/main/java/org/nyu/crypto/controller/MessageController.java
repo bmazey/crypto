@@ -14,8 +14,9 @@ public class MessageController {
     /**
      * Return a random 500 length plaintext message for encryption
      */
+
     @Autowired
-    MessageGenerator messageGenerator;
+    private MessageGenerator messageGenerator;
 
     @RequestMapping(value="/api/message", method = RequestMethod.GET)
     @ResponseBody

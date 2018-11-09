@@ -16,12 +16,11 @@ import java.util.HashMap;
 public class KeyController {
 
     @Autowired
-    KeyGenerator keyGenerator;
+    private KeyGenerator keyGenerator;
 
     @RequestMapping(value = "/api/key", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getKey() {
-        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
-        return ResponseEntity.ok(key);
+        return ResponseEntity.ok(keyGenerator.generateKeyDto());
     }
 }

@@ -12,20 +12,19 @@ public class CiphertextController {
     /**
      * Generate a cipher text
      */
+
     @Autowired
-    CiphertextGenerator ciphertextGenerator;
+    private CiphertextGenerator ciphertextGenerator;
 
     @RequestMapping(value="/api/cipher/mod",method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getCipherTextGenerator() {
-
         return ResponseEntity.ok(ciphertextGenerator.getCipherMod());
     }
 
     @RequestMapping(value = "/api/cipher/random", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getCipherTextGeneratorRandom(){
-
         return ResponseEntity.ok(ciphertextGenerator.getCipherMod());
     }
 }

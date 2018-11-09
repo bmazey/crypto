@@ -13,5 +13,4 @@ public class CryptoApplicationTests {
 	public void contextLoads() {
 	}
 
-
 }

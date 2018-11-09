@@ -1,8 +1,6 @@
 package org.nyu.crypto.controller;
 
 
-import org.nyu.crypto.dto.Ciphertext;
-import org.nyu.crypto.dto.Simulation;
 import org.nyu.crypto.service.Simulator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +17,12 @@ public class SimulationController {
      */
 
     @Autowired
-    Simulator simulator;
+    private Simulator simulator;
 
     @RequestMapping(value="/api/simulation", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<?> getSimulations() throws  Exception{
-
-        return  ResponseEntity.ok(simulator.createSimulationTexts());
+    public ResponseEntity<?> getSimulation() throws  Exception{
+        return  ResponseEntity.ok(simulator.createSimulation());
     }
 
 }

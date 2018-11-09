@@ -22,14 +22,14 @@ public class MessageGenerator {
     public String generateMessage() {
         r = new Random();
         StringBuilder messageBuilder = new StringBuilder();
-        Dictionary dictionary = dictionaryGenerator.generateDictionary();
+        Dictionary dictionary = dictionaryGenerator.generateDictionaryDto();
 
-        while(messageBuilder.length() < 500) {
+        while(messageBuilder.length() < MESSAGE_SPACE) {
             messageBuilder.append(dictionary.getWords()[r.nextInt(dictionary.getWords().length)]);
             messageBuilder.append(" ");
         }
 
-        return messageBuilder.subSequence(0, 500).toString();
+        return messageBuilder.subSequence(0, MESSAGE_SPACE).toString();
     }
 
     public Message generateMessageDto() {
@@ -41,16 +41,10 @@ public class MessageGenerator {
     public String generateSubsetMessage() {
         r = new Random();
         StringBuilder messageBuilder = new StringBuilder();
-        Dictionary dictionary = dictionaryGenerator.generateDictionary();
-
-        /**
-         * I really like the idea of having a method that can shorten the size of the dictionary as I believe there
-         * will be many testing scenarios where we will want to measure performance based on this.
-         *
-         * b.mazey@nyu.edu
-         */
+        Dictionary dictionary = dictionaryGenerator.generateDictionaryDto();
 
         // TODO - make this more customizable
+        // TODO - use shuffling
         // here we assert the first word comes from the first ten entries in the dictionary
         messageBuilder.append(dictionary.getWords()[10]);
         messageBuilder.append(" ");

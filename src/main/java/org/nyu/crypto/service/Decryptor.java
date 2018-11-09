@@ -21,9 +21,8 @@ public class Decryptor {
         for(int i = 0; i < ciphertext.length; i++) {
 
             for(String key : map.keySet()) {
-                ArrayList values = map.get(key);
+                ArrayList<Integer> values = map.get(key);
                 if (values.contains(ciphertext[i])) {
-
                     if (key.equals("space")) plaintext.append(" ");
                     else plaintext.append(key);
                 }
