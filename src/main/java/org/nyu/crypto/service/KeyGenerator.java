@@ -1,5 +1,7 @@
 package org.nyu.crypto.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.nyu.crypto.dto.Key;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,18 +21,22 @@ public class KeyGenerator {
 
     private HashMap<String, ArrayList<Integer>> key;
 
+    private ObjectMapper mapper;
+
     // this is set to 106 because Random.nextInt(inclusive, exclusive) ...
     private final int KEYSPACE = 106;
-
-    public HashMap<String, ArrayList<Integer>> getKey() {
-        if (key == null) { key = generateKey(); }
-        return key;
-    }
 
     public void setKey(HashMap<String, ArrayList<Integer>> key) {
         this.key = key;
     }
 
+    public Key generateKeyDto(){
+        mapper = new ObjectMapper();
+
+        HashMap<String, ArrayList<Integer>> map = generateKey();
+        Key key = mapper.convertValue(map, Key.class);
+        return key;
+    }
 
     public HashMap<String, ArrayList<Integer>> generateKey() {
 
@@ -41,6 +47,7 @@ public class KeyGenerator {
         HashMap<String, ArrayList<Integer>> result = new HashMap<>();
 
         // TODO - clean this up; is there a better way to do this?
+        //TODO - Yes we can use shuffling to clean up the code
         for (String key : map.keySet()) {
             result.put(key, new ArrayList<>());
         }
@@ -60,4 +67,5 @@ public class KeyGenerator {
 
         return result;
     }
+
 }
