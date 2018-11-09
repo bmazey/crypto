@@ -48,6 +48,13 @@ public class SimulationControllerTest {
 
         HashMap<String, ArrayList<Integer>> key = mapper.readValue(json.get("key").toString(), HashMap.class);
 
-        // TODO finish
+        String message = json.get("message").toString();
+
+        int[] ciphertext = mapper.readValue(json.get("ciphertext").toString(), int[].class);
+
+        String plaintext = decryptor.decrypt(key, ciphertext);
+
+        Assert.assertEquals(message, plaintext, message);
+
     }
 }
