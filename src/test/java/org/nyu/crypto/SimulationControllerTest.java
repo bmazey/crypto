@@ -1,9 +1,6 @@
 package org.nyu.crypto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +30,7 @@ public class SimulationControllerTest {
     @Autowired
     private Decryptor decryptor;
 
-    private JSONParser parser = new JSONParser();
+    private ObjectMapper mapper = new ObjectMapper();
 
     private final int SPACE = 500;
 
@@ -50,15 +47,17 @@ public class SimulationControllerTest {
         JSONObject responseJson = (JSONObject)jsonObject;
 
         // Creates Map of the key from responseJson
-        HashMap<String, ArrayList<Integer>> map  = (JSONObject)responseJson.get("key");
+        HashMap<String, ArrayList<Integer>> map  = mapper.convertValue(responseJson.get("key"), HashMap.class);
 
         // Generates the message as string
         String message = responseJson.get("message").toString();
 
-        JSONArray temp = (JSONArray)responseJson.get("ciphertext");
-        int[] cipher = new int[SPACE];
-        for (int i = 0; i < cipher.length; i++) {
-            cipher[i] = (int)(long)temp.get(i);
+        int[] cipher = mapper.convertValue(responseJson.get("ciphertext"), int[].class);
+
+        for (int i : cipher) {
+            if (i instanceof int) {
+
+            }
         }
 
         String plaintext = decryptor.decrypt(map, cipher);

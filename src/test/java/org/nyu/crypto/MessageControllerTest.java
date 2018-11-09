@@ -1,7 +1,7 @@
 package org.nyu.crypto;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ public class MessageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private JSONParser parser = new JSONParser();
 
     @Test
     public void messageControllerTest() throws Exception {
@@ -35,10 +34,9 @@ public class MessageControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject)jsonObject;
+        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
 
-        String messageGenerated = (String)responseJson.get("message");
+        String messageGenerated = (String)json.get("message");
         assertEquals(500, messageGenerated.length());
         assertNotEquals(499, messageGenerated.length());
     }

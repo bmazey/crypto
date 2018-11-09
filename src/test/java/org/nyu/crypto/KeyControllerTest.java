@@ -1,10 +1,7 @@
 package org.nyu.crypto;
 
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.junit.Assert;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nyu.crypto.service.FrequencyGenerator;
@@ -35,7 +32,6 @@ public class KeyControllerTest {
 
     private final int KEYSPACE = 106;
 
-    private JSONParser parser = new JSONParser();
 
     @Test
     public void keyControllerGet() throws Exception {
@@ -45,20 +41,16 @@ public class KeyControllerTest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        Object jsonObject = parser.parse(result.getResponse().getContentAsString());
-        JSONObject responseJson = (JSONObject)jsonObject;
+        JSONObject json = new JSONObject(result.getResponse().getContentAsString());
 
-        Set<Long> possible_keys = new HashSet<Long>();
+        HashSet<Integer> set = new HashSet<>();
 
         // Checks the the size of total keyspace, should be 106
-        for (Object key : responseJson.keySet()) {
-            JSONArray temp = (JSONArray) responseJson.get(key);
-            for (int i = 0; i<temp.size(); i++) {
-                possible_keys.add((long) temp.get(i));
-            }
+        while (json.keys().hasNext()) {
+
         }
 
-        assert possible_keys.size() == KEYSPACE;
+        assert set.size() == KEYSPACE;
     }
 
     @Test
