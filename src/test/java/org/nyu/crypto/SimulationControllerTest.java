@@ -38,6 +38,7 @@ public class SimulationControllerTest {
     private final int SPACE = 500;
 
     @Test
+    @SuppressWarnings("unchecked")
     public void simulationControllerGet() throws Exception {
 
         MvcResult result = this.mockMvc.perform(get("/api/simulation"))
@@ -49,8 +50,7 @@ public class SimulationControllerTest {
         JSONObject responseJson = (JSONObject)jsonObject;
 
         // Creates Map of the key from responseJson
-        JSONObject key_object = (JSONObject) responseJson.get("key");
-        HashMap<String, ArrayList<Integer>> keymap = key_object;
+        HashMap<String, ArrayList<Integer>> map  = (JSONObject)responseJson.get("key");
 
         // Generates the message as string
         String message = responseJson.get("message").toString();
@@ -62,7 +62,7 @@ public class SimulationControllerTest {
             cipher_int[i] = (int) (long) temp.get(i);
         }
 
-        String plaintext = decryptor.decrypt(keymap, cipher_int);
+        String plaintext = decryptor.decrypt(map, cipher_int);
 
         Assert.assertEquals(message, plaintext, message);
 
