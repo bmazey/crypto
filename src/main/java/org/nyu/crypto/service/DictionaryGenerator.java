@@ -15,8 +15,6 @@ import java.util.*;
 public class DictionaryGenerator {
 
     private ObjectMapper objectMapper;
-    private Random r;
-    private final int SIZE = 70;
 
     public Dictionary generateDictionaryDto() {
         Dictionary dictionary = new Dictionary();

@@ -21,7 +21,6 @@ public class KeyController {
     @RequestMapping(value = "/api/key", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getKey() {
-        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
         return ResponseEntity.ok(keyGenerator.generateKeyDto());
     }
 }

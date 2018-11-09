@@ -1,5 +1,7 @@
 package org.nyu.crypto.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.nyu.crypto.dto.Key;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,27 +19,23 @@ public class KeyGenerator {
     @Autowired
     private FrequencyGenerator frequencyGenerator;
 
-    @Autowired
-    private KeyGenerator keyGenerator;
-
     private HashMap<String, ArrayList<Integer>> key;
+
+    private ObjectMapper mapper;
 
     // this is set to 106 because Random.nextInt(inclusive, exclusive) ...
     private final int KEYSPACE = 106;
-
-    public HashMap<String, ArrayList<Integer>> getKey() {
-        if (key == null) { key = generateKey(); }
-        return key;
-    }
 
     public void setKey(HashMap<String, ArrayList<Integer>> key) {
         this.key = key;
     }
 
-    public KeyGenerator generateKeyDto(){
-        //TODO- Code the conversion to DTO
+    public Key generateKeyDto(){
+        mapper = new ObjectMapper();
 
-        return keyGenerator;
+        HashMap<String, ArrayList<Integer>> map = generateKey();
+        Key key = mapper.convertValue(map, Key.class);
+        return key;
     }
 
     public HashMap<String, ArrayList<Integer>> generateKey() {
