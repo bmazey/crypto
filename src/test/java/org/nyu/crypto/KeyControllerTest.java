@@ -30,6 +30,11 @@ public class KeyControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    FrequencyGenerator frequencyGenerator;
+
+    private final int KEYSPACE = 106;
+
     private JSONParser parser = new JSONParser();
 
     @Test
@@ -53,11 +58,7 @@ public class KeyControllerTest {
             }
         }
 
-        try{
-            Assert.assertEquals(106, possible_keys.size());
-        } catch(AssertionError e) {
-            System.out.println("Size Equality Assertion Error");
-        }
+        assert possible_keys.size() == KEYSPACE;
     }
 
     @Test
@@ -71,17 +72,13 @@ public class KeyControllerTest {
         Object jsonObject = parser.parse(result.getResponse().getContentAsString());
         JSONObject responseJson = (JSONObject) jsonObject;
 
-        HashMap<String, Integer> frequencies = new FrequencyGenerator().generateFrequency();
+        HashMap<String, Integer> frequencies = frequencyGenerator.generateFrequency();
 
         // Checks the size of each key, "space" should be 19, etc.
         for (Object key : responseJson.keySet()){
             JSONArray temp = (JSONArray) responseJson.get(key);
-            int freq = frequencies.get(key);
-            try {
-                Assert.assertEquals(temp.size(), freq);
-            } catch(AssertionError e){
-                System.out.println("Frequency Assertion Error for key: " + key.toString());
-            }
+            int freq = frequencies.get(key.toString());
+            assert temp.size() == freq;
         }
     }
 
