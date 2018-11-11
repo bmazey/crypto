@@ -18,8 +18,8 @@ public class DictionaryController {
         return ResponseEntity.ok(dictionaryGenerator.generateDictionaryDto());
     }
 
-    //TODO- Accepts valid sizes now, but needs to throw custom error message
-    @RequestMapping(value="/api/dictionary/{size:^[1-9][0-9]?$|^100$}", method = RequestMethod.GET)
+    //TODO- Smarter Regexp for this?
+    @RequestMapping(value="/api/dictionary/{size:^[1-9]|[1-6][0-9]|70$}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getSubsetDictionary(@PathVariable("size") int size) {
         return ResponseEntity.ok(dictionaryGenerator.generateDictionaryDto(size));

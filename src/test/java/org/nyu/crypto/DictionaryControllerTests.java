@@ -55,4 +55,28 @@ public class DictionaryControllerTests {
         Assert.assertEquals(69,dictionary.getWords().length);
     }
 
+    @Test
+    public void dictionaryControllerCheckInvalidSize() throws Exception
+    {
+        objectMapper = new ObjectMapper();
+        MvcResult underflowSizeResult = this.mockMvc.perform(get("/api/dictionary/0"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+        MvcResult overflowSizeResult = this.mockMvc.perform(get("/api/dictionary/71"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+    }
+    @Test
+    public void dictionaryControllerInvalidType() throws Exception
+    {
+        objectMapper = new ObjectMapper();
+        MvcResult invalidTypeResult = this.mockMvc.perform(get("/api/dictionary/!@#%^"))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+    }
+
 }
