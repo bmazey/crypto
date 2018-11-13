@@ -1,23 +1,17 @@
 package org.nyu.crypto.dto;
 
 
-
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name="messages")
 public class Message {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", updatable = false, nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(name = "message")
+    @Column(length = 500)
     private String message;
 
     public String getMessage() {return message;}

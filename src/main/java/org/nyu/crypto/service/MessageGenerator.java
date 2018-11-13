@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
+import java.util.UUID;
 
 
 @Service
@@ -37,9 +38,13 @@ public class MessageGenerator {
     }
 
     public Message generateMessageDto() {
-        Message messageDto = new Message();
-        messageDto.setMessage(generateMessage());
-        return messageDto;
+        Message message = new Message();
+        message.setMessage(generateMessage());
+
+        // save the result in storage
+        saveMessage(message);
+
+        return message;
     }
 
     public String generateSubsetMessage() {
@@ -65,8 +70,16 @@ public class MessageGenerator {
      * the section defined below is for interacting with storage
      */
 
-    public void createMessage() {
-        // TODO - finish
+    public void saveMessage(Message message) {
+        messageRepository.save(message);
+    }
+
+    public void deleteMessageById(UUID id) {
+        messageRepository.deleteById(id);
+    }
+
+    public void deleteAllMessages() {
+        messageRepository.deleteAll();
     }
 
 
