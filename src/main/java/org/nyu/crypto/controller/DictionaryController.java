@@ -4,7 +4,7 @@ import org.nyu.crypto.service.DictionaryGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.http.HttpStatus;
 
 @RestController
 public class DictionaryController {
@@ -18,11 +18,13 @@ public class DictionaryController {
         return ResponseEntity.ok(dictionaryGenerator.generateDictionaryDto());
     }
 
-    //TODO - need to validate
-    @RequestMapping(value="/api/dictionary/{size}", method = RequestMethod.GET)
+    // TODO - Smarter Regexp for this?
+    // TODO - create custom error message
+    @RequestMapping(value="/api/dictionary/{size:^[1-9]|[1-6][0-9]|70$}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getSubsetDictionary(@PathVariable("size") int size) {
         return ResponseEntity.ok(dictionaryGenerator.generateDictionaryDto(size));
     }
+
 
 }
