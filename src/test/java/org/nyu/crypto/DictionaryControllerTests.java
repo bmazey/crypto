@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nyu.crypto.dto.Dictionary;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -26,8 +27,8 @@ public class DictionaryControllerTests {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private final int WORDS_LENGTH=70;
-    //TODO- Create a final constant file in resources
+    @Value("${dictionary.defaultLength}")
+    private int dictionaryLength;
 
     @Test
     public void dictionaryControllerGet() throws Exception {
@@ -38,7 +39,7 @@ public class DictionaryControllerTests {
 
         Dictionary dictionary = objectMapper.readValue(result.getResponse().getContentAsString(), Dictionary.class);
 
-        Assert.assertEquals(70, dictionary.getWords().length);
+        Assert.assertEquals(dictionaryLength, dictionary.getWords().length);
     }
 
     @Test

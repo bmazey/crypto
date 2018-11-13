@@ -33,8 +33,6 @@ public class SimulationControllerTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    private final int SPACE = 500;
-
     @Test
     @SuppressWarnings("unchecked")
     public void simulationControllerGet() throws Exception {
