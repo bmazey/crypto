@@ -7,6 +7,7 @@ import org.nyu.crypto.service.data.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
 
@@ -72,6 +73,10 @@ public class MessageGenerator {
 
     public void saveMessage(Message message) {
         messageRepository.save(message);
+    }
+
+    public Optional<Message> getMessageById(UUID id) {
+        return messageRepository.findById(id);
     }
 
     public void deleteMessageById(UUID id) {
