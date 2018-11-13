@@ -6,3 +6,12 @@ spring:
     console:
       enabled: true
 
+key:
+  space: 106
+
+message:
+  space: 500
+
+dictionary:
+  defaultLength: 70
+

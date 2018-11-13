@@ -5,6 +5,7 @@ import org.nyu.crypto.dto.Dictionary;
 import org.nyu.crypto.dto.Message;
 import org.nyu.crypto.service.data.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,7 +22,8 @@ public class MessageGenerator {
     @Autowired
     private MessageRepository messageRepository;
 
-    private final int MESSAGE_SPACE = 500;
+    @Value("${message.space}")
+    private int messageSpace;
 
     private Random r;
 
@@ -30,12 +32,12 @@ public class MessageGenerator {
         StringBuilder messageBuilder = new StringBuilder();
         Dictionary dictionary = dictionaryGenerator.generateDictionaryDto();
 
-        while(messageBuilder.length() < MESSAGE_SPACE) {
+        while(messageBuilder.length() < messageSpace) {
             messageBuilder.append(dictionary.getWords()[r.nextInt(dictionary.getWords().length)]);
             messageBuilder.append(" ");
         }
 
-        return messageBuilder.subSequence(0, MESSAGE_SPACE).toString();
+        return messageBuilder.subSequence(0, messageSpace).toString();
     }
 
     public Message generateMessageDto() {
@@ -59,12 +61,12 @@ public class MessageGenerator {
         messageBuilder.append(dictionary.getWords()[10]);
         messageBuilder.append(" ");
 
-        while(messageBuilder.length() < 500) {
+        while(messageBuilder.length() < messageSpace) {
             messageBuilder.append(dictionary.getWords()[r.nextInt(dictionary.getWords().length)]);
             messageBuilder.append(" ");
         }
 
-        return messageBuilder.subSequence(0, 500).toString();
+        return messageBuilder.subSequence(0, messageSpace).toString();
     }
 
     /**

@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,6 +26,9 @@ public class MessageControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Value("${message.space}")
+    private int messageSpace;
+
     @Test
     public void messageControllerTest() throws Exception {
 
@@ -36,7 +40,7 @@ public class MessageControllerTest {
         JSONObject json = new JSONObject(result.getResponse().getContentAsString());
 
         String messageGenerated = (String)json.get("message");
-        assertEquals(500, messageGenerated.length());
+        assertEquals(messageSpace, messageGenerated.length());
         assertNotEquals(499, messageGenerated.length());
     }
 

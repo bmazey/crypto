@@ -3,6 +3,7 @@ package org.nyu.crypto.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.nyu.crypto.dto.Key;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,8 +22,8 @@ public class KeyGenerator {
 
     private ObjectMapper mapper;
 
-
-    private final int KEYSPACE = 106;
+    @Value("${key.space}")
+    private int keyspace;
 
     public void setKey(HashMap<String, ArrayList<Integer>> key) {
         this.key = key;
@@ -39,7 +40,7 @@ public class KeyGenerator {
 
 
         HashMap<String, Integer> map = frequencyGenerator.generateFrequency();
-        ArrayList<Integer> numbers = new ArrayList<>(IntStream.range(0, KEYSPACE).boxed().collect(toSet()));
+        ArrayList<Integer> numbers = new ArrayList<>(IntStream.range(0, keyspace).boxed().collect(toSet()));
         HashMap<String, ArrayList<Integer>> result = new HashMap<>();
         int partition=0;
 
