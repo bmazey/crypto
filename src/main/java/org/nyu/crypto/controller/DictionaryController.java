@@ -18,7 +18,8 @@ public class DictionaryController {
         return ResponseEntity.ok(dictionaryGenerator.generateDictionaryDto());
     }
 
-    //TODO- Smarter Regexp for this?
+    // TODO - Smarter Regexp for this?
+    // TODO - create custom error message
     @RequestMapping(value="/api/dictionary/{size:^[1-9]|[1-6][0-9]|70$}", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<?> getSubsetDictionary(@PathVariable("size") int size) {

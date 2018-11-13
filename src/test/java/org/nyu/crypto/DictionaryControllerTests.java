@@ -24,45 +24,42 @@ public class DictionaryControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private final int WORDS_LENGTH=70;
     //TODO- Create a final constant file in resources
 
     @Test
-    public void dictionaryControllerGet() throws Exception
-    {
-        objectMapper = new ObjectMapper();
+    public void dictionaryControllerGet() throws Exception {
         MvcResult result = this.mockMvc.perform(get("/api/dictionary"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
+
         Dictionary dictionary = objectMapper.readValue(result.getResponse().getContentAsString(), Dictionary.class);
 
-        Assert.assertEquals(70,dictionary.getWords().length);
+        Assert.assertEquals(70, dictionary.getWords().length);
     }
 
     @Test
-    public void dictionaryControllerCheckSize() throws Exception
-    {
-        objectMapper = new ObjectMapper();
+    public void dictionaryControllerCheckSize() throws Exception {
         MvcResult result = this.mockMvc.perform(get("/api/dictionary/69"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
+
         Dictionary dictionary = objectMapper.readValue(result.getResponse().getContentAsString(), Dictionary.class);
 
-        Assert.assertEquals(69,dictionary.getWords().length);
+        Assert.assertEquals(69, dictionary.getWords().length);
     }
 
     @Test
-    public void dictionaryControllerCheckInvalidSize() throws Exception
-    {
-        objectMapper = new ObjectMapper();
+    public void dictionaryControllerCheckInvalidSize() throws Exception {
         MvcResult underflowSizeResult = this.mockMvc.perform(get("/api/dictionary/0"))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
                 .andReturn();
+
         MvcResult overflowSizeResult = this.mockMvc.perform(get("/api/dictionary/71"))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
@@ -70,9 +67,7 @@ public class DictionaryControllerTests {
 
     }
     @Test
-    public void dictionaryControllerInvalidType() throws Exception
-    {
-        objectMapper = new ObjectMapper();
+    public void dictionaryControllerInvalidType() throws Exception {
         MvcResult invalidTypeResult = this.mockMvc.perform(get("/api/dictionary/!@#%^"))
                 .andDo(print())
                 .andExpect(status().is4xxClientError())
