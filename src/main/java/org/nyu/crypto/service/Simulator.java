@@ -1,20 +1,14 @@
 package org.nyu.crypto.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import net.bytebuddy.implementation.bind.MethodDelegationBinder;
-import org.nyu.crypto.dto.Ciphertext;
 import org.nyu.crypto.dto.Key;
-import org.nyu.crypto.dto.Message;
 import org.nyu.crypto.dto.Simulation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.springframework.cache.interceptor.SimpleKeyGenerator.generateKey;
 
 @Service
 public class Simulator {
