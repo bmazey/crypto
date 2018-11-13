@@ -3,6 +3,7 @@ package org.nyu.crypto.service;
 
 import org.nyu.crypto.dto.Dictionary;
 import org.nyu.crypto.dto.Message;
+import org.nyu.crypto.service.data.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,9 @@ public class MessageGenerator {
 
     @Autowired
     private DictionaryGenerator dictionaryGenerator;
+
+    @Autowired
+    private MessageRepository messageRepository;
 
     private final int MESSAGE_SPACE = 500;
 
@@ -56,5 +60,14 @@ public class MessageGenerator {
 
         return messageBuilder.subSequence(0, 500).toString();
     }
+
+    /**
+     * the section defined below is for interacting with storage
+     */
+
+    public void createMessage() {
+        // TODO - finish
+    }
+
 
 }
