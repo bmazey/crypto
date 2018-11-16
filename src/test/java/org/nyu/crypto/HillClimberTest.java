@@ -17,7 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
@@ -81,10 +80,7 @@ public class HillClimberTest {
         putative = calculatePutativeAdjacency(putative, text);
         Stream.of(putative).map(Arrays::toString).forEach(System.out::println);
 
-        int encryptedScore = score(encrypted);
-        int putativeScore = score(putative);
-
-        logger.info(encryptedScore  + " / " + putativeScore);
+        logger.info(score(encrypted) + " / " + score(putative));
 
     }
 
