@@ -15,3 +15,6 @@ message:
 dictionary:
   length: 70
 
+charset:
+  length: 27
+

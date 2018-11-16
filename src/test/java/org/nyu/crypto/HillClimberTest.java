@@ -36,6 +36,9 @@ public class HillClimberTest {
     @Value("${key.space}")
     private int keyspace;
 
+    @Value("${charset.length}")
+    private int charset;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     private Logger logger = LoggerFactory.getLogger(HillClimberTest.class);
@@ -65,16 +68,21 @@ public class HillClimberTest {
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
 
         int[][] encrypted = new int[keyspace][keyspace];
-        int[][] putative = new int[keyspace][keyspace];
+        int[][] putative = new int[charset][charset];
 
-        int[][] result = calculateCipherAdjacency(encrypted, ciphertext);
+        encrypted = calculateCipherAdjacency(encrypted, ciphertext);
 
         // prints the result
-        Stream.of(result).map(Arrays::toString).forEach(System.out::println);
+        Stream.of(encrypted).map(Arrays::toString).forEach(System.out::println);
+
+        // attempt to decrypt the ciphertext with a random key to get a putative plaintext
+        String text = decryptor.decrypt(key, ciphertext);
+
+        putative = calculatePutativeAdjacency(putative, text);
 
     }
 
-    // this method calculates the adjacency of sets of numbers
+    // this method calculates the adjacency of numbers within ciphertext
     private int[][] calculateCipherAdjacency(int[][] encrypted, int[] ciphertext) {
         // we don't have to check the last value, so we stop at length - 1
         for (int i = 0; i < ciphertext.length - 1; i++) {
@@ -83,5 +91,9 @@ public class HillClimberTest {
         return encrypted;
     }
 
-
+    // this method calculates the adjacency of letters in a putative plaintext
+    private int[][] calculatePutativeAdjacency(int[][] putative, String text) {
+        // TODO - figure out how to store a, b, c, ... space as rows / columns.
+        return putative;
+    }
 }
