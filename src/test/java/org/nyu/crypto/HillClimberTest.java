@@ -17,6 +17,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 
@@ -71,14 +72,19 @@ public class HillClimberTest {
         int[][] putative = new int[charset][charset];
 
         encrypted = calculateCipherAdjacency(encrypted, ciphertext);
-
-        // prints the result
         Stream.of(encrypted).map(Arrays::toString).forEach(System.out::println);
 
         // attempt to decrypt the ciphertext with a random key to get a putative plaintext
         String text = decryptor.decrypt(key, ciphertext);
+        logger.info(text);
 
         putative = calculatePutativeAdjacency(putative, text);
+        Stream.of(putative).map(Arrays::toString).forEach(System.out::println);
+
+        int encryptedScore = score(encrypted);
+        int putativeScore = score(putative);
+
+        logger.info(encryptedScore  + " / " + putativeScore);
 
     }
 
@@ -86,14 +92,29 @@ public class HillClimberTest {
     private int[][] calculateCipherAdjacency(int[][] encrypted, int[] ciphertext) {
         // we don't have to check the last value, so we stop at length - 1
         for (int i = 0; i < ciphertext.length - 1; i++) {
-            encrypted[ciphertext[i]][ciphertext[i + 1]] = 1;
+            encrypted[ciphertext[i]][ciphertext[i + 1]] += 1;
         }
         return encrypted;
     }
 
     // this method calculates the adjacency of letters in a putative plaintext
     private int[][] calculatePutativeAdjacency(int[][] putative, String text) {
-        // TODO - figure out how to store a, b, c, ... space as rows / columns.
+        // again, no need to check the last value
+        for (int i = 0; i < text.length() - 1; i++) {
+            putative[convert(text.charAt(i))][convert(text.charAt(i + 1))] += 1;
+        }
         return putative;
+    }
+
+    // this method converts chars to ints so we can use character-based indexing in the putative array
+    private int convert(char c) {
+        if (c == ' ') return 26;
+        else return (c - 'a');
+    }
+
+    private int score(int[][] vector) {
+        return Arrays.stream(vector)
+                .flatMapToInt(Arrays::stream)
+                .sum();
     }
 }
