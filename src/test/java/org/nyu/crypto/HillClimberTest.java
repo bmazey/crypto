@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 
@@ -24,7 +25,7 @@ public class HillClimberTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    Logger logger = LoggerFactory.getLogger(HillClimberTest.class);
+    private Logger logger = LoggerFactory.getLogger(HillClimberTest.class);
 
     @Test
     @SuppressWarnings("unchecked")
@@ -38,6 +39,7 @@ public class HillClimberTest {
         int[] ciphertext = simulation.getCiphertext();
 
         logger.info(plaintext);
+        logger.info(Arrays.toString(ciphertext));
 
     }
 }
