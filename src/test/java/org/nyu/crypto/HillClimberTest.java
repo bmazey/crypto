@@ -67,18 +67,21 @@ public class HillClimberTest {
         int[][] encrypted = new int[keyspace][keyspace];
         int[][] putative = new int[keyspace][keyspace];
 
-        int[][] result = calculateAdjacency(encrypted, ciphertext);
+        int[][] result = calculateCipherAdjacency(encrypted, ciphertext);
 
+        // prints the result
         Stream.of(result).map(Arrays::toString).forEach(System.out::println);
 
     }
 
     // this method calculates the adjacency of sets of numbers
-    private int[][] calculateAdjacency(int[][] encrypted, int[] ciphertext) {
+    private int[][] calculateCipherAdjacency(int[][] encrypted, int[] ciphertext) {
         // we don't have to check the last value, so we stop at length - 1
         for (int i = 0; i < ciphertext.length - 1; i++) {
             encrypted[ciphertext[i]][ciphertext[i + 1]] = 1;
         }
         return encrypted;
     }
+
+
 }

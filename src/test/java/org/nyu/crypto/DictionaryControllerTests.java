@@ -27,7 +27,7 @@ public class DictionaryControllerTests {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    @Value("${dictionary.defaultLength}")
+    @Value("${dictionary.length}")
     private int dictionaryLength;
 
     @Test

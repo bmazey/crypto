@@ -13,5 +13,5 @@ message:
   space: 500
 
 dictionary:
-  defaultLength: 70
+  length: 70
 
