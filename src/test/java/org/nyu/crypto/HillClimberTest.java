@@ -71,7 +71,7 @@ public class HillClimberTest {
         int[][] putative = new int[charset][charset];
 
         encrypted = calculateCipherAdjacency(encrypted, ciphertext);
-        Stream.of(encrypted).map(Arrays::toString).forEach(System.out::println);
+        //Stream.of(encrypted).map(Arrays::toString).forEach(System.out::println);
 
         // attempt to decrypt the ciphertext with a random key to get a putative plaintext
         String text = decryptor.decrypt(key, ciphertext);
