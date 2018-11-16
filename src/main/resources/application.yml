@@ -18,3 +18,6 @@ dictionary:
 charset:
   length: 27
 
+space:
+  value: 26
+

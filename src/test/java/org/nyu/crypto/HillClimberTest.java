@@ -39,6 +39,9 @@ public class HillClimberTest {
     @Value("${charset.length}")
     private int charset;
 
+    @Value("${space.value}")
+    private int spaceval;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     private Logger logger = LoggerFactory.getLogger(HillClimberTest.class);
@@ -104,7 +107,7 @@ public class HillClimberTest {
 
     // this method converts chars to ints so we can use character-based indexing in the putative array
     private int convert(char c) {
-        if (c == ' ') return 26;
+        if (c == ' ') return spaceval;
         else return (c - 'a');
     }
 
