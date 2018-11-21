@@ -18,6 +18,7 @@ public class Digrapher {
     private DictionaryGenerator dictionaryGenerator;
 
     // FIXME - this might be wrong!
+    // TODO - include space?
     public double[][] computeDigraph() {
 
         double[][] digraph = new double[alphabet][alphabet];
