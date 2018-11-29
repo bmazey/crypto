@@ -38,7 +38,6 @@ public class KeyGenerator {
 
     public HashMap<String, ArrayList<Integer>> generateKey() {
 
-
         HashMap<String, Integer> map = frequencyGenerator.generateFrequency();
         ArrayList<Integer> numbers = new ArrayList<>(IntStream.range(0, keyspace).boxed().collect(toSet()));
         HashMap<String, ArrayList<Integer>> result = new HashMap<>();
