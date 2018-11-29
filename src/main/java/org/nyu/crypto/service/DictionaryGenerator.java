@@ -6,21 +6,20 @@ import org.nyu.crypto.dto.Dictionary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 
 @Service
 public class DictionaryGenerator {
 
-    private ObjectMapper objectMapper;
-
     public Dictionary generateDictionaryDto() {
         Dictionary dictionary = new Dictionary();
-        objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
+
         try {
-            File dictionaryFile = new ClassPathResource("dictionary.json").getFile();
-            dictionary = objectMapper.readValue(dictionaryFile, Dictionary.class);
+            InputStream dictionaryStream = new ClassPathResource("dictionary.json").getInputStream();
+            dictionary = objectMapper.readValue(dictionaryStream, Dictionary.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
