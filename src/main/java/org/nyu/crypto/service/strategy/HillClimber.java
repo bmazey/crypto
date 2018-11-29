@@ -1,9 +1,6 @@
 package org.nyu.crypto.service.strategy;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.nyu.crypto.dto.Ciphertext;
-import org.nyu.crypto.dto.Key;
-import org.nyu.crypto.dto.Message;
+
 import org.nyu.crypto.service.FrequencyGenerator;
 import org.nyu.crypto.service.KeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,25 +10,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
-public class StrategyHillClimbing {
+public class HillClimber {
 
     @Autowired
-    FrequencyGenerator frequencyGenerator;
+    private FrequencyGenerator frequencyGenerator;
 
     @Autowired
-    KeyGenerator keyGenerator;
+    private KeyGenerator keyGenerator;
 
-    public Message decrypt(Ciphertext ciphertext) {
 
+    public String decrypt(int[] ciphertext) {
 
         HashMap<String, Integer> frequencyMap = frequencyGenerator.generateFrequency();
-        Message message = new Message();
 
         //Initial Random Key guess before using greedy algorithm
-        HashMap<String, ArrayList<Integer>> map = keyGenerator.generateKey();
-        ObjectMapper objectMapper = new ObjectMapper();
-        Key key = objectMapper.convertValue(map, Key.class);
-        return message;
+        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+
+        return "";
     }
 
     private void randomInitialKeyLayer() {
@@ -51,4 +46,5 @@ public class StrategyHillClimbing {
 
         //TODO: Create a putative plain text and call for score calculation
     }
+
 }

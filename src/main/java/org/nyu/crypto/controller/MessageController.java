@@ -2,11 +2,11 @@ package org.nyu.crypto.controller;
 
 import org.nyu.crypto.service.MessageGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 public class MessageController {
@@ -18,9 +18,15 @@ public class MessageController {
     @Autowired
     private MessageGenerator messageGenerator;
 
-    @RequestMapping(value="/api/message", method = RequestMethod.GET)
+    @RequestMapping(value="/api/message", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> getMessage() {
         return ResponseEntity.ok(messageGenerator.generateMessageDto());
+    }
+
+    @RequestMapping(value="/api/message/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<?> getMessageById(@PathVariable UUID id) {
+        return ResponseEntity.ok(messageGenerator.getMessageById(id));
     }
 }

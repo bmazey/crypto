@@ -33,8 +33,6 @@ public class SimulationControllerTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    private final int SPACE = 500;
-
     @Test
     @SuppressWarnings("unchecked")
     public void simulationControllerGet() throws Exception {
@@ -54,7 +52,7 @@ public class SimulationControllerTest {
 
         String plaintext = decryptor.decrypt(key, ciphertext);
 
-        Assert.assertEquals(message, plaintext, message);
+        Assert.assertEquals(message, plaintext);
 
     }
 }

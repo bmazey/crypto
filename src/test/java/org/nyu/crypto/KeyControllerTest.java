@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nyu.crypto.service.FrequencyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,7 +34,8 @@ public class KeyControllerTest {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    private final int KEYSPACE = 106;
+    @Value("${key.space}")
+    private int keyspace;
 
 
     @Test
@@ -42,7 +44,7 @@ public class KeyControllerTest {
 
         MvcResult result = this.mockMvc.perform(get("/api/key"))
                 .andDo(print())
-                .andExpect(status().isOk())
+                 .andExpect(status().isOk())
                 .andReturn();
 
         HashMap<String, ArrayList<Integer>> map = mapper.readValue(result.getResponse().getContentAsString(), HashMap.class);
@@ -55,7 +57,7 @@ public class KeyControllerTest {
         }
 
         // Checks the the size of total keyspace, should be 106
-        assert set.size() == KEYSPACE;
+        assert set.size() == keyspace;
     }
 
     @Test
