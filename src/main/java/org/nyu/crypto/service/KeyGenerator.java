@@ -45,9 +45,8 @@ public class KeyGenerator {
 
         Collections.shuffle(numbers);
 
-        for(String key: map.keySet())
-        {
-            result.put(key,new ArrayList<Integer> (numbers.subList(partition,partition+map.get(key))));
+        for(String key: map.keySet()) {
+            result.put(key,new ArrayList<> (numbers.subList(partition, partition+map.get(key))));
             partition=partition+map.get(key);
         }
         return result;
