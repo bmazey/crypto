@@ -11,15 +11,12 @@ import java.util.HashMap;
 @Service
 public class FrequencyGenerator {
 
-    private InputStream frequencyStream;
-    private ObjectMapper mapper;
-
 
     public HashMap<String, Integer> generateFrequency() {
-        mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         HashMap<String, Integer> frequency = new HashMap<>();
         try {
-            frequencyStream  = new ClassPathResource("frequency.json").getInputStream();
+            InputStream frequencyStream = new ClassPathResource("frequency.json").getInputStream();
 
             // see if this warning can be fixed ...
             frequency = mapper.readValue(frequencyStream, HashMap.class);

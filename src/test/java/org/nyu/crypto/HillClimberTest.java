@@ -24,15 +24,6 @@ import java.util.stream.Stream;
 @SpringBootTest(classes=CryptoApplication.class)
 public class HillClimberTest {
 
-    @Autowired
-    private Simulator simulator;
-
-    @Autowired
-    private Decryptor decryptor;
-
-    @Autowired
-    private KeyGenerator keyGenerator;
-
     @Value("${key.space}")
     private int keyspace;
 
@@ -41,6 +32,15 @@ public class HillClimberTest {
 
     @Value("${space.value}")
     private int spaceval;
+
+    @Autowired
+    private Simulator simulator;
+
+    @Autowired
+    private Decryptor decryptor;
+
+    @Autowired
+    private KeyGenerator keyGenerator;
 
     private ObjectMapper mapper = new ObjectMapper();
 

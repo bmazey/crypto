@@ -38,7 +38,6 @@ public class KeyGenerator {
 
     public HashMap<String, ArrayList<Integer>> generateKey() {
 
-
         HashMap<String, Integer> map = frequencyGenerator.generateFrequency();
         ArrayList<Integer> numbers = new ArrayList<>(IntStream.range(0, keyspace).boxed().collect(toSet()));
         HashMap<String, ArrayList<Integer>> result = new HashMap<>();
@@ -46,9 +45,8 @@ public class KeyGenerator {
 
         Collections.shuffle(numbers);
 
-        for(String key: map.keySet())
-        {
-            result.put(key,new ArrayList<Integer> (numbers.subList(partition,partition+map.get(key))));
+        for(String key: map.keySet()) {
+            result.put(key,new ArrayList<> (numbers.subList(partition, partition+map.get(key))));
             partition=partition+map.get(key);
         }
         return result;
