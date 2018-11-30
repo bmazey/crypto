@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Optional;
 
 @Service
 public class HillClimber {
@@ -59,6 +60,23 @@ public class HillClimber {
         }
 
         return "";
+    }
+
+    // we use a key to track associations in the digraph matrix
+    private Optional<String> getLetterAssociation(HashMap<String, ArrayList<Integer>> map, int x) {
+        for (String key : map.keySet()) {
+            ArrayList<Integer> list = map.get(key);
+            if (list.contains(x)) return Optional.of(key);
+        }
+        return Optional.empty();
+    }
+
+    // given two numbers and two letters, swap the keyspace a <-> and b <-> y
+    private HashMap<String, ArrayList<Integer>> swap(HashMap<String, ArrayList<Integer>> map,
+                                                     String a, String b, int x, int y) {
+        // TODO add check to make sure x is in a's list and y is in b's list
+
+        return map;
     }
 
     // helper method to sum a matrix
