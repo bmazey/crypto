@@ -53,7 +53,7 @@ public class HillClimber {
         // now we need to score the putative digraph matrix and compare it to the dictionary digraph matrix
         double putativeScore = score(putative);
 
-        // if we are inside this loop, that means our putative key is not accurate
+        // if we are inside this loop, that means our putative key is not accurate enough
         while(Math.abs(dictionaryScore - putativeScore) > 1) {
 
         }
