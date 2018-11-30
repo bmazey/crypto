@@ -9,14 +9,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class Digrapher {
 
-    @Value("${space.value}")
-    private int spaceval;
-
     @Value("${alphabet.length}")
     private int alphabet;
 
     @Value("${charset.length}")
     private int charset;
+
+    @Value("${key.space}")
+    private int keyspace;
+
+    @Value("${space.value}")
+    private int spaceval;
 
     @Autowired
     private DictionaryGenerator dictionaryGenerator;
@@ -45,8 +48,8 @@ public class Digrapher {
         return digraph;
     }
 
-    // we use this method to compute the putative plaintext digraph
-    public double[][] computeDigraph(String text) {
+    // we use this method to compute the 27 x 27 putative plaintext digraph
+    public double[][] computePutativeDigraph(String text) {
 
         double[][] putative = new double[charset][charset];
 
@@ -55,6 +58,17 @@ public class Digrapher {
             putative[convert(text.charAt(i))][convert(text.charAt(i + 1))] += 1;
         }
         return putative;
+    }
+
+    // this method computes a 106 x 106 digraph matrix of the ciphertext
+    public double[][] computeCipherDigraph(int[] ciphertext) {
+        double[][] cipher = new double[keyspace][keyspace];
+
+        // we don't have to check the last value, so we stop at length - 1
+        for (int i = 0; i < ciphertext.length - 1; i++) {
+            cipher[ciphertext[i]][ciphertext[i + 1]] += 1;
+        }
+        return cipher;
     }
 
     private int convert(char c) {

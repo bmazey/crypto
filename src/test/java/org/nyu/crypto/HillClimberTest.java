@@ -88,7 +88,6 @@ public class HillClimberTest {
 
     }
 
-    // TODO - do we even need this?
     // this method calculates the adjacency of numbers within ciphertext
     private int[][] calculateCipherAdjacency(int[][] encrypted, int[] ciphertext) {
         // we don't have to check the last value, so we stop at length - 1
