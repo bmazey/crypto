@@ -2,7 +2,7 @@ package org.nyu.crypto;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nyu.crypto.service.Digrapher;
+import org.nyu.crypto.service.strategy.Digrapher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;

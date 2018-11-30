@@ -1,5 +1,6 @@
-package org.nyu.crypto.service;
+package org.nyu.crypto.service.strategy;
 
+import org.nyu.crypto.service.DictionaryGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
