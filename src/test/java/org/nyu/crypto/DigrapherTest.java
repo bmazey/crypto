@@ -88,13 +88,13 @@ public class DigrapherTest {
 
         logger.info("dictionary: " + dictionary.length + " | " + "putative: " + putative.length);
 
-        // assert that their dimensions are the same
+        // assert that their dimensions are within 1
         assert dictionary.length == putative.length - 1;
 
     }
 
     @Test
-    public void CiphertextDigraphLength(){
+    public void assertCiphertextDigraphLength(){
 
         // generating a new ciphertext
         int[] ciphertext = simulator.createSimulation().getCiphertext();
@@ -104,7 +104,7 @@ public class DigrapherTest {
 
         logger.info("Ciphertext Matrix Length: " + cipherMatrix.length);
 
-        // asserting that its dimensions is 106 x 106
+        // asserting that its dimensions are 106 x 106
         assert cipherMatrix.length == keyspace;
     }
 }
