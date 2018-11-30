@@ -24,7 +24,7 @@ public class Digrapher {
     @Autowired
     private DictionaryGenerator dictionaryGenerator;
 
-    // we use this to calculate the initial dictionary digraph matrix
+    // we use this to calculate the initial 26 x 26 dictionary digraph matrix
     public double[][] computeDictionaryDigraph() {
 
         double[][] digraph = new double[alphabet][alphabet];
@@ -58,6 +58,20 @@ public class Digrapher {
             putative[convert(text.charAt(i))][convert(text.charAt(i + 1))] += 1;
         }
         return putative;
+    }
+
+    public double[][] computePutativeSubDigraph(double[][] putative) {
+
+        double[][] subgraph = new double[putative.length - 1][putative.length - 1];
+
+        // eliminate the last row and column to go from 27 x 27 -> 26 x 26 for comparisons to dictionary digraph
+        for (int i = 0; i < putative.length - 1; i++) {
+            for (int j = 0; j < putative[i].length - 1; j++) {
+                subgraph[i][j] = putative[i][j];
+            }
+        }
+
+        return subgraph;
     }
 
     // this method computes a 106 x 106 digraph matrix of the ciphertext

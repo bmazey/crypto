@@ -61,8 +61,6 @@ public class HillClimber {
         return "";
     }
 
-    // TODO - write a helper method to get a sub-matrix of the putative matrix and compare it to the dictionary matrix!
-
     // helper method to sum a matrix
     private double score(double[][] vector) {
         return Arrays.stream(vector)

@@ -66,7 +66,10 @@ public class DigrapherTest {
          * this is because we include the space values in the putative digraph computation but IGNORE them
          * in the dictionary digraph computation.
          *
-         * this test asserts that the dimensions of the putative matrix are one greater than the dictionary matrix
+         * this test asserts that the dimensions of the putative matrix are one greater than the dictionary matrix.
+         *
+         * we also use a sub-matrix of the putative digraph matrix during the hill climbing algorithm. in this case,
+         * the dictionary digraph and the putative sub-digraph should both be 26 x 26.
          */
 
         // let's start by computing the dictionary digraph
@@ -91,6 +94,14 @@ public class DigrapherTest {
         // assert that their dimensions are within 1
         assert dictionary.length == putative.length - 1;
 
+        // now get the sub-digraph of the putative digraph and check to make sure it is equal to the dictionary
+        // digraph dimensions
+        double[][] subgraph = digrapher.computePutativeSubDigraph(putative);
+
+        logger.info("dictionary: " + dictionary.length + " | " + "subgraph: " + subgraph.length);
+
+        assert dictionary.length == subgraph.length;
+
     }
 
     @Test
@@ -100,11 +111,11 @@ public class DigrapherTest {
         int[] ciphertext = simulator.createSimulation().getCiphertext();
 
         // computing ciphertext digraph
-        double[][] cipherMatrix = digrapher.computeCipherDigraph(ciphertext);
+        double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
-        logger.info("Ciphertext Matrix Length: " + cipherMatrix.length);
+        logger.info("ciphertext matrix length: " + cipher.length);
 
         // asserting that its dimensions are 106 x 106
-        assert cipherMatrix.length == keyspace;
+        assert cipher.length == keyspace;
     }
 }
