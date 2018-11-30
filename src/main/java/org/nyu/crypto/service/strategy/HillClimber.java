@@ -61,6 +61,8 @@ public class HillClimber {
         return "";
     }
 
+    // TODO - write a helper method to get a sub-matrix of the putative matrix and compare it to the dictionary matrix!
+
     // we calculate the score by taking the absolute value of the difference between the two matrices
     private double score(double[][] vector) {
         return Arrays.stream(vector)
