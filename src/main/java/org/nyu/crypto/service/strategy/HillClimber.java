@@ -3,6 +3,8 @@ package org.nyu.crypto.service.strategy;
 
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.KeyGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class HillClimber {
     @Autowired
     private KeyGenerator keyGenerator;
 
+    private Logger logger = LoggerFactory.getLogger(HillClimber.class);
+
 
     public String climb(int[] ciphertext) {
 
@@ -34,25 +38,37 @@ public class HillClimber {
         // initial random key guess before using hill climbing algorithm
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
 
+        // for testing
+        for (String tkey: key.keySet()) {
+            ArrayList<Integer> list = key.get(tkey);
+            logger.info(tkey + " : " + Arrays.toString(list.toArray()));
+        }
+
         // we now calculate the digraph matrix of the ciphertext which we only need once
         double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
         // initialize the dictionary digraph which we will use to compare
         double[][] dictionary = digrapher.computeDictionaryDigraph();
 
-        // we only need to compute the score of the dictionary digraph once
-        double dictionaryScore = score(dictionary);
-
         // FIXME - define distance
+        // TODO - this needs to be fixed
         for (int i = 0; i < keyspace; i++) {
-            key = climbHill(key, cipher, ciphertext, dictionaryScore, i);
+            for (int j = 0; j < keyspace; j++) {
+                key = climbHill(key, dictionary, ciphertext, j);
+            }
+        }
+
+        // for testing
+        for (String tkey: key.keySet()) {
+            ArrayList<Integer> list = key.get(tkey);
+            logger.info(tkey + " : " + Arrays.toString(list.toArray()));
         }
 
         return decryptor.decrypt(key, ciphertext);
     }
 
-    private HashMap<String, ArrayList<Integer>> climbHill(HashMap<String, ArrayList<Integer>> pkey, double[][] cipher,
-                             int[] ciphertext, double dictionaryScore, int distance) {
+    private HashMap<String, ArrayList<Integer>> climbHill(HashMap<String, ArrayList<Integer>> pkey, double[][] dictionary,
+                             int[] ciphertext, int distance) {
 
         // first we need to get the putative plaintext by decrypting the ciphertext with a random key
         String putativeText = decryptor.decrypt(pkey, ciphertext);
@@ -61,10 +77,10 @@ public class HillClimber {
         double[][] putative = digrapher.computePutativeDigraph(putativeText);
 
         // now we need to score the putative digraph matrix and compare it to the dictionary digraph matrix
-        double putativeScore = score(putative);
+        double score = score(dictionary, digrapher.computePutativeSubDigraph(putative));
+        logger.info("score: " + score);
 
-        double minscore = Math.abs(dictionaryScore - putativeScore);
-
+        // FIXME - this isn't right!
         for (int i = 0; i < keyspace - distance; i++) {
             String firstLetter = getLetterAssociation(pkey, i).get();
             String secondLetter = getLetterAssociation(pkey, i + distance).get();
@@ -73,31 +89,17 @@ public class HillClimber {
             // now we need to recompute the new putative digraph score
             String tPutativeText = decryptor.decrypt(pkey, ciphertext);
             double[][] tputative = digrapher.computePutativeDigraph(tPutativeText);
-            double tPutativeScore = score(tputative);
-
-            double tscore = Math.abs(dictionaryScore - tPutativeScore);
+            double tscore = score(dictionary, digrapher.computePutativeSubDigraph(tputative));
 
             // if our new score is greater, we've moved away from the solution ... unswap and continue
-            if (tscore > minscore) {
-                pkey = swap(pkey, secondLetter, firstLetter, i + distance, i);
+            if (tscore > score) {
+                pkey = swap(pkey, secondLetter, firstLetter, i, i + distance);
                 continue;
             }
-
-            minscore = tscore;
-
+            score = tscore;
         }
 
         return pkey;
-
-        // if we are inside this loop, that means our putative key is not accurate enough
-//        while(Math.abs(dictionaryScore - putativeScore) > 1) {
-//
-//            // perform a swap
-//
-//            // recompute putative score
-//        }
-
-        // return "";
     }
 
     // we use a key to track associations in the digraph matrix
@@ -130,18 +132,15 @@ public class HillClimber {
         return map;
     }
 
-    private HashMap<String, ArrayList<Integer>> distanceSwap(HashMap<String, ArrayList<Integer>> map, int distance) {
-
-        // TODO - do we need this method?
-
-        return map;
-    }
-
-    // helper method to sum a matrix
-    private double score(double[][] vector) {
-        return Arrays.stream(vector)
-                .flatMapToDouble(Arrays::stream)
-                .sum();
+    // method to score the abs val difference
+    private double score(double[][] dictionary, double[][] subputative) {
+        double score = 0;
+        for(int i = 0; i < dictionary.length; i++) {
+            for (int j = 0; j < dictionary[i].length; j++) {
+                score += Math.abs(dictionary[i][j] - subputative[i][j]);
+            }
+        }
+        return score;
     }
 
 }

@@ -25,23 +25,11 @@ import java.util.stream.Stream;
 @SpringBootTest(classes=CryptoApplication.class)
 public class HillClimberTest {
 
-    @Value("${key.space}")
-    private int keyspace;
-
-    @Value("${charset.length}")
-    private int charset;
-
     @Value("${space.value}")
     private int spaceval;
 
     @Autowired
     private Simulator simulator;
-
-    @Autowired
-    private Decryptor decryptor;
-
-    @Autowired
-    private KeyGenerator keyGenerator;
 
     @Autowired
     private HillClimber hillClimber;
@@ -54,65 +42,9 @@ public class HillClimberTest {
     @SuppressWarnings("unchecked")
     public void simulateHillClimbing() {
 
-//        Simulation simulation = simulator.createSimulation();
-//
-//        // unpack the contents into key, plaintext, ciphertext
-//        HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
-//        String plaintext = simulation.getMessage();
-//        int[] ciphertext = simulation.getCiphertext();
-//
-//        logger.info(plaintext);
-//        logger.info(Arrays.toString(ciphertext));
-//
-//        // let's invoke the hill climbing function
-//        climbHill(ciphertext);
-
         Simulation simulation = simulator.createSimulation();
         logger.info("plaintext: " + simulation.getMessage());
-
         logger.info("putative : " + hillClimber.climb(simulation.getCiphertext()));
-
-
-    }
-
-    // TODO - move this to service!
-    private void climbHill(int[] ciphertext) {
-        // generate a random key
-        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
-
-        int[][] encrypted = new int[keyspace][keyspace];
-        int[][] putative = new int[charset][charset];
-
-        encrypted = calculateCipherAdjacency(encrypted, ciphertext);
-        //Stream.of(encrypted).map(Arrays::toString).forEach(System.out::println);
-
-        // attempt to decrypt the ciphertext with a random key to get a putative plaintext
-        String text = decryptor.decrypt(key, ciphertext);
-        logger.info(text);
-
-        putative = calculatePutativeAdjacency(putative, text);
-        Stream.of(putative).map(Arrays::toString).forEach(System.out::println);
-
-        logger.info(score(encrypted) + " / " + score(putative));
-
-    }
-
-    // this method calculates the adjacency of numbers within ciphertext
-    private int[][] calculateCipherAdjacency(int[][] encrypted, int[] ciphertext) {
-        // we don't have to check the last value, so we stop at length - 1
-        for (int i = 0; i < ciphertext.length - 1; i++) {
-            encrypted[ciphertext[i]][ciphertext[i + 1]] += 1;
-        }
-        return encrypted;
-    }
-
-    // this method calculates the adjacency of letters in a putative plaintext
-    private int[][] calculatePutativeAdjacency(int[][] putative, String text) {
-        // again, no need to check the last value
-        for (int i = 0; i < text.length() - 1; i++) {
-            putative[convert(text.charAt(i))][convert(text.charAt(i + 1))] += 1;
-        }
-        return putative;
     }
 
     // this method converts chars to ints so we can use character-based indexing in the putative array

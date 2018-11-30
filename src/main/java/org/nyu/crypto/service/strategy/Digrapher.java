@@ -52,11 +52,19 @@ public class Digrapher {
     public double[][] computePutativeDigraph(String text) {
 
         double[][] putative = new double[charset][charset];
+        int digraphs = text.length() - 1;
 
         // again, no need to check the last value
         for (int i = 0; i < text.length() - 1; i++) {
             putative[convert(text.charAt(i))][convert(text.charAt(i + 1))] += 1;
         }
+
+        for (int i = 0; i < putative.length; i++) {
+            for (int j = 0; j < putative[i].length; j++) {
+                putative[i][j] = (putative[i][j] / digraphs) * 100;
+            }
+        }
+
         return putative;
     }
 
