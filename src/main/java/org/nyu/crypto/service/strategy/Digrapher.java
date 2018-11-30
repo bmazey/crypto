@@ -15,12 +15,14 @@ public class Digrapher {
     @Value("${alphabet.length}")
     private int alphabet;
 
+    @Value("${charset.length}")
+    private int charset;
+
     @Autowired
     private DictionaryGenerator dictionaryGenerator;
 
-    // FIXME - this might be wrong!
-    // TODO - include space?
-    public double[][] computeDigraph() {
+    // we use this to calculate the initial dictionary digraph matrix
+    public double[][] computeDictionaryDigraph() {
 
         double[][] digraph = new double[alphabet][alphabet];
 
@@ -41,6 +43,18 @@ public class Digrapher {
         }
 
         return digraph;
+    }
+
+    // we use this method to compute the putative plaintext digraph
+    public double[][] computeDigraph(String text) {
+
+        double[][] putative = new double[charset][charset];
+
+        // again, no need to check the last value
+        for (int i = 0; i < text.length() - 1; i++) {
+            putative[convert(text.charAt(i))][convert(text.charAt(i + 1))] += 1;
+        }
+        return putative;
     }
 
     private int convert(char c) {

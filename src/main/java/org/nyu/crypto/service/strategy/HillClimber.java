@@ -1,50 +1,67 @@
 package org.nyu.crypto.service.strategy;
 
 
-import org.nyu.crypto.service.FrequencyGenerator;
+import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.KeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 @Service
 public class HillClimber {
 
     @Autowired
-    private FrequencyGenerator frequencyGenerator;
+    private Decryptor decryptor;
+
+    @Autowired
+    private Digrapher digrapher;
 
     @Autowired
     private KeyGenerator keyGenerator;
 
 
-    public String decrypt(int[] ciphertext) {
+    public String climb(int[] ciphertext) {
 
-        HashMap<String, Integer> frequencyMap = frequencyGenerator.generateFrequency();
-
-        //Initial Random Key guess before using greedy algorithm
+        // initial random key guess before using hill climbing algorithm
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+
+        // initialize the dictionary digraph which we will use to compare
+        double[][] dictionaryDigraph = digrapher.computeDictionaryDigraph();
+
+        // we only need to compute the score of the dictionary digraph once
+        double dictionaryScore = score(dictionaryDigraph);
+
+        return climbHill(key, ciphertext, dictionaryScore);
+    }
+
+    private String climbHill(HashMap<String, ArrayList<Integer>> key, int[] ciphertext, double dictionaryScore) {
+
+        // first we need to get the putative plaintext by decrypting the ciphertext with a random key
+        String putativeText = decryptor.decrypt(key, ciphertext);
+
+        // next we need to calculate the digraph of the putative plaintext
+        double[][] putative = digrapher.computeDigraph(putativeText);
+
+        // now we need to score the putative digraph matrix and compare it to the dictionary digraph matrix
+        double putativeScore = score(putative);
+
+        // if we are inside this loop, that means our putative key is not accurate
+        while(Math.abs(dictionaryScore - putativeScore) > 1) {
+
+        }
 
         return "";
     }
 
-    private void randomInitialKeyLayer() {
 
-        //TODO: Implement key generation
-        //After a key is rejected the key must be changed by exchanging the values
-    }
-
-    private void calculateScore() {
-
-        //TODO: Calculate score from the key using the digram logic
-        // If score is 0 then it is a perfect match.
-
-    }
-
-    private void getPutativePlainText() {
-
-        //TODO: Create a putative plain text and call for score calculation
+    // we calculate the score by taking the absolute value of the difference between the two matrices
+    private double score(double[][] vector) {
+        return Arrays.stream(vector)
+                .flatMapToDouble(Arrays::stream)
+                .sum();
     }
 
 }

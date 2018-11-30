@@ -21,7 +21,7 @@ public class DigrapherTest {
 
     @Test
     public void generateDigraph() {
-        double[][] digraph = digrapher.computeDigraph();
+        double[][] digraph = digrapher.computeDictionaryDigraph();
         Stream.of(digraph).map(Arrays::toString).forEach(System.out::println);
 
         // TODO - make sure result adds up to 100%.
