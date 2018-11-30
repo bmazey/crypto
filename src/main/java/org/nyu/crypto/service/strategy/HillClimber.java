@@ -74,7 +74,7 @@ public class HillClimber {
     // given two numbers and two letters, swap the keyspace a <-> and b <-> y
     private HashMap<String, ArrayList<Integer>> swap(HashMap<String, ArrayList<Integer>> map,
                                                      String a, String b, Integer x, Integer y) {
-        // assert that the list contains the expected values
+        // assert that the lists contain the expected values
         ArrayList<Integer> alist = map.get(a);
         assert alist.contains(x);
 
