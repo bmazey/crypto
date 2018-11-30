@@ -7,6 +7,7 @@ import org.nyu.crypto.dto.Simulation;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.KeyGenerator;
 import org.nyu.crypto.service.Simulator;
+import org.nyu.crypto.service.strategy.HillClimber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class HillClimberTest {
     @Autowired
     private KeyGenerator keyGenerator;
 
+    @Autowired
+    private HillClimber hillClimber;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     private Logger logger = LoggerFactory.getLogger(HillClimberTest.class);
@@ -50,18 +54,23 @@ public class HillClimberTest {
     @SuppressWarnings("unchecked")
     public void simulateHillClimbing() {
 
+//        Simulation simulation = simulator.createSimulation();
+//
+//        // unpack the contents into key, plaintext, ciphertext
+//        HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
+//        String plaintext = simulation.getMessage();
+//        int[] ciphertext = simulation.getCiphertext();
+//
+//        logger.info(plaintext);
+//        logger.info(Arrays.toString(ciphertext));
+//
+//        // let's invoke the hill climbing function
+//        climbHill(ciphertext);
+
         Simulation simulation = simulator.createSimulation();
+        logger.info("plaintext: " + simulation.getMessage());
 
-        // unpack the contents into key, plaintext, ciphertext
-        HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
-        String plaintext = simulation.getMessage();
-        int[] ciphertext = simulation.getCiphertext();
-
-        logger.info(plaintext);
-        logger.info(Arrays.toString(ciphertext));
-
-        // let's invoke the hill climbing function
-        climbHill(ciphertext);
+        logger.info("putative : " + hillClimber.climb(simulation.getCiphertext()));
 
 
     }

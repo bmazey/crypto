@@ -4,6 +4,7 @@ package org.nyu.crypto.service.strategy;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.KeyGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -13,6 +14,9 @@ import java.util.Optional;
 
 @Service
 public class HillClimber {
+
+    @Value("${key.space}")
+    private int keyspace;
 
     @Autowired
     private Decryptor decryptor;
@@ -39,14 +43,19 @@ public class HillClimber {
         // we only need to compute the score of the dictionary digraph once
         double dictionaryScore = score(dictionary);
 
-        return climbHill(key, cipher, ciphertext, dictionaryScore);
+        // FIXME - define distance
+        for (int i = 0; i < keyspace; i++) {
+            key = climbHill(key, cipher, ciphertext, dictionaryScore, i);
+        }
+
+        return decryptor.decrypt(key, ciphertext);
     }
 
-    private String climbHill(HashMap<String, ArrayList<Integer>> key, double[][] cipher,
-                             int[] ciphertext, double dictionaryScore) {
+    private HashMap<String, ArrayList<Integer>> climbHill(HashMap<String, ArrayList<Integer>> pkey, double[][] cipher,
+                             int[] ciphertext, double dictionaryScore, int distance) {
 
         // first we need to get the putative plaintext by decrypting the ciphertext with a random key
-        String putativeText = decryptor.decrypt(key, ciphertext);
+        String putativeText = decryptor.decrypt(pkey, ciphertext);
 
         // next we need to calculate the digraph of the putative plaintext
         double[][] putative = digrapher.computePutativeDigraph(putativeText);
@@ -54,15 +63,41 @@ public class HillClimber {
         // now we need to score the putative digraph matrix and compare it to the dictionary digraph matrix
         double putativeScore = score(putative);
 
-        // if we are inside this loop, that means our putative key is not accurate enough
-        while(Math.abs(dictionaryScore - putativeScore) > 1) {
+        double minscore = Math.abs(dictionaryScore - putativeScore);
 
-            // perform a swap
+        for (int i = 0; i < keyspace - distance; i++) {
+            String firstLetter = getLetterAssociation(pkey, i).get();
+            String secondLetter = getLetterAssociation(pkey, i + distance).get();
+            pkey = swap(pkey, firstLetter, secondLetter, i, i + distance);
 
-            // recompute putative score
+            // now we need to recompute the new putative digraph score
+            String tPutativeText = decryptor.decrypt(pkey, ciphertext);
+            double[][] tputative = digrapher.computePutativeDigraph(tPutativeText);
+            double tPutativeScore = score(tputative);
+
+            double tscore = Math.abs(dictionaryScore - tPutativeScore);
+
+            // if our new score is greater, we've moved away from the solution ... unswap and continue
+            if (tscore > minscore) {
+                pkey = swap(pkey, secondLetter, firstLetter, i + distance, i);
+                continue;
+            }
+
+            minscore = tscore;
+
         }
 
-        return "";
+        return pkey;
+
+        // if we are inside this loop, that means our putative key is not accurate enough
+//        while(Math.abs(dictionaryScore - putativeScore) > 1) {
+//
+//            // perform a swap
+//
+//            // recompute putative score
+//        }
+
+        // return "";
     }
 
     // we use a key to track associations in the digraph matrix
@@ -91,6 +126,13 @@ public class HillClimber {
         blist.remove(y);
         blist.add(x);
         map.put(b, blist);
+
+        return map;
+    }
+
+    private HashMap<String, ArrayList<Integer>> distanceSwap(HashMap<String, ArrayList<Integer>> map, int distance) {
+
+        // TODO - do we need this method?
 
         return map;
     }
