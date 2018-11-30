@@ -9,6 +9,7 @@ import org.nyu.crypto.service.strategy.Digrapher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -20,6 +21,9 @@ import java.util.stream.Stream;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=CryptoApplication.class)
 public class DigrapherTest {
+
+    @Value("${key.space}")
+    private int keyspace;
 
     @Autowired
     private Digrapher digrapher;
@@ -87,5 +91,20 @@ public class DigrapherTest {
         // assert that their dimensions are the same
         assert dictionary.length == putative.length - 1;
 
+    }
+
+    @Test
+    public void CiphertextDigraphLength(){
+
+        // generating a new ciphertext
+        int[] ciphertext = simulator.createSimulation().getCiphertext();
+
+        // computing ciphertext digraph
+        double[][] cipherMatrix = digrapher.computeCipherDigraph(ciphertext);
+
+        logger.info("Ciphertext Matrix Length: " + cipherMatrix.length);
+
+        // asserting that its dimensions is 106 x 106
+        assert cipherMatrix.length == keyspace;
     }
 }
