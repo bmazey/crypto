@@ -63,7 +63,7 @@ public class HillClimber {
     }
 
     // we use a key to track associations in the digraph matrix
-    private Optional<String> getLetterAssociation(HashMap<String, ArrayList<Integer>> map, int x) {
+    private Optional<String> getLetterAssociation(HashMap<String, ArrayList<Integer>> map, Integer x) {
         for (String key : map.keySet()) {
             ArrayList<Integer> list = map.get(key);
             if (list.contains(x)) return Optional.of(key);
@@ -73,8 +73,21 @@ public class HillClimber {
 
     // given two numbers and two letters, swap the keyspace a <-> and b <-> y
     private HashMap<String, ArrayList<Integer>> swap(HashMap<String, ArrayList<Integer>> map,
-                                                     String a, String b, int x, int y) {
-        // TODO add check to make sure x is in a's list and y is in b's list
+                                                     String a, String b, Integer x, Integer y) {
+        // assert that the list contains the expected values
+        ArrayList<Integer> alist = map.get(a);
+        assert alist.contains(x);
+
+        alist.remove(x);
+        alist.add(y);
+        map.put(a, alist);
+
+        ArrayList<Integer> blist = map.get(b);
+        assert blist.contains(y);
+
+        blist.remove(y);
+        blist.add(x);
+        map.put(b, blist);
 
         return map;
     }
