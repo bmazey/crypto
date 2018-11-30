@@ -57,6 +57,9 @@ public class HillClimber {
         // if we are inside this loop, that means our putative key is not accurate enough
         while(Math.abs(dictionaryScore - putativeScore) > 1) {
 
+            // perform a swap
+
+            // recompute putative score
         }
 
         return "";
