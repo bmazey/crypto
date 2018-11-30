@@ -66,6 +66,7 @@ public class HillClimberTest {
 
     }
 
+    // TODO - move this to service!
     private void climbHill(int[] ciphertext) {
         // generate a random key
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
