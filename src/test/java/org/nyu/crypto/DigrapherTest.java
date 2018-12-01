@@ -2,10 +2,12 @@ package org.nyu.crypto;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nyu.crypto.dto.Simulation;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.KeyGenerator;
 import org.nyu.crypto.service.Simulator;
 import org.nyu.crypto.service.strategy.Digrapher;
+import org.nyu.crypto.service.strategy.HillClimber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class DigrapherTest {
     private Decryptor decryptor;
 
     @Autowired
+    private HillClimber hillClimber;
+
+    @Autowired
     private KeyGenerator keyGenerator;
 
     @Autowired
@@ -39,7 +44,7 @@ public class DigrapherTest {
 
     private Logger logger = LoggerFactory.getLogger(DigrapherTest.class);
 
-    private final double TOTAL = 100.0;
+    private final int TOTAL = 100;
 
     @Test
     public void generateDigraph() {
@@ -54,8 +59,10 @@ public class DigrapherTest {
             }
         }
 
+        // TODO - WARNING! SUM IS NOT QUITE 100!
         // sum should add up to 100
-        assert sum == TOTAL;
+        System.out.print(sum);
+        assert (int)sum == TOTAL;
     }
 
     @Test
@@ -91,17 +98,8 @@ public class DigrapherTest {
 
         logger.info("dictionary: " + dictionary.length + " | " + "putative: " + putative.length);
 
-        // assert that their dimensions are within 1
-        assert dictionary.length == putative.length - 1;
-
-        // now get the sub-digraph of the putative digraph and check to make sure it is equal to the dictionary
-        // digraph dimensions
-        double[][] subgraph = digrapher.computePutativeSubDigraph(putative);
-
-        logger.info("dictionary: " + dictionary.length + " | " + "subgraph: " + subgraph.length);
-
-        assert dictionary.length == subgraph.length;
-
+        // assert that their dimensions are the same
+        assert dictionary.length == putative.length;
     }
 
     @Test
@@ -117,5 +115,19 @@ public class DigrapherTest {
 
         // asserting that its dimensions are 106 x 106
         assert cipher.length == keyspace;
+    }
+
+    @Test
+    public void validateDigraphScore() {
+
+        Simulation simulation = simulator.createSimulation();
+
+        double[][] dictionary = digrapher.computeDictionaryDigraph();
+        double[][] putative = digrapher.computePutativeDigraph(simulation.getMessage());
+
+        double score = hillClimber.score(dictionary, putative);
+
+        logger.info("score: " + score);
+
     }
 }

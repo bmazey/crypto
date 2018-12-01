@@ -24,15 +24,17 @@ public class Digrapher {
     @Autowired
     private DictionaryGenerator dictionaryGenerator;
 
-    // we use this to calculate the initial 26 x 26 dictionary digraph matrix
+    // we use this to calculate the initial 27 x 27 dictionary digraph matrix
     public double[][] computeDictionaryDigraph() {
 
-        double[][] digraph = new double[alphabet][alphabet];
+        double[][] digraph = new double[charset][charset];
 
         String[] words = dictionaryGenerator.generateDictionaryDto().getWords();
 
         int digraphs = 0;
         for (String word : words) {
+            // add a space before and after each word
+            word = " " + word + " ";
             digraphs += word.length() - 1;
             for (int i = 0; i < word.length() - 1; i++) {
                 digraph[convert(word.charAt(i))][convert(word.charAt(i + 1))] += 1;

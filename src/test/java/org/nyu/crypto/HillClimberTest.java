@@ -7,6 +7,7 @@ import org.nyu.crypto.dto.Simulation;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.KeyGenerator;
 import org.nyu.crypto.service.Simulator;
+import org.nyu.crypto.service.strategy.Digrapher;
 import org.nyu.crypto.service.strategy.HillClimber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,24 +39,14 @@ public class HillClimberTest {
 
     private Logger logger = LoggerFactory.getLogger(HillClimberTest.class);
 
+    // TODO - change the digraph generation from dictionary to randomly generated messages!
+
     @Test
     @SuppressWarnings("unchecked")
     public void simulateHillClimbing() {
-
         Simulation simulation = simulator.createSimulation();
         logger.info("plaintext: " + simulation.getMessage());
         logger.info("putative : " + hillClimber.climb(simulation.getCiphertext()));
     }
 
-    // this method converts chars to ints so we can use character-based indexing in the putative array
-    private int convert(char c) {
-        if (c == ' ') return spaceval;
-        else return (c - 'a');
-    }
-
-    private int score(int[][] vector) {
-        return Arrays.stream(vector)
-                .flatMapToInt(Arrays::stream)
-                .sum();
-    }
 }

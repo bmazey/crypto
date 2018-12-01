@@ -53,7 +53,7 @@ public class HillClimber {
         // FIXME - define distance
         // TODO - this needs to be fixed
         for (int i = 0; i < keyspace; i++) {
-            for (int j = 0; j < keyspace; j++) {
+            for (int j = 0; j < keyspace - i; j++) {
                 key = climbHill(key, dictionary, ciphertext, j);
             }
         }
@@ -77,8 +77,8 @@ public class HillClimber {
         double[][] putative = digrapher.computePutativeDigraph(putativeText);
 
         // now we need to score the putative digraph matrix and compare it to the dictionary digraph matrix
-        double score = score(dictionary, digrapher.computePutativeSubDigraph(putative));
-        logger.info("score: " + score);
+        double score = score(dictionary, putative);
+        //logger.info("score: " + score);
 
         // FIXME - this isn't right!
         for (int i = 0; i < keyspace - distance; i++) {
@@ -89,7 +89,7 @@ public class HillClimber {
             // now we need to recompute the new putative digraph score
             String tPutativeText = decryptor.decrypt(pkey, ciphertext);
             double[][] tputative = digrapher.computePutativeDigraph(tPutativeText);
-            double tscore = score(dictionary, digrapher.computePutativeSubDigraph(tputative));
+            double tscore = score(dictionary, tputative);
 
             // if our new score is greater, we've moved away from the solution ... unswap and continue
             if (tscore > score) {
@@ -133,11 +133,12 @@ public class HillClimber {
     }
 
     // method to score the abs val difference
-    private double score(double[][] dictionary, double[][] subputative) {
+    // public for testing purposes
+    public double score(double[][] dictionary, double[][] putative) {
         double score = 0;
         for(int i = 0; i < dictionary.length; i++) {
             for (int j = 0; j < dictionary[i].length; j++) {
-                score += Math.abs(dictionary[i][j] - subputative[i][j]);
+                score += Math.abs(dictionary[i][j] - putative[i][j]);
             }
         }
         return score;
