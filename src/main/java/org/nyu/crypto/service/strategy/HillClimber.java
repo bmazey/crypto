@@ -81,7 +81,7 @@ public class HillClimber {
         //logger.info("score: " + score);
 
         // FIXME - this isn't right!
-        for (int i = 0; i < keyspace - distance; i++) {
+        for (int i = 0; i < keyspace - distance; i ++) {
             String firstLetter = getLetterAssociation(pkey, i).get();
             String secondLetter = getLetterAssociation(pkey, i + distance).get();
             pkey = swap(pkey, firstLetter, secondLetter, i, i + distance);
@@ -94,8 +94,10 @@ public class HillClimber {
             // if our new score is greater, we've moved away from the solution ... unswap and continue
             if (tscore > score) {
                 pkey = swap(pkey, secondLetter, firstLetter, i, i + distance);
+                //logger.info("UNSWAP!");
                 continue;
             }
+            //logger.info("SWAP! tscore: " + tscore + " score: " + score);
             score = tscore;
         }
 
