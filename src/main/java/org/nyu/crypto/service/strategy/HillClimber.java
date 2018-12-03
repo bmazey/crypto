@@ -34,37 +34,53 @@ public class HillClimber {
 
     public String climb(int[] ciphertext) {
 
+        HashMap<String, ArrayList<Integer>> result = new HashMap<>();
+
         // TODO - is there a way to optimize an initial guess?
         // initial random key guess before using hill climbing algorithm
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
 
-        // for testing
-        for (String tkey: key.keySet()) {
-            ArrayList<Integer> list = key.get(tkey);
-            logger.info(tkey + " : " + Arrays.toString(list.toArray()));
-        }
-
         // we now calculate the digraph matrix of the ciphertext which we only need once
-        double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
+        // double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
         // initialize the dictionary digraph which we will use to compare
         double[][] dictionary = digrapher.computeDictionaryDigraph();
 
+        // generate an initial putative plaintext with the random key and ciphertext
+        String putativeText = decryptor.decrypt(key, ciphertext);
+
+        // next we need to calculate the digraph of the putative plaintext
+        double[][] putative = digrapher.computePutativeDigraph(putativeText);
+
+        // calculate an initial score
+        double score = score(dictionary, putative);
+
         // FIXME - define distance
         // TODO - this needs to be fixed ... we need to try multiple random keys!
         for (int i = 0; i < keyspace; i++) {
+
+            // guess a new random key
+            key = keyGenerator.generateKey();
+
+            // invoke the climbing method with varying distances
             for (int j = 0; j < keyspace - i; j++) {
                 key = climbHill(key, dictionary, ciphertext, j);
             }
+
+            // test the new score
+            putativeText = decryptor.decrypt(key, ciphertext);
+            putative = digrapher.computePutativeDigraph(putativeText);
+
+            // calculate an initial score
+            double tscore = score(dictionary, putative);
+
+            if (tscore < score) {
+                score = tscore;
+                result = key;
+            }
         }
 
-        // for testing
-        for (String tkey: key.keySet()) {
-            ArrayList<Integer> list = key.get(tkey);
-            logger.info(tkey + " : " + Arrays.toString(list.toArray()));
-        }
-
-        return decryptor.decrypt(key, ciphertext);
+        return decryptor.decrypt(result, ciphertext);
     }
 
     private HashMap<String, ArrayList<Integer>> climbHill(HashMap<String, ArrayList<Integer>> pkey, double[][] dictionary,
