@@ -94,10 +94,8 @@ public class HillClimber {
             // if our new score is greater, we've moved away from the solution ... unswap and continue
             if (tscore > score) {
                 pkey = swap(pkey, secondLetter, firstLetter, i, i + distance);
-                //logger.info("UNSWAP!");
                 continue;
             }
-            //logger.info("SWAP! tscore: " + tscore + " score: " + score);
             score = tscore;
         }
 
