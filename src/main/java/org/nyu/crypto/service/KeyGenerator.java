@@ -54,7 +54,7 @@ public class KeyGenerator {
 
     // TODO - use this to optimize our initial putative key guess?
     public HashMap<String, ArrayList<Integer>> generatePutativeKey(int[] ciphertext) {
-        return new HashMap<String, ArrayList<Integer>>();
+        return new HashMap<>();
     }
 
 }

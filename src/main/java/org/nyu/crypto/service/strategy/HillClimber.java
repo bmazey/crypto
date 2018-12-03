@@ -51,7 +51,7 @@ public class HillClimber {
         double[][] dictionary = digrapher.computeDictionaryDigraph();
 
         // FIXME - define distance
-        // TODO - this needs to be fixed
+        // TODO - this needs to be fixed ... we need to try multiple random keys!
         for (int i = 0; i < keyspace; i++) {
             for (int j = 0; j < keyspace - i; j++) {
                 key = climbHill(key, dictionary, ciphertext, j);
