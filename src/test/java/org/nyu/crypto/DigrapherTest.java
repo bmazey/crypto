@@ -69,14 +69,11 @@ public class DigrapherTest {
     public void compareDictionaryDigraphToPutativeDigraph() {
 
         /**
-         * our dictionary digraph matrix should be 26 x 26 and our putative digraph matrix should be 27 x 27
+         * our dictionary digraph matrix should be 27 x 27 and our putative digraph matrix should be 27 x 27
          * this is because we include the space values in the putative digraph computation but IGNORE them
          * in the dictionary digraph computation.
          *
          * this test asserts that the dimensions of the putative matrix are one greater than the dictionary matrix.
-         *
-         * we also use a sub-matrix of the putative digraph matrix during the hill climbing algorithm. in this case,
-         * the dictionary digraph and the putative sub-digraph should both be 26 x 26.
          */
 
         // let's start by computing the dictionary digraph
