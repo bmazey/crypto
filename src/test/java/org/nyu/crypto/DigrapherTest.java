@@ -47,7 +47,7 @@ public class DigrapherTest {
     private final int TOTAL = 100;
 
     @Test
-    public void generateDigraph() {
+    public void validateDictionaryDigraphSum() {
         double[][] digraph = digrapher.computeDictionaryDigraph();
         Stream.of(digraph).map(Arrays::toString).forEach(System.out::println);
 
@@ -61,7 +61,35 @@ public class DigrapherTest {
 
         // TODO - WARNING! SUM IS NOT QUITE 100!
         // sum should add up to 100
-        System.out.print(sum);
+        logger.info("dictionary digraph sum: " + sum);
+        assert (int)sum == TOTAL;
+    }
+
+    @Test
+    public void validatePutativeDigraphSum() {
+
+        // TODO - make a generate random putative text method? where would it go? (probably simulator)
+        // create a random putative plaintext digraph and verify that it sums to ~100
+        Simulation simulation = simulator.createSimulation();
+
+        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+
+        String putative = decryptor.decrypt(key, simulation.getCiphertext());
+
+        double[][] digraph = digrapher.computePutativeDigraph(putative);
+        Stream.of(digraph).map(Arrays::toString).forEach(System.out::println);
+
+        // TODO - make sure result adds up to 100%.
+        double sum = 0;
+        for (int i = 0; i < digraph.length; i++) {
+            for (int j = 0; j < digraph[i].length; j++) {
+                sum += digraph[i][j];
+            }
+        }
+
+        // TODO - WARNING! SUM IS NOT QUITE 100!
+        // sum should add up to 100
+        logger.info("putative digraph sum: " + sum);
         assert (int)sum == TOTAL;
     }
 
@@ -78,7 +106,6 @@ public class DigrapherTest {
 
         // let's start by computing the dictionary digraph
         double[][] dictionary = digrapher.computeDictionaryDigraph();
-        Stream.of(dictionary).map(Arrays::toString).forEach(System.out::println);
 
         // now we'll create some putative plaintext and compute the digraph
         // start by generating a random key
@@ -115,13 +142,21 @@ public class DigrapherTest {
     }
 
     @Test
-    public void validatePlaintextDigraphScore() {
+    public void validatePlaintextAndDictionaryDigraphScore() {
 
+        // FIXME - this is where our big problem is ... the scores are in 48 - 52 range which is way too high ...
         Simulation simulation = simulator.createSimulation();
 
         double[][] dictionary = digrapher.computeDictionaryDigraph();
         double[][] putative = digrapher.computePutativeDigraph(simulation.getMessage());
 
+        logger.info("dictionary digraph: ");
+        Stream.of(dictionary).map(Arrays::toString).forEach(System.out::println);
+
+        logger.info("plaintext digraph: ");
+        Stream.of(putative).map(Arrays::toString).forEach(System.out::println);
+
+        // this should be as close to 0 as possible!
         double score = hillClimber.score(dictionary, putative);
 
         logger.info("score: " + score);

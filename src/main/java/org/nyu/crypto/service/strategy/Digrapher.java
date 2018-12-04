@@ -95,6 +95,7 @@ public class Digrapher {
         return cipher;
     }
 
+    // TODO - this might be our culprit
     private int convert(char c) {
         if (c == ' ') return spaceval;
         else return (c - 'a');
