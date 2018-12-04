@@ -115,7 +115,7 @@ public class DigrapherTest {
     }
 
     @Test
-    public void validateDigraphScore() {
+    public void validatePlaintextDigraphScore() {
 
         Simulation simulation = simulator.createSimulation();
 
