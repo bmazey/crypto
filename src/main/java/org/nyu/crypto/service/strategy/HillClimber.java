@@ -80,6 +80,61 @@ public class HillClimber {
             }
         }
 
+        logger.info("final score: " + score);
+        return decryptor.decrypt(result, ciphertext);
+    }
+
+    public String climbExperiment(int[] ciphertext, double[][] plaintext) {
+
+        HashMap<String, ArrayList<Integer>> result = new HashMap<>();
+
+        // TODO - is there a way to optimize an initial guess?
+        // initial random key guess before using hill climbing algorithm
+        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+
+        // we now calculate the digraph matrix of the ciphertext which we only need once
+        // double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
+
+        // generate an initial putative plaintext with the random key and ciphertext
+        String putativeText = decryptor.decrypt(key, ciphertext);
+
+        // next we need to calculate the digraph of the putative plaintext
+        double[][] putative = digrapher.computePutativeDigraph(putativeText);
+
+        // calculate an initial score
+        double score = score(plaintext, putative);
+        logger.info("initial score: " + score);
+
+        // FIXME - define distance
+        // TODO - this needs to be fixed ... we need to try multiple random keys!
+        for (int i = 0; i < 12; i++) {
+
+            // guess a new random key
+            key = keyGenerator.generateKey();
+
+            // invoke the climbing method with varying distances
+            for (int j = 1; j < keyspace - i; j++) {
+                key = climbHill(key, plaintext, ciphertext, j);
+            }
+
+            // test the new score
+            putativeText = decryptor.decrypt(key, ciphertext);
+            putative = digrapher.computePutativeDigraph(putativeText);
+
+            // calculate an initial score
+            double tscore = score(plaintext, putative);
+
+            if (tscore < score) {
+                score = tscore;
+                logger.info("updated score: " + score);
+                result = key;
+            }
+            else {
+                logger.info("retained score: " + score);
+            }
+        }
+
+        logger.info("final score: " + score);
         return decryptor.decrypt(result, ciphertext);
     }
 
@@ -97,10 +152,10 @@ public class HillClimber {
         //logger.info("score: " + score);
 
         // FIXME - this isn't right!
-        for (int i = 0; i < keyspace - distance; i ++) {
-            String firstLetter = getLetterAssociation(pkey, i).get();
-            String secondLetter = getLetterAssociation(pkey, i + distance).get();
-            pkey = swap(pkey, firstLetter, secondLetter, i, i + distance);
+        for (int i = 0; i < ciphertext.length - distance; i++) {
+            String firstLetter = getLetterAssociation(pkey, ciphertext[i]).get();
+            String secondLetter = getLetterAssociation(pkey, ciphertext[i + distance]).get();
+            pkey = swap(pkey, firstLetter, secondLetter, ciphertext[i], ciphertext[i + distance]);
 
             // now we need to recompute the new putative digraph score
             String tPutativeText = decryptor.decrypt(pkey, ciphertext);
@@ -109,7 +164,7 @@ public class HillClimber {
 
             // if our new score is greater, we've moved away from the solution ... unswap and continue
             if (tscore > score) {
-                pkey = swap(pkey, secondLetter, firstLetter, i, i + distance);
+                pkey = swap(pkey, secondLetter, firstLetter, ciphertext[i], ciphertext[i + distance]);
                 continue;
             }
             score = tscore;
