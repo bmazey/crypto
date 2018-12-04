@@ -120,8 +120,6 @@ public class HillClimber {
             // test the new score
             putativeText = decryptor.decrypt(key, ciphertext);
             putative = digrapher.computePutativeDigraph(putativeText);
-
-            // calculate an initial score
             double tscore = score(plaintext, putative);
 
             if (tscore < score) {
@@ -152,10 +150,10 @@ public class HillClimber {
         //logger.info("score: " + score);
 
         // FIXME - this isn't right!
-        for (int i = 0; i < ciphertext.length - distance; i++) {
-            String firstLetter = getLetterAssociation(pkey, ciphertext[i]).get();
-            String secondLetter = getLetterAssociation(pkey, ciphertext[i + distance]).get();
-            pkey = swap(pkey, firstLetter, secondLetter, ciphertext[i], ciphertext[i + distance]);
+        for (int i = 0; i < keyspace - distance; i++) {
+            String firstLetter = getLetterAssociation(pkey, i).get();
+            String secondLetter = getLetterAssociation(pkey, i + distance).get();
+            pkey = swap(pkey, firstLetter, secondLetter, i, i + distance);
 
             // now we need to recompute the new putative digraph score
             String tPutativeText = decryptor.decrypt(pkey, ciphertext);
@@ -164,7 +162,7 @@ public class HillClimber {
 
             // if our new score is greater, we've moved away from the solution ... unswap and continue
             if (tscore > score) {
-                pkey = swap(pkey, secondLetter, firstLetter, ciphertext[i], ciphertext[i + distance]);
+                pkey = swap(pkey, secondLetter, firstLetter, i, i + distance);
                 continue;
             }
             score = tscore;
