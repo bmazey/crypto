@@ -113,7 +113,7 @@ public class HillClimber {
             key = keyGenerator.generateKey();
 
             // invoke the climbing method with varying distances
-            for (int j = 1; j < keyspace - i; j++) {
+            for (int j = 1; j < keyspace; j++) {
                 key = climbHill(key, plaintext, ciphertext, j);
             }
 
