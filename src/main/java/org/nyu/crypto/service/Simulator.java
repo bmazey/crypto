@@ -30,6 +30,9 @@ public class Simulator {
     private MessageGenerator messageGenerator;
 
     @Autowired
+    private Decryptor decryptor;
+
+    @Autowired
     Encryptor encryptor;
 
     private ObjectMapper mapper;
@@ -77,5 +80,18 @@ public class Simulator {
         simulation.setCiphertext(cipher);
 
         return simulation;
+    }
+
+    public String putativePlaintextGen(){
+
+        Simulation simulation = createSimulation();
+
+        int[] cipher = simulation.getCiphertext();
+
+        HashMap<String, ArrayList<Integer>> randomKey = keyGenerator.generateKey();
+
+        String putative = decryptor.decrypt(randomKey, cipher);
+
+        return putative;
     }
 }
