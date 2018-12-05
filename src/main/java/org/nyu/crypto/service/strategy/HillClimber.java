@@ -40,11 +40,11 @@ public class HillClimber {
          *
          * 1. compute and iterate over the ciphertext digraph
          * 2. for each element in the ciphertext digraph, find the closest element in the perfect plaintext digraph
-         * 3. take the row # and column # (0 - 105) of the ciphertext digraph element, find what character in the
+         * 3. take the row # and column # (0 - 105) of the ciphertext digraph element, find what characters in the
          *      putative key the row / column values are currently assigned to, and swap the ciphertext digraph row /
          *      columns values into the respective putative keyspaces
-         *          *how do you know which ones to remove?* for all combinations of a and b, look up cipher[a][b] and take
-         *          the row / columns of the lowest scoring values(least frequent)
+         *          *how do you know which ones to give up?* for all combinations of a.list and b.list, look up
+         *          cipher[a][b] and take the row / column # of the lowest scoring value (least frequent)
          * 4. recompute the putative digraph and score it against the perfect plaintext digraph
          * 5. the new score is lower, keep the key; if it's higher, unswap and continue
          *
