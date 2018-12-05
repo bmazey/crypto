@@ -39,7 +39,7 @@ public class HillClimber {
          * optimal key (a separate method to pre-optimize key)
          *
          * 1. compute and iterate over the ciphertext digraph
-         * 2. for each element in the ciphertext digraph, find the closest value in the perfect plaintext digraph
+         * 2. for each element in the ciphertext digraph, find the closest element in the perfect plaintext digraph
          * 3. take the row # and column # (0 - 105) of the ciphertext digraph element, find what character in the
          *      putative key the row / column values are currently assigned to, and swap the ciphertext digraph row /
          *      columns values into the respective putative keyspaces
