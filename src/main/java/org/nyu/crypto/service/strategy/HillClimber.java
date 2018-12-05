@@ -34,6 +34,22 @@ public class HillClimber {
 
     public String climb(int[] ciphertext) {
 
+        /**
+         * ok - it's late, but i actually had a flash of insight and want to implement tomorrow, along with heuristic
+         * optimal key (a separate method to pre-optimize key)
+         *
+         * 1. compute and iterate over the ciphertext digraph
+         * 2. for each element in the ciphertext digraph, find the closest value in the perfect plaintext digraph
+         * 3. take the row # and column # (0 - 105) of the ciphertext digraph element, find what character in the
+         *      putative key the row / column values are currently assigned to, and swap the ciphertext digraph row /
+         *      columns values into the respective putative keyspaces
+         *          *how do you know which ones to remove?* for all combinations of a and b, look up cipher[a][b] and take
+         *          the row / columns of the lowest scoring values(least frequent)
+         * 4. recompute the putative digraph and score it against the perfect plaintext digraph
+         * 5. the new score is lower, keep the key; if it's higher, unswap and continue
+         *
+         */
+
         HashMap<String, ArrayList<Integer>> result = new HashMap<>();
 
         // TODO - is there a way to optimize an initial guess?
