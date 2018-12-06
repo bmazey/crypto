@@ -99,7 +99,7 @@ public class KeyGenerator {
 
         if (spaceValues.size() < 19){
             Collections.shuffle(numbers);
-            for(int i = 0; i < spaceValues.size(); i++){
+            for(int i = spaceValues.size(); i < 19; i++){
                 spaceValues.add(numbers.get(i));
                 numbers.remove(numbers.get(i));
             }
