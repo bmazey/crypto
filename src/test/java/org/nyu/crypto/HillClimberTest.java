@@ -61,11 +61,21 @@ public class HillClimberTest {
     @SuppressWarnings("unchecked")
     public void simulateHillClimbing2() {
         Simulation simulation = simulator.createSimulation();
-        logger.info("plaintext: " + simulation.getMessage());
 
         // now compute plaintext digraph for our experiment
-        double[][] plaintext = digrapher.computePutativeDigraph(simulation.getMessage());
-        logger.info("putative : " + hillClimber.climb2(simulation.getCiphertext(), plaintext));
+        double[][] digraph = digrapher.computePutativeDigraph(simulation.getMessage());
+
+        String plaintext = simulation.getMessage();
+        String putative = hillClimber.climb2(simulation.getCiphertext(), digraph);
+
+        logger.info("putative : " + putative);
+        logger.info("plaintext: " + simulation.getMessage());
+
+        int score = 0;
+        for (int i = 0; i < plaintext.length(); i++) {
+            if (putative.charAt(i) == plaintext.charAt(i)) score++;
+        }
+        logger.info("score: " + score);
     }
 
 }

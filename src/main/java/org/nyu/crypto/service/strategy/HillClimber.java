@@ -269,7 +269,7 @@ public class HillClimber {
                 ArrayList<Integer> klist = key.get(kletter);
                 for (int w : klist) {
                     // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(putative[kval]).sum());
+                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(plaintext[kval]).sum());
                     if (current > subscore) {
                         subscore = current;
                         kswapval = w;
@@ -287,25 +287,25 @@ public class HillClimber {
                 ArrayList<Integer> nlist = key.get(nletter);
                 for (int x : nlist) {
                     // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(putative[nval]).sum());
+                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(plaintext[nval]).sum());
                     if (current > subscore) {
                         subscore = current;
                         nswapval = x;
                     }
                 }
 
+                logger.info("kletter: " + kletter + " kswapval: " + kswapval + " | fletter: " + fletter + " cipherrow: "
+                        + cipherrow);
+
+                logger.info("nletter: " + nletter + " nswapval: " + nswapval + " | sletter: " + sletter + " ciphercolumn: "
+                        + ciphercolumn);
+
                 key = swap(key, nletter, sletter, nswapval, ciphercolumn);
 
-                //logger.info("kletter: " + kletter + " kswapval: " + kswapval + " | fletter: " + fletter + " cipherrow: "
-                        //+ cipherrow);
-
-                //logger.info("nletter: " + nletter + " nswapval: " + nswapval + " | sletter: " + sletter + " ciphercolumn: "
-                        //+ ciphercolumn);
-
                 text = decryptor.decrypt(key, ciphertext);
-                putative = digrapher.computePutativeDigraph(text);
+                double[][] nputative = digrapher.computePutativeDigraph(text);
 
-                double current = score(plaintext, putative);
+                double current = score(plaintext, nputative);
 
                 // this is the bad case - our swaps have moved us away from the 'ideal' solution
                 if (current > score) {
@@ -313,6 +313,7 @@ public class HillClimber {
                     key = swap(key, kletter, fletter, cipherrow, kswapval);
                     continue;
                 }
+                putative = nputative;
                 score = current;
             }
         }
