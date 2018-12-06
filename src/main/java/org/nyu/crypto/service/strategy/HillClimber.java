@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 @Service
 public class HillClimber {
@@ -33,7 +35,8 @@ public class HillClimber {
     @Autowired
     private KeyGenerator keyGenerator;
 
-    private String[] alphabet = frequencyGenerator.generateAlphabet();
+    private final String[] alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
+                                        "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "space"};
 
     private Logger logger = LoggerFactory.getLogger(HillClimber.class);
 
@@ -193,6 +196,20 @@ public class HillClimber {
         return pkey;
     }
 
+    public String climb2(int[] ciphertext, double[][] plaintext) {
+
+        // TODO - apply optimal heuristic key guess strategy as well
+        // start by generating a random key
+        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+
+        // compute ciphertext digraph
+        double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
+
+        key = climbHill2(key, plaintext, cipher, ciphertext);
+
+        return decryptor.decrypt(key, ciphertext);
+    }
+
     private HashMap<String, ArrayList<Integer>> climbHill2(HashMap<String, ArrayList<Integer>> key,
                                                            double[][] plaintext, double[][] cipher, int[] ciphertext) {
         // we start by computing the putative digraph
@@ -210,6 +227,10 @@ public class HillClimber {
                 double subscore = Double.MAX_VALUE;
                 int cipherrow = 0;
                 int ciphercolumn = 0;
+
+                int kval = 0;
+                int nval = 0;
+
                 String kletter = "a";
                 String nletter = "a";
 
@@ -221,6 +242,10 @@ public class HillClimber {
                             subscore = current;
                             cipherrow = i;
                             ciphercolumn = j;
+
+                            kval = k;
+                            nval = n;
+
                             kletter = convert(k);
                             nletter = convert(n);
                         }
@@ -232,17 +257,73 @@ public class HillClimber {
                 // get the current corresponding letter values in the putative key - these are the letters that are
                 // currently holding the numbers (cipherrow and ciphercolumn) we want to swap with k and n
                 String fletter = getLetterAssociation(key, cipherrow).get();
-                String sletter = getLetterAssociation(key, ciphercolumn).get();
 
                 // now we need to find the numbers in the k and n letters' keyspaces which are causing the most
                 // inaccurate scores ... we want to give those numbers up in exchange
                 // kletter number <-> fletter number / nletter number <-> sletter number
-                ArrayList<Integer> klist = key.get(kletter);
 
+                // reset subscore to 0
+                subscore = 0;
+                Integer kswapval = 0;
+
+                ArrayList<Integer> klist = key.get(kletter);
+                for (int w : klist) {
+                    // TODO - this might not be the best way to calculate the bad score
+                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(plaintext[kval]).sum());
+                    if (current > subscore) {
+                        subscore = current;
+                        kswapval = w;
+                    }
+                }
+
+                key = swap(key, kletter, fletter, kswapval, cipherrow);
+
+                String sletter = getLetterAssociation(key, ciphercolumn).get();
+
+                // reset subscore to 0
+                subscore = 0;
+                Integer nswapval = 0;
 
                 ArrayList<Integer> nlist = key.get(nletter);
+                for (int x : nlist) {
+                    // TODO - this might not be the best way to calculate the bad score
+                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(plaintext[nval]).sum());
+                    if (current > subscore) {
+                        subscore = current;
+                        nswapval = x;
+                    }
+                }
 
+                logger.info("kletter: " + kletter + " kswapval: " + kswapval + " | fletter: " + fletter + " cipherrow: "
+                        + cipherrow);
+
+                logger.info("nletter: " + nletter + " nswapval: " + nswapval + " | sletter: " + sletter + " ciphercolumn: "
+                        + ciphercolumn);
+
+                key = swap(key, nletter, sletter, nswapval, ciphercolumn);
+
+                text = decryptor.decrypt(key, ciphertext);
+                double[][] nputative = digrapher.computePutativeDigraph(text);
+
+                double current = score(plaintext, nputative);
+
+                // this is the bad case - our swaps have moved us away from the 'ideal' solution
+                if (current > score) {
+                    key = swap(key, nletter, sletter, ciphercolumn, nswapval);
+                    key = swap(key, kletter, fletter, cipherrow, kswapval);
+                    continue;
+                }
+
+                // FIXME - update putative?
+
+                score = current;
             }
+        }
+
+        // TODO - move this to keygenerator as printKey() method;
+        for (String keyval : key.keySet()) {
+            ArrayList<Integer> list = key.get(keyval);
+            System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
         }
 
         return key;
@@ -263,6 +344,9 @@ public class HillClimber {
 
         // if the two letters are the same, swapping will not affect the result
         if (a.equals(b)) return map;
+
+        // can't swap a number with itself
+        if (x.intValue() == y.intValue()) return map;
 
         // assert that the lists contain the expected values
         ArrayList<Integer> alist = map.get(a);
@@ -300,4 +384,5 @@ public class HillClimber {
         assert i <= alphabet.length;
         return alphabet[i];
     }
+
 }
