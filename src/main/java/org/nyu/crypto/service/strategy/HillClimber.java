@@ -187,6 +187,51 @@ public class HillClimber {
         return pkey;
     }
 
+    private HashMap<String, ArrayList<Integer>> climbHill2(HashMap<String, ArrayList<Integer>> key,
+                                                           double[][] plaintext, double[][] cipher, int[] ciphertext) {
+        // we start by computing the putative digraph
+        String text = decryptor.decrypt(key, ciphertext);
+        double[][] putative = digrapher.computePutativeDigraph(text);
+
+        //compute our initial score
+        double score = score(plaintext, putative);
+
+        // next we iterate over the ciphertext digraph to find the closest % match to the plaintext digraph
+        for (int i = 0; i < cipher.length; i++) {
+            for (int j = 0; j < cipher[i].length; j++) {
+
+                // initialize an optimal compare score
+                double subscore = Double.MAX_VALUE;
+                int cipherrow = 0;
+                int ciphercolumn = 0;
+
+                // inner nested loop to iterate over plaintext digraph
+                for (int k = 0; k < plaintext.length; k ++) {
+                    for (int n = 0; n < plaintext[k].length; n++) {
+                        double current = Math.abs(plaintext[k][n] - cipher[i][j]);
+                        if (current < subscore) {
+                            subscore = current;
+                            cipherrow = i;
+                            ciphercolumn = j;
+
+                            // TODO - store k and n as letters!
+
+                        }
+                    }
+                }
+
+                // now we have a cipher digraph row # and column # of the most similar plaintext digraph occurrence
+                // these two letters 'should' share these keys in their corresponding keyspaces
+                // get the current corresponding letter values in the putative key - these are the letters that are
+                // currently holding the values we want to swap
+                String firstLetter = getLetterAssociation(key, cipherrow).get();
+                String secondLetter = getLetterAssociation(key, ciphercolumn).get();
+            }
+        }
+
+        return key;
+    }
+
     // we use a key to track associations in the digraph matrix
     private Optional<String> getLetterAssociation(HashMap<String, ArrayList<Integer>> map, Integer x) {
         for (String key : map.keySet()) {

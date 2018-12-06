@@ -86,12 +86,23 @@ public class Digrapher {
 
     // this method computes a 106 x 106 digraph matrix of the ciphertext
     public double[][] computeCipherDigraph(int[] ciphertext) {
+
+        int digraphs = ciphertext.length - 1;
+
         double[][] cipher = new double[keyspace][keyspace];
 
         // we don't have to check the last value, so we stop at length - 1
         for (int i = 0; i < ciphertext.length - 1; i++) {
             cipher[ciphertext[i]][ciphertext[i + 1]] += 1;
         }
+
+        // convert to percentage
+        for (int i = 0; i < cipher.length; i++) {
+            for (int j = 0; j < cipher[i].length; j++) {
+                cipher[i][j] = (cipher[i][j] / digraphs) * 100;
+            }
+        }
+
         return cipher;
     }
 
