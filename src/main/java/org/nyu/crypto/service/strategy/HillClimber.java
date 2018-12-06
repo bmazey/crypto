@@ -34,7 +34,7 @@ public class HillClimber {
     @Autowired
     private KeyGenerator keyGenerator;
 
-    private String[] alphabet = frequencyGenerator.generateAlphabet();
+    private String[] alphabet;
 
     private Logger logger = LoggerFactory.getLogger(HillClimber.class);
 
@@ -194,6 +194,23 @@ public class HillClimber {
         return pkey;
     }
 
+    public String climb2(int[] ciphertext, double[][] plaintext) {
+
+        // initialize alphabet
+        alphabet = frequencyGenerator.generateAlphabet();
+
+        // TODO - apply optimal heuristic key guess strategy as well
+        // start by generating a random key
+        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+
+        // compute ciphertext digraph
+        double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
+
+        key = climbHill2(key, plaintext, cipher, ciphertext);
+
+        return decryptor.decrypt(key, ciphertext);
+    }
+
     private HashMap<String, ArrayList<Integer>> climbHill2(HashMap<String, ArrayList<Integer>> key,
                                                            double[][] plaintext, double[][] cipher, int[] ciphertext) {
         // we start by computing the putative digraph
@@ -211,6 +228,10 @@ public class HillClimber {
                 double subscore = Double.MAX_VALUE;
                 int cipherrow = 0;
                 int ciphercolumn = 0;
+
+                int kval = 0;
+                int nval = 0;
+
                 String kletter = "a";
                 String nletter = "a";
 
@@ -222,6 +243,10 @@ public class HillClimber {
                             subscore = current;
                             cipherrow = i;
                             ciphercolumn = j;
+
+                            kval = k;
+                            nval = n;
+
                             kletter = convert(k);
                             nletter = convert(n);
                         }
@@ -242,29 +267,37 @@ public class HillClimber {
                 // reset subscore to 0
                 subscore = 0;
                 Integer kswapval = 0;
-                Integer nswapval = 0;
 
                 ArrayList<Integer> klist = key.get(kletter);
                 for (int w : klist) {
                     // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(plaintext[w]).sum());
+                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(plaintext[kval]).sum());
                     if (current > subscore) {
                         subscore = current;
                         kswapval = w;
                     }
                 }
 
+                // reset subscore to 0
+                subscore = 0;
+                Integer nswapval = 0;
+
                 ArrayList<Integer> nlist = key.get(nletter);
                 for (int x : nlist) {
                     // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(plaintext[x]).sum());
+                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(plaintext[nval]).sum());
                     if (current > subscore) {
                         subscore = current;
                         nswapval = x;
                     }
                 }
 
-                // swap, score the putative and plaintext digraphs and swap / unswap accordingly
+                logger.info("kletter: " + kletter + " kswapval: " + kswapval + " | fletter: " + fletter + " cipherrow: "
+                        + cipherrow);
+
+                logger.info("nletter: " + nletter + " nswapval: " + nswapval + " | sletter: " + sletter + " ciphercolumn: "
+                        + ciphercolumn);
+
                 key = swap(key, kletter, fletter, kswapval, cipherrow);
                 key = swap(key, nletter, sletter, nswapval, ciphercolumn);
 
@@ -302,6 +335,9 @@ public class HillClimber {
         // if the two letters are the same, swapping will not affect the result
         if (a.equals(b)) return map;
 
+        // can't swap a number with itself
+        if (x.intValue() == y.intValue()) return map;
+
         // assert that the lists contain the expected values
         ArrayList<Integer> alist = map.get(a);
         assert alist.contains(x);
@@ -338,4 +374,5 @@ public class HillClimber {
         assert i <= alphabet.length;
         return alphabet[i];
     }
+
 }

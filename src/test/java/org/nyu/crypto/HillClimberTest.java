@@ -45,7 +45,7 @@ public class HillClimberTest {
         logger.info("putative : " + hillClimber.climb(simulation.getCiphertext()));
     }
 
-    @Test
+    //@Test
     @SuppressWarnings("unchecked")
     public void simulateExperimentalHillClimbing() {
         Simulation simulation = simulator.createSimulation();
@@ -55,6 +55,17 @@ public class HillClimberTest {
         double[][] plaintext = digrapher.computePutativeDigraph(simulation.getMessage());
 
         logger.info("putative : " + hillClimber.climbExperiment(simulation.getCiphertext(), plaintext));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void simulateHillClimbing2() {
+        Simulation simulation = simulator.createSimulation();
+        logger.info("plaintext: " + simulation.getMessage());
+
+        // now compute plaintext digraph for our experiment
+        double[][] plaintext = digrapher.computePutativeDigraph(simulation.getMessage());
+        logger.info("putative : " + hillClimber.climb2(simulation.getCiphertext(), plaintext));
     }
 
 }
