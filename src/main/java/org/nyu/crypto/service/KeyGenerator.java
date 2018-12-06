@@ -69,7 +69,6 @@ public class KeyGenerator {
 
         for(int i = 0; i < ciphertext.length - 1; i++){
             if (ciphertext[i] == ciphertext[i+1] && !whitelist.contains(ciphertext[i])){
-                blacklist.add(ciphertext[i]);
                 bValue.add(ciphertext[i]);
             }
             else if (whitelist.contains(ciphertext[i])){
@@ -80,22 +79,32 @@ public class KeyGenerator {
                 if (i < ciphertext.length - 3)
                         blacklist.add(ciphertext[i + 3]);
             }
-            else if (!blacklist.contains(ciphertext[i]))
+            else
                 whitelist.add(ciphertext[i]);
         }
+
+        System.out.println(blacklist.size());
+        System.out.println(whitelist.size());
+        System.out.println(bValue.size());
+        System.out.println(numbers.size());
 
         if (bValue.size() > 1){
             Random random = new Random();
             int b = random.nextInt(bValue.size());
             bValue.clear();
             bValue.add(b);
-            numbers.remove(b);
         }
 
+
         ArrayList<Integer> bNum = new ArrayList<>(bValue);
+        numbers.remove(bNum.get(0));
         putativeKey.put("b", bNum);
 
+        System.out.println(numbers.size());
+
         ArrayList<Integer> spaceValues = new ArrayList<>(whitelist);
+
+        System.out.println(spaceValues.size());
 
         if (spaceValues.size() < 19){
             Collections.shuffle(numbers);
@@ -104,6 +113,8 @@ public class KeyGenerator {
                 numbers.remove(numbers.get(i));
             }
         }
+        System.out.println(spaceValues.size());
+        System.out.println(numbers.size());
 
         if (spaceValues.size() > 19){
             Collections.shuffle(numbers);
@@ -113,12 +124,19 @@ public class KeyGenerator {
             spaceValues = spaceTemp;
         }
 
+        System.out.println(spaceValues.size());
+        System.out.println(numbers.size());
+
         putativeKey.put("space", spaceValues);
 
         blacklist.addAll(numbers);
 
+        System.out.println(blacklist.size());
+
         ArrayList<Integer> leftNum = new ArrayList<>(blacklist);
         Collections.shuffle(leftNum);
+
+        System.out.println(leftNum.size());
 
         int partition = 0;
 
