@@ -313,10 +313,19 @@ public class HillClimber {
                     key = swap(key, kletter, fletter, cipherrow, kswapval);
                     continue;
                 }
-                putative = nputative;
+
+                // FIXME - update putative?
+
                 score = current;
             }
         }
+
+        // TODO - move this to keygenerator as printKey() method;
+        for (String keyval : key.keySet()) {
+            ArrayList<Integer> list = key.get(keyval);
+            System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
+        }
+
         return key;
     }
 
