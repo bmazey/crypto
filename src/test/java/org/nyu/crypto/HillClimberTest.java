@@ -37,36 +37,16 @@ public class HillClimberTest {
 
     // TODO - change the digraph generation from dictionary to randomly generated messages!
 
-    //@Test
-    @SuppressWarnings("unchecked")
-    public void simulateHillClimbing() {
-        Simulation simulation = simulator.createSimulation();
-        logger.info("plaintext: " + simulation.getMessage());
-        logger.info("putative : " + hillClimber.climb(simulation.getCiphertext()));
-    }
-
-    //@Test
-    @SuppressWarnings("unchecked")
-    public void simulateExperimentalHillClimbing() {
-        Simulation simulation = simulator.createSimulation();
-        logger.info("plaintext: " + simulation.getMessage());
-
-        // now compute plaintext digraph for our experiment
-        double[][] plaintext = digrapher.computePutativeDigraph(simulation.getMessage());
-
-        logger.info("putative : " + hillClimber.climbExperiment(simulation.getCiphertext(), plaintext));
-    }
-
     @Test
     @SuppressWarnings("unchecked")
-    public void simulateHillClimbing2() {
+    public void simulateHillClimbing() {
         Simulation simulation = simulator.createSimulation();
 
         // now compute plaintext digraph for our experiment
         double[][] digraph = digrapher.computePutativeDigraph(simulation.getMessage());
 
         String plaintext = simulation.getMessage();
-        String putative = hillClimber.climb2(simulation.getCiphertext(), digraph);
+        String putative = hillClimber.climb(simulation.getCiphertext(), digraph);
 
         logger.info("putative : " + putative);
         logger.info("plaintext: " + simulation.getMessage());
