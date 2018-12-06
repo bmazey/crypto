@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.stream.DoubleStream;
 
 @Service
 public class HillClimber {
@@ -237,11 +238,48 @@ public class HillClimber {
                 // now we need to find the numbers in the k and n letters' keyspaces which are causing the most
                 // inaccurate scores ... we want to give those numbers up in exchange
                 // kletter number <-> fletter number / nletter number <-> sletter number
-                ArrayList<Integer> klist = key.get(kletter);
 
+                // reset subscore to 0
+                subscore = 0;
+                Integer kswapval = 0;
+                Integer nswapval = 0;
+
+                ArrayList<Integer> klist = key.get(kletter);
+                for (int w : klist) {
+                    // TODO - this might not be the best way to calculate the bad score
+                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(plaintext[w]).sum());
+                    if (current > subscore) {
+                        subscore = current;
+                        kswapval = w;
+                    }
+                }
 
                 ArrayList<Integer> nlist = key.get(nletter);
+                for (int x : nlist) {
+                    // TODO - this might not be the best way to calculate the bad score
+                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(plaintext[x]).sum());
+                    if (current > subscore) {
+                        subscore = current;
+                        nswapval = x;
+                    }
+                }
 
+                // swap, score the putative and plaintext digraphs and swap / unswap accordingly
+                key = swap(key, kletter, fletter, kswapval, cipherrow);
+                key = swap(key, nletter, sletter, nswapval, ciphercolumn);
+
+                text = decryptor.decrypt(key, ciphertext);
+                putative = digrapher.computePutativeDigraph(text);
+
+                double current = score(plaintext, putative);
+
+                // this is the bad case - our swaps have moved us away from the 'ideal' solution
+                if (current > score) {
+                    key = swap(key, kletter, fletter, cipherrow, kswapval);
+                    key = swap(key, nletter, sletter, ciphercolumn, nswapval);
+                    continue;
+                }
+                score = current;
             }
         }
 
