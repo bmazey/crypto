@@ -111,4 +111,5 @@ public class Digrapher {
         if (c == ' ') return spaceval;
         else return (c - 'a');
     }
+
 }

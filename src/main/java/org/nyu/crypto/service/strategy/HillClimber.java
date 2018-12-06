@@ -2,6 +2,7 @@ package org.nyu.crypto.service.strategy;
 
 
 import org.nyu.crypto.service.Decryptor;
+import org.nyu.crypto.service.FrequencyGenerator;
 import org.nyu.crypto.service.KeyGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,12 @@ public class HillClimber {
     private Digrapher digrapher;
 
     @Autowired
+    private FrequencyGenerator frequencyGenerator;
+
+    @Autowired
     private KeyGenerator keyGenerator;
+
+    private String[] alphabet = frequencyGenerator.generateAlphabet();
 
     private Logger logger = LoggerFactory.getLogger(HillClimber.class);
 
@@ -204,6 +210,8 @@ public class HillClimber {
                 double subscore = Double.MAX_VALUE;
                 int cipherrow = 0;
                 int ciphercolumn = 0;
+                String kletter = "a";
+                String nletter = "a";
 
                 // inner nested loop to iterate over plaintext digraph
                 for (int k = 0; k < plaintext.length; k ++) {
@@ -213,19 +221,27 @@ public class HillClimber {
                             subscore = current;
                             cipherrow = i;
                             ciphercolumn = j;
-
-                            // TODO - store k and n as letters!
-
+                            kletter = convert(k);
+                            nletter = convert(n);
                         }
                     }
                 }
 
                 // now we have a cipher digraph row # and column # of the most similar plaintext digraph occurrence
-                // these two letters 'should' share these keys in their corresponding keyspaces
+                // k letter and n letter taken from the perfect digraph 'should' share these keys in their corresponding keyspaces
                 // get the current corresponding letter values in the putative key - these are the letters that are
-                // currently holding the values we want to swap
-                String firstLetter = getLetterAssociation(key, cipherrow).get();
-                String secondLetter = getLetterAssociation(key, ciphercolumn).get();
+                // currently holding the numbers (cipherrow and ciphercolumn) we want to swap with k and n
+                String fletter = getLetterAssociation(key, cipherrow).get();
+                String sletter = getLetterAssociation(key, ciphercolumn).get();
+
+                // now we need to find the numbers in the k and n letters' keyspaces which are causing the most
+                // inaccurate scores ... we want to give those numbers up in exchange
+                // kletter number <-> fletter number / nletter number <-> sletter number
+                ArrayList<Integer> klist = key.get(kletter);
+
+
+                ArrayList<Integer> nlist = key.get(nletter);
+
             }
         }
 
@@ -279,4 +295,9 @@ public class HillClimber {
         return score;
     }
 
+    // TODO - check this to make sure it's converting correctly
+    private String convert(int i) {
+        assert i <= alphabet.length;
+        return alphabet[i];
+    }
 }
