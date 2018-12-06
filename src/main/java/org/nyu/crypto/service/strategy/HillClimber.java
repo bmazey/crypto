@@ -247,7 +247,7 @@ public class HillClimber {
                 for (int k = 0; k < plaintext.length; k ++) {
                     for (int n = 0; n < plaintext[k].length; n++) {
                         double current = Math.abs(plaintext[k][n] - cipher[i][j]);
-                        if (current <= subscore) {
+                        if (current < subscore) {
                             subscore = current;
                             cipherrow = i;
                             ciphercolumn = j;
@@ -303,11 +303,9 @@ public class HillClimber {
                     }
                 }
 
-                logger.info("kletter: " + kletter + " kswapval: " + kswapval + " | fletter: " + fletter + " cipherrow: "
-                        + cipherrow);
+                logger.info(kletter + " : " + kswapval + " <-> " + fletter + " : " + cipherrow);
 
-                logger.info("nletter: " + nletter + " nswapval: " + nswapval + " | sletter: " + sletter + " ciphercolumn: "
-                        + ciphercolumn);
+                logger.info(nletter + " : " + nswapval + " <-> " + sletter + " : " + ciphercolumn);
 
                 key = swap(key, nletter, sletter, nswapval, ciphercolumn);
 
