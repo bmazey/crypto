@@ -65,10 +65,10 @@ public class KeyGenerator {
         blacklist.add(ciphertext[0]); //first character
         blacklist.add(ciphertext[1]); //second character
         blacklist.add(ciphertext[2]); //third character
-        blacklist.add(ciphertext[104]); //last character
+        blacklist.add(ciphertext[105]); //last character
 
         for(int i = 0; i < ciphertext.length - 1; i++){
-            if (ciphertext[i] == ciphertext[i+1]){
+            if (ciphertext[i] == ciphertext[i+1] && !whitelist.contains(ciphertext[i])){
                 blacklist.add(ciphertext[i]);
                 bValue.add(ciphertext[i]);
             }
@@ -80,13 +80,9 @@ public class KeyGenerator {
                 if (i < ciphertext.length - 3)
                         blacklist.add(ciphertext[i + 3]);
             }
-            else
+            else if (!blacklist.contains(ciphertext[i]))
                 whitelist.add(ciphertext[i]);
         }
-
-        System.out.println(blacklist);
-        System.out.println(whitelist);
-        System.out.println(bValue);
 
         if (bValue.size() > 1){
             Random random = new Random();
@@ -109,11 +105,20 @@ public class KeyGenerator {
             }
         }
 
+        if (spaceValues.size() > 19){
+            Collections.shuffle(numbers);
+            Collections.shuffle(spaceValues);
+            ArrayList<Integer> spaceTemp = new ArrayList<>(spaceValues.subList(0, 19));
+            numbers.removeAll(spaceTemp);
+            spaceValues = spaceTemp;
+        }
+
         putativeKey.put("space", spaceValues);
 
         blacklist.addAll(numbers);
 
         ArrayList<Integer> leftNum = new ArrayList<>(blacklist);
+        Collections.shuffle(leftNum);
 
         int partition = 0;
 
