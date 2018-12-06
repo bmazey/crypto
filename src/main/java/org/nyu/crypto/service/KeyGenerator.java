@@ -105,8 +105,22 @@ public class KeyGenerator {
         }
         putativeKey.put("b", bValue);
 
+        Collections.shuffle(blacklist);
+        int partition = 0;
 
-        return new HashMap<>();
+        for(String key: map.keySet()) {
+            if (key.equals("space")){
+                partition = partition + map.get(key);
+            }
+            else if (key.equals("b")){
+                partition = partition + map.get(key);
+            }
+            else {
+                putativeKey.put(key, new ArrayList<>(blacklist.subList(partition, partition + map.get(key))));
+                partition = partition + map.get(key);
+            }
+        }
+        return putativeKey;
     }
 
 }
