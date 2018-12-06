@@ -58,7 +58,7 @@ public class KeyGenerator {
         ArrayList<Integer> numbers = new ArrayList<>(IntStream.range(0, keyspace).boxed().collect(toSet()));
         HashSet<Integer> whitelist = new HashSet<>();
         HashSet<Integer> blacklist = new HashSet<>();
-        ArrayList<Integer> bValue = new ArrayList<>();
+        HashSet<Integer> bValue = new HashSet<>();
 
         // possible spaces and possible b
 
@@ -68,10 +68,9 @@ public class KeyGenerator {
         blacklist.add(ciphertext[104]); //last character
 
         for(int i = 0; i < ciphertext.length - 1; i++){
-            if (ciphertext[i] == ciphertext[i+1] && !blacklist.contains(ciphertext[i])){
+            if (ciphertext[i] == ciphertext[i+1]){
                 blacklist.add(ciphertext[i]);
                 bValue.add(ciphertext[i]);
-                i++;
             }
             else if (whitelist.contains(ciphertext[i])){
                 if (i < ciphertext.length - 1)
@@ -85,37 +84,52 @@ public class KeyGenerator {
                 whitelist.add(ciphertext[i]);
         }
 
-        ArrayList<Integer> spaceValues = new ArrayList<>(whitelist);
-
-        putativeKey.put("space", spaceValues);
+        System.out.println(blacklist);
+        System.out.println(whitelist);
+        System.out.println(bValue);
 
         if (bValue.size() > 1){
             Random random = new Random();
-            int b = bValue.get(random.nextInt(bValue.size()));
+            int b = random.nextInt(bValue.size());
             bValue.clear();
             bValue.add(b);
+            numbers.remove(b);
         }
 
-        putativeKey.put("b", bValue);
+        ArrayList<Integer> bNum = new ArrayList<>(bValue);
+        putativeKey.put("b", bNum);
 
-        Collections.shuffle(numbers);
+        ArrayList<Integer> spaceValues = new ArrayList<>(whitelist);
 
-//        Collections.shuffle(blacklist);
-//        int partition = 0;
-//
-//        for(String key: map.keySet()) {
-//            if (key.equals("space")){
-//                partition = partition + map.get(key);
-//            }
-//            else if (key.equals("b")){
-//                partition = partition + map.get(key);
-//            }
-//            else {
-//                putativeKey.put(key, new ArrayList<>(blacklist.subList(partition, partition + map.get(key))));
-//                partition = partition + map.get(key);
-//            }
-//        }
-//        return putativeKey;
+        if (spaceValues.size() < 19){
+            Collections.shuffle(numbers);
+            for(int i = 0; i < spaceValues.size(); i++){
+                spaceValues.add(numbers.get(i));
+                numbers.remove(numbers.get(i));
+            }
+        }
+
+        putativeKey.put("space", spaceValues);
+
+        blacklist.addAll(numbers);
+
+        ArrayList<Integer> leftNum = new ArrayList<>(blacklist);
+
+        int partition = 0;
+
+        for(String key: map.keySet()) {
+            if (key.equals("space")){
+                partition = partition + map.get(key);
+            }
+            else if (key.equals("b")){
+                partition = partition + map.get(key);
+            }
+            else {
+                putativeKey.put(key, new ArrayList<>(leftNum.subList(partition, partition + map.get(key))));
+                partition = partition + map.get(key);
+            }
+        }
+        return putativeKey;
     }
 
 }
