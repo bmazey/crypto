@@ -202,6 +202,11 @@ public class HillClimber {
         // start by generating a random key
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
 
+        for (String keyval : key.keySet()) {
+            ArrayList<Integer> list = key.get(keyval);
+            System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
+        }
+
         // compute ciphertext digraph
         double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
@@ -223,6 +228,10 @@ public class HillClimber {
         for (int i = 0; i < cipher.length; i++) {
             for (int j = 0; j < cipher[i].length; j++) {
 
+                // if the cell is 0, that means these two numbers never show up next to each other,
+                // there's nothing we can do
+                if(cipher[i][j] == 0) continue;
+
                 // initialize an optimal compare score
                 double subscore = Double.MAX_VALUE;
                 int cipherrow = 0;
@@ -238,7 +247,7 @@ public class HillClimber {
                 for (int k = 0; k < plaintext.length; k ++) {
                     for (int n = 0; n < plaintext[k].length; n++) {
                         double current = Math.abs(plaintext[k][n] - cipher[i][j]);
-                        if (current < subscore) {
+                        if (current <= subscore) {
                             subscore = current;
                             cipherrow = i;
                             ciphercolumn = j;
@@ -270,7 +279,7 @@ public class HillClimber {
                 for (int w : klist) {
                     // TODO - this might not be the best way to calculate the bad score
                     double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(plaintext[kval]).sum());
-                    if (current > subscore) {
+                    if (current >= subscore) {
                         subscore = current;
                         kswapval = w;
                     }
@@ -288,7 +297,7 @@ public class HillClimber {
                 for (int x : nlist) {
                     // TODO - this might not be the best way to calculate the bad score
                     double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(plaintext[nval]).sum());
-                    if (current > subscore) {
+                    if (current >= subscore) {
                         subscore = current;
                         nswapval = x;
                     }
