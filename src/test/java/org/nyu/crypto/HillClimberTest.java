@@ -100,7 +100,7 @@ public class HillClimberTest {
         Simulation simulation = simulator.createSimulation();
 
         // now compute plaintext digraph for our experiment
-        double[][] digraph = digrapher.computePutativeDigraph(simulation.getMessage());
+        double[][] digraph = digrapher.computeDictionaryDigraph();
 
         String plaintext = simulation.getMessage();
 
@@ -108,17 +108,17 @@ public class HillClimberTest {
         String putative = climb.getPutative();
 
         logger.info("putative : " + putative);
-        logger.info("plaintext: " + simulation.getMessage());
+        logger.info("plaintext: " + plaintext);
 
         HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
         HashMap<String, ArrayList<Integer>> ikey = climb.getInitialKey();
         HashMap<String, ArrayList<Integer>> pkey = climb.getPutativeKey();
 
-        //logger.info("initial key: ");
-        //keyGenerator.printKey(ikey);
+        logger.info("ikey: ");
+        keyGenerator.printKey(ikey);
 
-        //logger.info("putative key: ");
-        //keyGenerator.printKey(pkey);
+        logger.info("pkey: ");
+        keyGenerator.printKey(pkey);
 
 
         // score of initial key guess against actual key
