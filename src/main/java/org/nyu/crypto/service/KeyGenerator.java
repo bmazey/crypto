@@ -88,11 +88,16 @@ public class KeyGenerator {
             Collections.shuffle(possibleSpaceValues);
             spaceValues = new ArrayList<>(possibleSpaceValues.subList(0, 19));
             space = 0;
-            for (int i = 0; i < ciphertext.length - 3; i ++){
+            for (int i = 3; i < ciphertext.length - 3; i ++){
                 if (spaceValues.contains(ciphertext[i])){
                     if (spaceValues.contains(ciphertext[i+1]) ||
                             spaceValues.contains(ciphertext[i+2]) ||
                             spaceValues.contains(ciphertext[i+3])){
+                        break;
+                    }
+                    if (spaceValues.contains(ciphertext[i-1]) ||
+                            spaceValues.contains(ciphertext[i-2]) ||
+                            spaceValues.contains(ciphertext[i-3])){
                         break;
                     }
                     else
@@ -104,30 +109,47 @@ public class KeyGenerator {
             }
         }
 
-        for (int i = 0; i < ciphertext.length; i++){
-            System.out.print(ciphertext[i]+" ");
+        numbers.removeAll(spaceValues);
+
+        ArrayList<Integer> bNum = new ArrayList<>(bValue);
+
+        if (bValue.size() > 1){
+            ArrayList<Integer> bTemp = new ArrayList<>(bValue);
+            Collections.shuffle(bTemp);
+            bNum.clear();
+            bNum.addAll(bTemp.subList(0, 1));
+            numbers.removeAll(bNum);
         }
-        System.out.println("");
-        System.out.println(spaceValues);
 
-        System.out.println(whitelist);
+        if (bValue.size() == 0){
+            ArrayList<Integer> bTemp = new ArrayList<>(numbers);
+            Collections.shuffle(bTemp);
+            bNum.clear();
+            bNum.addAll(bTemp.subList(0, 1));
+            numbers.removeAll(bNum);
+        }
 
-        System.out.println(blacklist);
+        if (bValue.size() == 1)
+            numbers.removeAll(bNum);
 
-//        if (bValue.size() > 1){
-//            ArrayList<Integer> bTemp = new ArrayList<>(bValue);
-//            Collections.shuffle(bTemp);
-//            bValue.clear();
-//            bValue.addAll(bTemp.subList(0, 1));
-//            blacklist.removeAll(bValue);
-//        }
-//
-//        if (bValue.size() == 0){
-//            Collections.shuffle(numbers);
-//            ArrayList<Integer> bTemp = new ArrayList<>(numbers.subList(0, 1));
-//            blacklist.removeAll(bTemp);
-//            bValue.addAll(bTemp);
-//        }
+        ArrayList<Integer> leftNum = new ArrayList<>(numbers);
+        Collections.shuffle(leftNum);
+
+        int partition = 0;
+
+        for(String key: map.keySet()) {
+            if (!key.equals("space") && !key.equals("b")) {
+
+                putativeKey.put(key, new ArrayList<>(leftNum.subList(partition, partition + map.get(key))));
+                partition = partition + map.get(key);
+            }
+        }
+
+        putativeKey.put("space", spaceValues);
+
+        putativeKey.put("b", bNum);
+
+        return putativeKey;
 
 //
 //            else if (whitelist.contains(ciphertext[i]) && !bValue.contains(ciphertext[i])){
@@ -195,24 +217,7 @@ public class KeyGenerator {
 //
 //        blacklist.addAll(numbers);
 //
-//        ArrayList<Integer> leftNum = new ArrayList<>(blacklist);
-//        Collections.shuffle(leftNum);
 //
-//        int partition = 0;
-//
-//        for(String key: map.keySet()) {
-//            if (key.equals("space")){
-//                partition = partition + map.get(key);
-//            }
-//            else if (key.equals("b")){
-//                partition = partition + map.get(key);
-//            }
-//            else {
-//                putativeKey.put(key, new ArrayList<>(leftNum.subList(partition, partition + map.get(key))));
-//                partition = partition + map.get(key);
-//            }
-//        }
-        return putativeKey;
     }
 
 }
