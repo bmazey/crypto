@@ -1,6 +1,7 @@
 package org.nyu.crypto.service.strategy;
 
 
+import org.nyu.crypto.dto.Climb;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.FrequencyGenerator;
 import org.nyu.crypto.service.KeyGenerator;
@@ -56,12 +57,17 @@ public class HillClimber {
      *
      */
 
-    public String climb(int[] ciphertext, double[][] plaintext) {
+    public Climb climb(int[] ciphertext, double[][] plaintext) {
+
+        Climb climb = new Climb();
+        climb.setCiphertext(ciphertext);
 
         // TODO - apply optimal heuristic key guess strategy as well
         // start by generating a random key
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+        climb.setInitialKey(key);
 
+        // TODO move this to printKey() function in KeyGenerator
         for (String keyval : key.keySet()) {
             ArrayList<Integer> list = key.get(keyval);
             System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
@@ -72,7 +78,10 @@ public class HillClimber {
 
         key = climbHill(key, plaintext, cipher, ciphertext);
 
-        return decryptor.decrypt(key, ciphertext);
+        // build Climb dto
+        climb.setPutativeKey(key);
+        climb.setPutative(decryptor.decrypt(key, ciphertext));
+        return climb;
     }
 
     private HashMap<String, ArrayList<Integer>> climbHill(HashMap<String, ArrayList<Integer>> key,
@@ -104,7 +113,7 @@ public class HillClimber {
                 String nletter = "";
 
                 // inner nested loop to iterate over plaintext digraph
-                for (int k = 0; k < plaintext.length; k ++) {
+                for (int k = 0; k < plaintext.length; k++) {
                     for (int n = 0; n < plaintext[k].length; n++) {
                         // FIXME - this is probably oversimplified
                         double current = Math.abs(plaintext[k][n] - cipher[i][j]);
@@ -166,9 +175,11 @@ public class HillClimber {
 
                 key = swap(key, nletter, sletter, nswapval, ciphercolumn);
 
-                logger.info(kletter + " : " + kswapval + " <-> " + fletter + " : " + cipherrow);
+                // FIXME - problem is k letter and n letter are frequently the same
 
-                logger.info(nletter + " : " + nswapval + " <-> " + sletter + " : " + ciphercolumn);
+                // logger.info(kletter + " : " + kswapval + " <-> " + fletter + " : " + cipherrow);
+
+                // logger.info(nletter + " : " + nswapval + " <-> " + sletter + " : " + ciphercolumn);
 
                 text = decryptor.decrypt(key, ciphertext);
                 double[][] newputative = digrapher.computePutativeDigraph(text);
@@ -185,7 +196,7 @@ public class HillClimber {
 
                 putative = newputative;
                 score = current;
-                logger.info("updated putative score: " + score);
+                // logger.info("updated putative score: " + score);
             }
         }
 

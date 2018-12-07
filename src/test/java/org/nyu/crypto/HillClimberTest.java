@@ -3,6 +3,7 @@ package org.nyu.crypto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nyu.crypto.dto.Climb;
 import org.nyu.crypto.dto.Simulation;
 import org.nyu.crypto.service.Simulator;
 import org.nyu.crypto.service.strategy.Digrapher;
@@ -13,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 @RunWith(SpringRunner.class)
@@ -46,7 +50,9 @@ public class HillClimberTest {
         double[][] digraph = digrapher.computePutativeDigraph(simulation.getMessage());
 
         String plaintext = simulation.getMessage();
-        String putative = hillClimber.climb(simulation.getCiphertext(), digraph);
+
+        Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
+        String putative = climb.getPutative();
 
         logger.info("putative : " + putative);
         logger.info("plaintext: " + simulation.getMessage());
@@ -67,7 +73,9 @@ public class HillClimberTest {
         double[][] digraph = digrapher.computeDictionaryDigraph();
 
         String plaintext = simulation.getMessage();
-        String putative = hillClimber.climb(simulation.getCiphertext(), digraph);
+
+        Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
+        String putative = climb.getPutative();
 
         logger.info("putative : " + putative);
         logger.info("plaintext: " + simulation.getMessage());
@@ -82,5 +90,54 @@ public class HillClimberTest {
     /**
      * TODO - write tests to compare key and putative key similarity!
      */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void validateClimbingKeyScorePlaintextDigraph() {
+        Simulation simulation = simulator.createSimulation();
+
+        // now compute plaintext digraph for our experiment
+        double[][] digraph = digrapher.computePutativeDigraph(simulation.getMessage());
+
+        String plaintext = simulation.getMessage();
+
+        Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
+        String putative = climb.getPutative();
+
+        logger.info("putative : " + putative);
+        logger.info("plaintext: " + simulation.getMessage());
+
+        HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
+
+        // score of initial key guess against actual key
+        int iscore = 0;
+        for (String keyval : climb.getInitialKey().keySet()) {
+            ArrayList<Integer> ilist = climb.getInitialKey().get(keyval);
+            ArrayList<Integer> list = key.get(keyval);
+            for(Integer i: ilist) {
+                if (list.contains(i)) {
+                    logger.info("matched <" + keyval + " : " + i + "> in initial");
+                    iscore++;
+                }
+            }
+        }
+
+        // score of putative key against actual key
+        int pscore = 0;
+        for (String keyval : climb.getPutativeKey().keySet()) {
+            ArrayList<Integer> plist = climb.getPutativeKey().get(keyval);
+            ArrayList<Integer> list = key.get(keyval);
+            for(Integer i: plist) {
+                if (list.contains(i)) {
+                    logger.info("matched <" + keyval + " : " + i + "> in putative");
+                    pscore++;
+                }
+            }
+        }
+
+        // score of putative key should always be greater or equal to the initial key
+        logger.info("initial key score: " + iscore);
+        logger.info("putative key score: " + pscore);
+        assert pscore >= iscore;
+    }
 
 }
