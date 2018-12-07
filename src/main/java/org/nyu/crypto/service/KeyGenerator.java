@@ -68,24 +68,52 @@ public class KeyGenerator {
         blacklist.add(ciphertext[105]); //last character
 
         for(int i = 0; i < ciphertext.length - 1; i++){
-            if (ciphertext[i] == ciphertext[i+1] && !whitelist.contains(ciphertext[i])){
+
+            if (ciphertext[i] == ciphertext[i+1]) {
                 bValue.add(ciphertext[i]);
+                blacklist.remove(ciphertext[i]);
+                whitelist.remove(ciphertext[i]);
+                i++;
             }
+
             else if (whitelist.contains(ciphertext[i])){
-                if (i < ciphertext.length - 1)
-                        blacklist.add(ciphertext[i + 1]);
-                if (i < ciphertext.length - 2)
-                        blacklist.add(ciphertext[i + 2]);
-                if (i < ciphertext.length - 3)
-                        blacklist.add(ciphertext[i + 3]);
+                if (i < ciphertext.length - 1) {
+                    blacklist.add(ciphertext[i + 1]);
+                    whitelist.remove(ciphertext[i + 1]);
+                }
+                if (i < ciphertext.length - 2) {
+                    blacklist.add(ciphertext[i + 2]);
+                    whitelist.remove(ciphertext[i + 2]);
+                }
+                if (i < ciphertext.length - 3) {
+                    blacklist.add(ciphertext[i + 3]);
+                    whitelist.remove(ciphertext[i + 3]);
+                }
             }
-            else
+            else if (!blacklist.contains(ciphertext[i]) && !bValue.contains(ciphertext[i]))
                 whitelist.add(ciphertext[i]);
         }
 
-        System.out.println(blacklist.size());
-        System.out.println(whitelist.size());
-        System.out.println(bValue.size());
+        ArrayList<Integer> spaceValues = new ArrayList<>(whitelist);
+
+        if (spaceValues.size() < 19){
+            numbers.removeAll(spaceValues);
+            Collections.shuffle(numbers);
+            for(int i = spaceValues.size(); i < 19; i++){
+                spaceValues.add(numbers.get(i));
+            }
+        }
+
+        if (whitelist.size() > 19){
+            Collections.shuffle(spaceValues);
+            ArrayList<Integer> spaceTemp = new ArrayList<>(spaceValues.subList(0, 19));
+            spaceValues = spaceTemp;
+        }
+
+        numbers.removeAll(spaceValues);
+        putativeKey.put("space", spaceValues);
+
+        System.out.println(spaceValues.size());
         System.out.println(numbers.size());
 
         if (bValue.size() > 1){
@@ -95,39 +123,22 @@ public class KeyGenerator {
             bValue.add(b);
         }
 
+        if (bValue.size() == 0){
+            Collections.shuffle(numbers);
+            ArrayList<Integer> bTemp = new ArrayList<>(numbers.subList(0, 1));
+            numbers.removeAll(bTemp);
+            bValue.addAll(bTemp);
+        }
 
         ArrayList<Integer> bNum = new ArrayList<>(bValue);
-        numbers.remove(bNum.get(0));
+        numbers.removeAll(bNum);
+
+        System.out.println(bNum.size());
+        System.out.println(numbers.size());
+
         putativeKey.put("b", bNum);
 
-        System.out.println(numbers.size());
-
-        ArrayList<Integer> spaceValues = new ArrayList<>(whitelist);
-
-        System.out.println(spaceValues.size());
-
-        if (spaceValues.size() < 19){
-            Collections.shuffle(numbers);
-            for(int i = spaceValues.size(); i < 19; i++){
-                spaceValues.add(numbers.get(i));
-                numbers.remove(numbers.get(i));
-            }
-        }
-        System.out.println(spaceValues.size());
-        System.out.println(numbers.size());
-
-        if (spaceValues.size() > 19){
-            Collections.shuffle(numbers);
-            Collections.shuffle(spaceValues);
-            ArrayList<Integer> spaceTemp = new ArrayList<>(spaceValues.subList(0, 19));
-            numbers.removeAll(spaceTemp);
-            spaceValues = spaceTemp;
-        }
-
-        System.out.println(spaceValues.size());
-        System.out.println(numbers.size());
-
-        putativeKey.put("space", spaceValues);
+        System.out.println(putativeKey);
 
         blacklist.addAll(numbers);
 
@@ -135,8 +146,6 @@ public class KeyGenerator {
 
         ArrayList<Integer> leftNum = new ArrayList<>(blacklist);
         Collections.shuffle(leftNum);
-
-        System.out.println(leftNum.size());
 
         int partition = 0;
 
