@@ -118,10 +118,17 @@ public class PutativeKeyGenTest {
         logger.info("Total of common chars: " + score);
         logger.info("Common key values: " + commonValues);
 
-        logger.info("Actual key: " + actualKey);
-        logger.info("Putative key: " + putativeKey);
+//        logger.info("Actual key: " + actualKey);
+//        logger.info("Putative key: " + putativeKey);
+//
+//        logger.info("Actual plaintext: " + plaintext);
+//        logger.info("Putative plaintext: " + putativePlaintext);
+    }
 
-        logger.info("Actual plaintext: " + plaintext);
-        logger.info("Putative plaintext: " + putativePlaintext);
+    @Test
+    public void KeySimulations(){
+        for (int i = 0; i < 10; i++){
+            KeySimulation();
+        }
     }
 }
