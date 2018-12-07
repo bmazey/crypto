@@ -20,6 +20,7 @@ charset:
 
 space:
   value: 26
+  keyValue: 19
 
 alphabet:
   length: 26

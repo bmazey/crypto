@@ -25,6 +25,9 @@ public class KeyGenerator {
     @Value("${key.space}")
     private int keyspace;
 
+    @Value("${space.keyValue}")
+    private int spaceKeyValue;
+
     public void setKey(HashMap<String, ArrayList<Integer>> key) {
         this.key = key;
     }
@@ -67,7 +70,7 @@ public class KeyGenerator {
 
 
         // We add all the other characters of the ciphertext to a "whitelist", all the possible space values
-        for (int i = 0; i<ciphertext.length; i++){
+        for (int i = 0; i < ciphertext.length; i++){
             if(!blacklist.contains(ciphertext[i])){
                 whitelist.add(ciphertext[i]);
             }
@@ -88,28 +91,28 @@ public class KeyGenerator {
         // Restricting the numbers of possible space values
         // If a character is a space, the 3 following characters as well as the 3 preceding characters cannot be space
         // Because the shortest word possible in the dictionary is of length 3
-        int space = 0;
-        while(space != 19) {
+        int spaceTemp = 0;
+        while(spaceTemp != spaceKeyValue) {
             Collections.shuffle(possibleSpaceValues);
-            spaceValues = new ArrayList<>(possibleSpaceValues.subList(0, 19));
-            space = 0;
-            for (int i = 3; i < ciphertext.length - 3; i ++){
+            spaceValues = new ArrayList<>(possibleSpaceValues.subList(0, spaceKeyValue));
+            spaceTemp = 0;
+            for (int i = 3; i < ciphertext.length - 3; i++){
                 if (spaceValues.contains(ciphertext[i])){
-                    if (spaceValues.contains(ciphertext[i+1]) ||
-                            spaceValues.contains(ciphertext[i+2]) ||
-                            spaceValues.contains(ciphertext[i+3])){
+                    if (spaceValues.contains(ciphertext[i + 1]) ||
+                            spaceValues.contains(ciphertext[i + 2]) ||
+                            spaceValues.contains(ciphertext[i + 3])){
                         break;
                     }
-                    else if (spaceValues.contains(ciphertext[i-1]) ||
-                            spaceValues.contains(ciphertext[i-2]) ||
-                            spaceValues.contains(ciphertext[i-3])){
+                    else if (spaceValues.contains(ciphertext[i - 1]) ||
+                            spaceValues.contains(ciphertext[i - 2]) ||
+                            spaceValues.contains(ciphertext[i - 3])){
                         break;
                     }
                     else
-                        space++;
+                        spaceTemp++;
 
                 }
-                if (space == 19)
+                if (spaceTemp == spaceKeyValue)
                     break;
             }
         }
