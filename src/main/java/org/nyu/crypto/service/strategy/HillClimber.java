@@ -90,7 +90,7 @@ public class HillClimber {
 
                 // if the cell is 0, that means these two numbers never show up next to each other,
                 // there's nothing we can do
-                if(cipher[i][j] == 0) continue;
+                // if(cipher[i][j] == 0) continue;
 
                 // initialize an optimal compare score
                 double subscore = Double.MAX_VALUE;
@@ -106,6 +106,7 @@ public class HillClimber {
                 // inner nested loop to iterate over plaintext digraph
                 for (int k = 0; k < plaintext.length; k ++) {
                     for (int n = 0; n < plaintext[k].length; n++) {
+                        // FIXME - this is probably oversimplified
                         double current = Math.abs(plaintext[k][n] - cipher[i][j]);
                         if (current < subscore) {
                             subscore = current;
@@ -137,7 +138,7 @@ public class HillClimber {
 
                 ArrayList<Integer> klist = key.get(kletter);
                 for (int w : klist) {
-                    // TODO - this might not be the best way to calculate the bad score
+                    // FIXME - this might not be the best way to calculate the bad score
                     double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(putative[kval]).sum());
                     if (current >= subscore) {
                         subscore = current;
@@ -155,7 +156,7 @@ public class HillClimber {
 
                 ArrayList<Integer> nlist = key.get(nletter);
                 for (int x : nlist) {
-                    // TODO - this might not be the best way to calculate the bad score
+                    // FIXME - this might not be the best way to calculate the bad score
                     double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(putative[nval]).sum());
                     if (current >= subscore) {
                         subscore = current;
@@ -176,7 +177,7 @@ public class HillClimber {
 
                 // this is the bad case we want our matrices to be very similar - our swaps have moved us away
                 // from the 'ideal' solution ... un-swap
-                if (current > score) {
+                if (current >= score) {
                     key = swap(key, nletter, sletter, ciphercolumn, nswapval);
                     key = swap(key, kletter, fletter, cipherrow, kswapval);
                     continue;
@@ -247,7 +248,6 @@ public class HillClimber {
         return score;
     }
 
-    // TODO - check this to make sure it's converting correctly
     private String convert(int i) {
         assert i <= alphabet.length;
         return alphabet[i];
