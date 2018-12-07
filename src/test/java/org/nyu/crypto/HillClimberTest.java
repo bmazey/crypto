@@ -107,17 +107,14 @@ public class HillClimberTest {
         Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
         String putative = climb.getPutative();
 
-        logger.info("putative : " + putative);
-        logger.info("plaintext: " + plaintext);
-
         HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
         HashMap<String, ArrayList<Integer>> ikey = climb.getInitialKey();
         HashMap<String, ArrayList<Integer>> pkey = climb.getPutativeKey();
 
-        logger.info("ikey: ");
+        logger.info("initial key: ");
         keyGenerator.printKey(ikey);
 
-        logger.info("pkey: ");
+        logger.info("putative key: ");
         keyGenerator.printKey(pkey);
 
 
@@ -150,6 +147,10 @@ public class HillClimberTest {
         // score of putative key should always be greater or equal to the initial key
         logger.info("initial key score: " + iscore);
         logger.info("putative key score: " + pscore);
+
+        logger.info("putative : " + putative);
+        logger.info("plaintext: " + plaintext);
+
         assert pscore >= iscore;
     }
 

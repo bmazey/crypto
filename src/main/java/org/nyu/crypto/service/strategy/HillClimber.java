@@ -69,7 +69,7 @@ public class HillClimber {
         climb.setInitialKey(key);
 
         // logger.info("initial key: ");
-        keyGenerator.printKey(key);
+        // keyGenerator.printKey(key);
 
         // compute ciphertext digraph
         double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
