@@ -21,6 +21,9 @@ public class PutativeKeyGenTest {
     @Value("${key.space}")
     private int keyspace;
 
+    @Value("${message.space}")
+    private int messageSpace;
+
     @Autowired
     private KeyGenerator keyGenerator;
 
@@ -89,6 +92,27 @@ public class PutativeKeyGenTest {
         // Attempting to decrypt ciphertext with putative key
         String putativePlaintext = decryptor.decrypt(putativeKey, ciphertext);
 
+        HashMap<String, Integer> commonValues = new HashMap<>();
+
+        int score = 0;
+
+        for (int i = 0; i < messageSpace; i++){
+            if (putativePlaintext.charAt(i) == plaintext.charAt(i))
+                score++;
+        }
+
+        int common = 0;
+        for (String key : actualKey.keySet()){
+            ArrayList<Integer> actual = actualKey.get(key);
+            ArrayList<Integer> putative = putativeKey.get(key);
+            actual.retainAll(putative);
+            common = actual.size();
+            commonValues.put(key, common);
+        }
+
+        System.out.println(score);
+        System.out.println(commonValues);
+        System.out.println("-----------------------------------------------------");
         System.out.println(actualKey);
         System.out.println(putativeKey);
         System.out.println("-----------------------------------------------------");

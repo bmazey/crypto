@@ -100,7 +100,7 @@ public class KeyGenerator {
                             spaceValues.contains(ciphertext[i+3])){
                         break;
                     }
-                    if (spaceValues.contains(ciphertext[i-1]) ||
+                    else if (spaceValues.contains(ciphertext[i-1]) ||
                             spaceValues.contains(ciphertext[i-2]) ||
                             spaceValues.contains(ciphertext[i-3])){
                         break;
