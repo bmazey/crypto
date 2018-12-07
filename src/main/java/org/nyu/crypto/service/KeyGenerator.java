@@ -73,10 +73,9 @@ public class KeyGenerator {
                 bValue.add(ciphertext[i]);
                 blacklist.remove(ciphertext[i]);
                 whitelist.remove(ciphertext[i]);
-                i++;
             }
 
-            else if (whitelist.contains(ciphertext[i])){
+            else if (whitelist.contains(ciphertext[i]) && !bValue.contains(ciphertext[i])){
                 if (i < ciphertext.length - 1) {
                     blacklist.add(ciphertext[i + 1]);
                     whitelist.remove(ciphertext[i + 1]);
@@ -92,6 +91,14 @@ public class KeyGenerator {
             }
             else if (!blacklist.contains(ciphertext[i]) && !bValue.contains(ciphertext[i]))
                 whitelist.add(ciphertext[i]);
+        }
+
+        if (bValue.size() > 1){
+            ArrayList<Integer> bTemp = new ArrayList<>(bValue);
+            Collections.shuffle(bTemp);
+            bValue.clear();
+            bValue.addAll(bTemp.subList(0, 1));
+            numbers.removeAll(bValue);
         }
 
         ArrayList<Integer> spaceValues = new ArrayList<>(whitelist);
@@ -110,18 +117,10 @@ public class KeyGenerator {
             spaceValues = spaceTemp;
         }
 
-        numbers.removeAll(spaceValues);
+        //if (whitelist.size() == 19)
+            numbers.removeAll(spaceValues);
+
         putativeKey.put("space", spaceValues);
-
-        System.out.println(spaceValues.size());
-        System.out.println(numbers.size());
-
-        if (bValue.size() > 1){
-            Random random = new Random();
-            int b = random.nextInt(bValue.size());
-            bValue.clear();
-            bValue.add(b);
-        }
 
         if (bValue.size() == 0){
             Collections.shuffle(numbers);
@@ -131,18 +130,10 @@ public class KeyGenerator {
         }
 
         ArrayList<Integer> bNum = new ArrayList<>(bValue);
-        numbers.removeAll(bNum);
-
-        System.out.println(bNum.size());
-        System.out.println(numbers.size());
 
         putativeKey.put("b", bNum);
 
-        System.out.println(putativeKey);
-
         blacklist.addAll(numbers);
-
-        System.out.println(blacklist.size());
 
         ArrayList<Integer> leftNum = new ArrayList<>(blacklist);
         Collections.shuffle(leftNum);
