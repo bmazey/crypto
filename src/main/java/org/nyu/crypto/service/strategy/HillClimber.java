@@ -74,8 +74,12 @@ public class HillClimber {
         // compute ciphertext digraph
         double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
-        HashMap<String, ArrayList<Integer>> result = climbHill(key, plaintext, cipher, ciphertext);
+        // create a deep copy
+        HashMap<String, ArrayList<Integer>> result = SerializationUtils.clone(key);
 
+        for (int i = 0; i < 100; i++) {
+            result = climbHill(result, plaintext, cipher, ciphertext);
+        }
         // build Climb dto
         climb.setPutativeKey(result);
         climb.setPutative(decryptor.decrypt(result, ciphertext));
@@ -86,10 +90,9 @@ public class HillClimber {
                                                            double[][] plaintext, double[][] cipher, int[] ciphertext) {
 
         // create a deep copy
-        HashMap<String, ArrayList<Integer>> result = SerializationUtils.clone(key);
 
         // we start by computing the initial putative digraph
-        String putativeText = decryptor.decrypt(result, ciphertext);
+        String putativeText = decryptor.decrypt(key, ciphertext);
         double[][] putative = digrapher.computePutativeDigraph(putativeText);
 
         //compute our initial score
@@ -108,21 +111,21 @@ public class HillClimber {
                 }
 
                 // get two random numbers from the letters' keyspace and swap them
-                Integer k = result.get(firstLetter).get(random.nextInt(result.get(firstLetter).size()));
-                Integer n = result.get(secondLetter).get(random.nextInt(result.get(secondLetter).size()));
+                Integer k = key.get(firstLetter).get(random.nextInt(key.get(firstLetter).size()));
+                Integer n = key.get(secondLetter).get(random.nextInt(key.get(secondLetter).size()));
 
                 // logger.info(firstLetter + " : " + k + " <-> " + secondLetter + " : " + n);
-                result = swap(result, firstLetter, secondLetter, k, n);
+                key = swap(key, firstLetter, secondLetter, k, n);
 
                 // compute the new score
-                putativeText = decryptor.decrypt(result, ciphertext);
+                putativeText = decryptor.decrypt(key, ciphertext);
                 putative = digrapher.computePutativeDigraph(putativeText);
                 double current = score(plaintext, putative);
 
                 // if the new score is greater than the old score, unswap
                 if (current > score) {
                     // logger.info("unswap!");
-                    result = swap(result, firstLetter, secondLetter, n, k);
+                    key = swap(key, firstLetter, secondLetter, n, k);
                     // keyGenerator.printKey(result);
                     continue;
                 }
@@ -134,7 +137,7 @@ public class HillClimber {
         }
         // logger.info("final key: ");
         // keyGenerator.printKey(result);
-        return result;
+        return key;
     }
 
     // we use a key to track associations in the digraph matrix
