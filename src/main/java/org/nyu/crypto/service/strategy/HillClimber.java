@@ -175,6 +175,7 @@ public class HillClimber {
                 double current = score(plaintext, nputative);
 
                 // this is the bad case - our swaps have moved us away from the 'ideal' solution
+                // unswap
                 if (current > score) {
                     key = swap(key, nletter, sletter, ciphercolumn, nswapval);
                     key = swap(key, kletter, fletter, cipherrow, kswapval);
@@ -182,8 +183,8 @@ public class HillClimber {
                 }
 
                 // FIXME - update putative?
-
                 score = current;
+                logger.info("updated putative score: " + score);
             }
         }
 

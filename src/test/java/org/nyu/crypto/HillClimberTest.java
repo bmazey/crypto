@@ -39,7 +39,7 @@ public class HillClimberTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void simulateHillClimbing() {
+    public void simulateHillClimbingPlaintextDigraph() {
         Simulation simulation = simulator.createSimulation();
 
         // now compute plaintext digraph for our experiment
@@ -56,6 +56,34 @@ public class HillClimberTest {
             if (putative.charAt(i) == plaintext.charAt(i)) score++;
         }
         logger.info("score: " + score);
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void simulateHillClimbingDictionaryDigraph() {
+        Simulation simulation = simulator.createSimulation();
+
+        // now compute plaintext digraph for our experiment
+        double[][] digraph = digrapher.computeDictionaryDigraph();
+
+        String plaintext = simulation.getMessage();
+        String putative = hillClimber.climb(simulation.getCiphertext(), digraph);
+
+        int score = 0;
+
+        while (score < 100) {
+
+            score = 0;
+
+            for (int i = 0; i < plaintext.length(); i++) {
+                if (putative.charAt(i) == plaintext.charAt(i)) score++;
+            }
+
+            logger.info("score: " + score);
+        }
+
+        logger.info("putative : " + putative);
+        logger.info("plaintext: " + simulation.getMessage());
     }
 
 }
