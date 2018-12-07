@@ -69,21 +69,18 @@ public class HillClimberTest {
         String plaintext = simulation.getMessage();
         String putative = hillClimber.climb(simulation.getCiphertext(), digraph);
 
-        int score = 0;
-
-        while (score < 100) {
-
-            score = 0;
-
-            for (int i = 0; i < plaintext.length(); i++) {
-                if (putative.charAt(i) == plaintext.charAt(i)) score++;
-            }
-
-            logger.info("score: " + score);
-        }
-
         logger.info("putative : " + putative);
         logger.info("plaintext: " + simulation.getMessage());
+
+        int score = 0;
+        for (int i = 0; i < plaintext.length(); i++) {
+            if (putative.charAt(i) == plaintext.charAt(i)) score++;
+        }
+        logger.info("score: " + score);
     }
+
+    /**
+     * TODO - write tests to compare key and putative key similarity!
+     */
 
 }

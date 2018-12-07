@@ -138,7 +138,7 @@ public class HillClimber {
                 ArrayList<Integer> klist = key.get(kletter);
                 for (int w : klist) {
                     // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(plaintext[kval]).sum());
+                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(putative[kval]).sum());
                     if (current >= subscore) {
                         subscore = current;
                         kswapval = w;
@@ -156,33 +156,33 @@ public class HillClimber {
                 ArrayList<Integer> nlist = key.get(nletter);
                 for (int x : nlist) {
                     // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(plaintext[nval]).sum());
+                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(putative[nval]).sum());
                     if (current >= subscore) {
                         subscore = current;
                         nswapval = x;
                     }
                 }
 
+                key = swap(key, nletter, sletter, nswapval, ciphercolumn);
+
                 logger.info(kletter + " : " + kswapval + " <-> " + fletter + " : " + cipherrow);
 
                 logger.info(nletter + " : " + nswapval + " <-> " + sletter + " : " + ciphercolumn);
 
-                key = swap(key, nletter, sletter, nswapval, ciphercolumn);
-
                 text = decryptor.decrypt(key, ciphertext);
-                double[][] nputative = digrapher.computePutativeDigraph(text);
+                double[][] newputative = digrapher.computePutativeDigraph(text);
 
-                double current = score(plaintext, nputative);
+                double current = score(plaintext, newputative);
 
-                // this is the bad case - our swaps have moved us away from the 'ideal' solution
-                // unswap
+                // this is the bad case we want our matrices to be very similar - our swaps have moved us away
+                // from the 'ideal' solution ... un-swap
                 if (current > score) {
                     key = swap(key, nletter, sletter, ciphercolumn, nswapval);
                     key = swap(key, kletter, fletter, cipherrow, kswapval);
                     continue;
                 }
 
-                // FIXME - update putative?
+                putative = newputative;
                 score = current;
                 logger.info("updated putative score: " + score);
             }
