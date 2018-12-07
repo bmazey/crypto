@@ -60,18 +60,20 @@ public class KeyGenerator {
         HashSet<Integer> blacklist = new HashSet<>();
         HashSet<Integer> bValue = new HashSet<>();
 
-        // possible spaces and possible b
-
+        // The first 3 characters cannot be space as the shortest word possible is of length 3
         blacklist.add(ciphertext[0]); //first character
         blacklist.add(ciphertext[1]); //second character
         blacklist.add(ciphertext[2]); //third character
 
+
+        // We add all the other characters of the ciphertext to a "whitelist", all the possible space values
         for (int i = 0; i<ciphertext.length; i++){
             if(!blacklist.contains(ciphertext[i])){
                 whitelist.add(ciphertext[i]);
             }
         }
 
+        // If 2 consecutive characters are equal, we assume there is a high possibility that it is a "b"
         for(int i = 0; i < ciphertext.length - 1; i++) {
             if (ciphertext[i] == ciphertext[i + 1]) {
                 bValue.add(ciphertext[i]);
@@ -83,6 +85,9 @@ public class KeyGenerator {
         ArrayList<Integer> possibleSpaceValues = new ArrayList<>(whitelist);
         ArrayList<Integer> spaceValues = new ArrayList<>();
 
+        // Restricting the numbers of possible space values
+        // If a character is a space, the 3 following characters as well as the 3 preceding characters cannot be space
+        // Because the shortest word possible in the dictionary is of length 3
         int space = 0;
         while(space != 19) {
             Collections.shuffle(possibleSpaceValues);
@@ -113,6 +118,8 @@ public class KeyGenerator {
 
         ArrayList<Integer> bNum = new ArrayList<>(bValue);
 
+        // If we end up with several possible "b"
+        // we pick one randomly among them
         if (bValue.size() > 1){
             ArrayList<Integer> bTemp = new ArrayList<>(bValue);
             Collections.shuffle(bTemp);
@@ -121,6 +128,8 @@ public class KeyGenerator {
             numbers.removeAll(bNum);
         }
 
+        // If there is no existing guess for "b"
+        // we pick one randomly from the list of number minus the chosen spaceValues
         if (bValue.size() == 0){
             ArrayList<Integer> bTemp = new ArrayList<>(numbers);
             Collections.shuffle(bTemp);
@@ -129,9 +138,11 @@ public class KeyGenerator {
             numbers.removeAll(bNum);
         }
 
+        // If there is only one guess for "b"
         if (bValue.size() == 1)
             numbers.removeAll(bNum);
 
+        // The 86 numbers left are shuffled randomly one more time before being assigned to the putative key
         ArrayList<Integer> leftNum = new ArrayList<>(numbers);
         Collections.shuffle(leftNum);
 
@@ -139,7 +150,6 @@ public class KeyGenerator {
 
         for(String key: map.keySet()) {
             if (!key.equals("space") && !key.equals("b")) {
-
                 putativeKey.put(key, new ArrayList<>(leftNum.subList(partition, partition + map.get(key))));
                 partition = partition + map.get(key);
             }
@@ -150,74 +160,5 @@ public class KeyGenerator {
         putativeKey.put("b", bNum);
 
         return putativeKey;
-
-//
-//            else if (whitelist.contains(ciphertext[i]) && !bValue.contains(ciphertext[i])){
-//                if (i < ciphertext.length - 1) {
-//                    blacklist.add(ciphertext[i + 1]);
-//                    whitelist.remove(ciphertext[i + 1]);
-//                }
-//                if (i < ciphertext.length - 2) {
-//                    blacklist.add(ciphertext[i + 2]);
-//                    whitelist.remove(ciphertext[i + 2]);
-//                }
-//                if (i < ciphertext.length - 3) {
-//                    blacklist.add(ciphertext[i + 3]);
-//                    whitelist.remove(ciphertext[i + 3]);
-//                }
-//            }
-//            else if (!blacklist.contains(ciphertext[i]) && !bValue.contains(ciphertext[i]))
-//                whitelist.add(ciphertext[i]);
-//        }
-//
-//        if (bValue.size() > 1){
-//            ArrayList<Integer> bTemp = new ArrayList<>(bValue);
-//            Collections.shuffle(bTemp);
-//            bValue.clear();
-//            bValue.addAll(bTemp.subList(0, 1));
-//            blacklist.removeAll(bValue);
-//        }
-//
-//        if (bValue.size() == 0){
-//            Collections.shuffle(numbers);
-//            ArrayList<Integer> bTemp = new ArrayList<>(numbers.subList(0, 1));
-//            blacklist.removeAll(bTemp);
-//            bValue.addAll(bTemp);
-//        }
-//
-//        int limit = keyspace - 20;
-//
-//        while (blacklist.size() < limit){
-//            Collections.shuffle(numbers);
-//            blacklist.addAll(numbers.subList(0, 1));
-//        }
-//
-//        ArrayList<Integer> spaceValues = new ArrayList<>(whitelist);
-//        ArrayList<Integer> otherChars = new ArrayList<>(blacklist);
-//
-//        if (spaceValues.size() < 19){
-//            int currentSize = spaceValues.size();
-//            Collections.shuffle(otherChars);
-//            spaceValues.addAll(otherChars.subList(0, currentSize));
-//            otherChars.removeAll(otherChars.subList(0, currentSize));
-//        }
-//
-//        if (whitelist.size() > 19){
-//            Collections.shuffle(spaceValues);
-//            ArrayList<Integer> spaceTemp = new ArrayList<>(spaceValues.subList(0, 19));
-//            spaceValues = spaceTemp;
-//            otherChars.removeAll(spaceValues.subList(19, spaceValues.size()));
-//        }
-//
-//        putativeKey.put("space", spaceValues);
-//
-//        ArrayList<Integer> bNum = new ArrayList<>(bValue);
-//
-//        putativeKey.put("b", bNum);
-//
-//        blacklist.addAll(numbers);
-//
-//
     }
-
 }
