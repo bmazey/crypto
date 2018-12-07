@@ -5,6 +5,8 @@ import org.junit.runner.RunWith;
 import org.nyu.crypto.dto.Key;
 import org.nyu.crypto.dto.Simulation;
 import org.nyu.crypto.service.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,8 @@ public class PutativeKeyGenTest {
 
     @Autowired
     private Encryptor encryptor;
+
+    private Logger logger = LoggerFactory.getLogger(PutativeKeyGenTest.class);
 
     @Test
     public void putativeKeyspaceTest() {
@@ -89,34 +93,35 @@ public class PutativeKeyGenTest {
         // Generating a putative key using the ciphertext
         HashMap<String, ArrayList<Integer>> putativeKey = keyGenerator.generatePutativeKey(ciphertext);
 
-        // Attempting to decrypt ciphertext with putative key
+        // Decrypting ciphertext with putative key
         String putativePlaintext = decryptor.decrypt(putativeKey, ciphertext);
 
         HashMap<String, Integer> commonValues = new HashMap<>();
 
         int score = 0;
 
+        // Common chars between actual plaintext and putative plaintext
         for (int i = 0; i < messageSpace; i++){
             if (putativePlaintext.charAt(i) == plaintext.charAt(i))
                 score++;
         }
 
-        int common = 0;
+        // Common key values between actual key and putative key
         for (String key : actualKey.keySet()){
             ArrayList<Integer> actual = actualKey.get(key);
             ArrayList<Integer> putative = putativeKey.get(key);
             actual.retainAll(putative);
-            common = actual.size();
+            int common = actual.size();
             commonValues.put(key, common);
         }
 
-        System.out.println(score);
-        System.out.println(commonValues);
-        System.out.println("-----------------------------------------------------");
-        System.out.println(actualKey);
-        System.out.println(putativeKey);
-        System.out.println("-----------------------------------------------------");
-        System.out.println(plaintext);
-        System.out.println(putativePlaintext);
+        logger.info("Total of common chars: " + score);
+        logger.info("Common key values: " + commonValues);
+
+        logger.info("Actual key: " + actualKey);
+        logger.info("Putative key: " + putativeKey);
+
+        logger.info("Actual plaintext: " + plaintext);
+        logger.info("Putative plaintext: " + putativePlaintext);
     }
 }
