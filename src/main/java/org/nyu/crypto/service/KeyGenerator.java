@@ -57,4 +57,11 @@ public class KeyGenerator {
         return new HashMap<>();
     }
 
+    public void printKey(HashMap<String, ArrayList<Integer>> key) {
+        for (String val: key.keySet()) {
+            ArrayList<Integer> list = key.get(val);
+            System.out.println(val + " : " + Arrays.toString(list.toArray()));
+        }
+    }
+
 }

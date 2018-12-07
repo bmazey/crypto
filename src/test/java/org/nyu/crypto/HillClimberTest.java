@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.nyu.crypto.dto.Climb;
 import org.nyu.crypto.dto.Simulation;
+import org.nyu.crypto.service.KeyGenerator;
 import org.nyu.crypto.service.Simulator;
 import org.nyu.crypto.service.strategy.Digrapher;
 import org.nyu.crypto.service.strategy.HillClimber;
@@ -25,6 +26,9 @@ public class HillClimberTest {
 
     @Value("${space.value}")
     private int spaceval;
+
+    @Autowired
+    KeyGenerator keyGenerator;
 
     @Autowired
     private Simulator simulator;
@@ -107,11 +111,20 @@ public class HillClimberTest {
         logger.info("plaintext: " + simulation.getMessage());
 
         HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
+        HashMap<String, ArrayList<Integer>> ikey = climb.getInitialKey();
+        HashMap<String, ArrayList<Integer>> pkey = climb.getPutativeKey();
+
+        //logger.info("initial key: ");
+        //keyGenerator.printKey(ikey);
+
+        //logger.info("putative key: ");
+        //keyGenerator.printKey(pkey);
+
 
         // score of initial key guess against actual key
         int iscore = 0;
-        for (String keyval : climb.getInitialKey().keySet()) {
-            ArrayList<Integer> ilist = climb.getInitialKey().get(keyval);
+        for (String keyval : ikey.keySet()) {
+            ArrayList<Integer> ilist = ikey.get(keyval);
             ArrayList<Integer> list = key.get(keyval);
             for(Integer i: ilist) {
                 if (list.contains(i)) {
@@ -123,8 +136,8 @@ public class HillClimberTest {
 
         // score of putative key against actual key
         int pscore = 0;
-        for (String keyval : climb.getPutativeKey().keySet()) {
-            ArrayList<Integer> plist = climb.getPutativeKey().get(keyval);
+        for (String keyval : pkey.keySet()) {
+            ArrayList<Integer> plist = pkey.get(keyval);
             ArrayList<Integer> list = key.get(keyval);
             for(Integer i: plist) {
                 if (list.contains(i)) {

@@ -11,10 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
@@ -38,6 +35,8 @@ public class HillClimber {
 
     private final String[] alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
                                         "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "space"};
+
+    private Random random = new Random();
 
     private Logger logger = LoggerFactory.getLogger(HillClimber.class);
 
@@ -66,12 +65,6 @@ public class HillClimber {
         // start by generating a random key
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
         climb.setInitialKey(key);
-
-        // TODO move this to printKey() function in KeyGenerator
-        for (String keyval : key.keySet()) {
-            ArrayList<Integer> list = key.get(keyval);
-            System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
-        }
 
         // compute ciphertext digraph
         double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
@@ -117,7 +110,7 @@ public class HillClimber {
                     for (int n = 0; n < plaintext[k].length; n++) {
                         // FIXME - this is probably oversimplified
                         double current = Math.abs(plaintext[k][n] - cipher[i][j]);
-                        if (current < subscore) {
+                        if ((current < subscore) && k != n) {
                             subscore = current;
                             cipherrow = i;
                             ciphercolumn = j;
@@ -177,10 +170,6 @@ public class HillClimber {
 
                 // FIXME - problem is k letter and n letter are frequently the same
 
-                // logger.info(kletter + " : " + kswapval + " <-> " + fletter + " : " + cipherrow);
-
-                // logger.info(nletter + " : " + nswapval + " <-> " + sletter + " : " + ciphercolumn);
-
                 text = decryptor.decrypt(key, ciphertext);
                 double[][] newputative = digrapher.computePutativeDigraph(text);
 
@@ -188,23 +177,27 @@ public class HillClimber {
 
                 // this is the bad case we want our matrices to be very similar - our swaps have moved us away
                 // from the 'ideal' solution ... un-swap
-                if (current >= score) {
+                if (current > score) {
                     key = swap(key, nletter, sletter, ciphercolumn, nswapval);
                     key = swap(key, kletter, fletter, cipherrow, kswapval);
                     continue;
                 }
 
+                logger.info(kletter + " : " + kswapval + " <-> " + fletter + " : " + cipherrow);
+                logger.info(nletter + " : " + nswapval + " <-> " + sletter + " : " + ciphercolumn);
+
+                logger.info("new key: ");
+                keyGenerator.printKey(key);
+
+                //logger.info("score updated!");
                 putative = newputative;
                 score = current;
                 // logger.info("updated putative score: " + score);
             }
         }
 
-        // TODO - move this to keygenerator as printKey() method;
-        for (String keyval : key.keySet()) {
-            ArrayList<Integer> list = key.get(keyval);
-            System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
-        }
+        //logger.info("climb hill key: ");
+        //keyGenerator.printKey(key);
 
         return key;
     }

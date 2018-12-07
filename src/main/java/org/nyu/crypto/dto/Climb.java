@@ -45,5 +45,4 @@ public class Climb {
         this.putative = putative;
     }
 
-
 }
