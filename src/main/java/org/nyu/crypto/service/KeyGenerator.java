@@ -105,10 +105,9 @@ public class KeyGenerator {
 
         if (spaceValues.size() < 19){
             numbers.removeAll(spaceValues);
+            int currentSize = spaceValues.size();
             Collections.shuffle(numbers);
-            for(int i = spaceValues.size(); i < 19; i++){
-                spaceValues.add(numbers.get(i));
-            }
+            spaceValues.addAll(numbers.subList(0, currentSize));
         }
 
         if (whitelist.size() > 19){
@@ -117,8 +116,7 @@ public class KeyGenerator {
             spaceValues = spaceTemp;
         }
 
-        //if (whitelist.size() == 19)
-            numbers.removeAll(spaceValues);
+        numbers.removeAll(spaceValues);
 
         putativeKey.put("space", spaceValues);
 
