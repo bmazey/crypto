@@ -2,9 +2,9 @@ package org.nyu.crypto;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.nyu.crypto.service.FrequencyGenerator;
-import org.nyu.crypto.service.KeyGenerator;
-import org.nyu.crypto.service.Simulator;
+import org.nyu.crypto.dto.Key;
+import org.nyu.crypto.dto.Simulation;
+import org.nyu.crypto.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,8 +30,17 @@ public class PutativeKeyGenTest {
     @Autowired
     private FrequencyGenerator frequencyGenerator;
 
+    @Autowired
+    private MessageGenerator messageGenerator;
+
+    @Autowired
+    private Decryptor decryptor;
+
+    @Autowired
+    private Encryptor encryptor;
+
     @Test
-    public void putativeKeyTest() {
+    public void putativeKeyspaceTest() {
 
         int[] ciphertext = simulator.createSimulation().getCiphertext();
 
@@ -64,5 +73,26 @@ public class PutativeKeyGenTest {
             int freq = frequencies.get(key);
             assert list.size() == freq;
         }
+    }
+
+    @Test
+    public void KeySimulation(){
+
+        // Generating a message, a key, and encrypting that ciphertext using that key
+        String plaintext = messageGenerator.generateMessage();
+        HashMap<String, ArrayList<Integer>> actualKey = keyGenerator.generateKey();
+        int[] ciphertext = encryptor.encrypt(actualKey, plaintext);
+
+        // Generating a putative key using the ciphertext
+        HashMap<String, ArrayList<Integer>> putativeKey = keyGenerator.generatePutativeKey(ciphertext);
+
+        // Attempting to decrypt ciphertext with putative key
+        String putativePlaintext = decryptor.decrypt(putativeKey, ciphertext);
+
+        System.out.println(actualKey);
+        System.out.println(putativeKey);
+        System.out.println("-----------------------------------------------------");
+        System.out.println(plaintext);
+        System.out.println(putativePlaintext);
     }
 }
