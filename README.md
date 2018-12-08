@@ -113,7 +113,7 @@ Response
 
 <h2>Key Controller</h2>
 This controller allows you to generate a random key.
-&nbsp;
+<br/>
 Request
 
     GET http://crypto2.us-east-2.elasticbeanstalk.com/api/key
@@ -166,7 +166,7 @@ Response
 This controller allows you to start a simulation.
 It generates a random key as well as a random plaintext (using the default dictionary of 70 words).
 Finally, the respective ciphertext is created using the key over the plaintext.
-&nbsp;
+<br/>
 Request
 
     GET http://crypto2.us-east-2.elasticbeanstalk.com/api/simulation
