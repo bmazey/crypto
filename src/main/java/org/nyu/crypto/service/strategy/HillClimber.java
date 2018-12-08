@@ -145,14 +145,14 @@ public class HillClimber {
             key = swap(key, firstLetter, secondLetter, x, y);
 
             //String letter = getLetterAssociation(key, row).get();
-            logger.info("random swap  | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
+            logger.info("random swap | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
         }
 
         // swap keys with one another
         else {
 
-            firstLetter = getLetterAssociation(key, row).get();
-            secondLetter = getLetterAssociation(key, column).get();
+            firstLetter = convert(row);
+            secondLetter = convert(column);
 
             // FIXME - no randomness here, try to store a state and clear the state when new letters are picked
             // issue is useless attempts being made
