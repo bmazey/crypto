@@ -142,8 +142,10 @@ public class HillClimber {
             x = key.get(firstLetter).get(random.nextInt(key.get(firstLetter).size()));
             y = key.get(secondLetter).get(random.nextInt(key.get(secondLetter).size()));
 
-            logger.info("random swap | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
             key = swap(key, firstLetter, secondLetter, x, y);
+
+            String letter = getLetterAssociation(key, row).get();
+            logger.info("random swap (" + letter + ") | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
         }
 
         // swap keys with one another
@@ -174,6 +176,8 @@ public class HillClimber {
             logger.info("un-swap!");
             key = swap(key, firstLetter, secondLetter, y, x);
         }
+
+        // FIXME - UPDATE SCORE?! issue: optimal switching with itself? X_X
 
         return key;
     }
