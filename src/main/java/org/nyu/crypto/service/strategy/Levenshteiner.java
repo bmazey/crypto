@@ -46,6 +46,7 @@ public class Levenshteiner {
                 // if the score is 0 it's a perfect match ... ignore it!
                 if (i == 0) continue;
 
+                // FIXME - do we actually care about taking the largest all the time?
                 if (i <= max && currentSize >= size) {
                     max = i;
                     size = currentSize;
@@ -56,6 +57,8 @@ public class Levenshteiner {
         }
 
         logger.info("original putative: " + original + " | swap word: " + swap);
+
+        // TODO - align by LCS and swap! don't forget to add space swap at beginning and end ...
 
         return key;
     }

@@ -69,9 +69,13 @@ public class HillClimber {
         Climb climb = new Climb();
         climb.setCiphertext(ciphertext);
 
-        // TODO - apply optimal heuristic key guess strategy as well
         // start by generating a random key
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
+
+        // TODO - apply optimal heuristic key guess strategy as well
+        // here it is!
+        // HashMap<String, ArrayList<Integer>> key = keyGenerator.generatePutativeKey(ciphertext);
+
         climb.setInitialKey(key);
 
         // logger.info("initial key: ");
