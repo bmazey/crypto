@@ -23,6 +23,9 @@ public class HillClimber {
     @Value("${key.space}")
     private int keyspace;
 
+    @Value("${charset.length}")
+    private int charset;
+
     @Autowired
     private Decryptor decryptor;
 
@@ -34,6 +37,9 @@ public class HillClimber {
 
     @Autowired
     private KeyGenerator keyGenerator;
+
+    @Autowired
+    private Levenshteiner levenshteiner;
 
     private final String[] alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
                                         "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "space"};
@@ -77,9 +83,13 @@ public class HillClimber {
         // create a deep copy
         HashMap<String, ArrayList<Integer>> result = SerializationUtils.clone(key);
 
-        for (int i = 0; i < 100; i++) {
+        // TODO - why 12 rounds?
+        for (int i = 0; i < 12; i++) {
             result = climbHill(result, plaintext, cipher, ciphertext);
         }
+
+        levenshteiner.distanceSwap(result, ciphertext);
+
         // build Climb dto
         climb.setPutativeKey(result);
         climb.setPutative(decryptor.decrypt(result, ciphertext));

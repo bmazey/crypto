@@ -106,7 +106,7 @@ public class HillClimberTest {
             String plaintext = simulation.getMessage();
 
             // now compute plaintext digraph for our experiment
-            double[][] digraph = digrapher.computePutativeDigraph(plaintext);
+            double[][] digraph = digrapher.computeDictionaryDigraph();
 
             Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
             String putative = climb.getPutative();
