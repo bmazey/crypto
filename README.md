@@ -28,7 +28,7 @@
 
 http://crypto2.us-east-2.elasticbeanstalk.com/swagger-ui.html
 
-We have different controllers available in our API
+The various controllers available in the API are listed below.
 
 <h2>Ciphertext controller</h2>
 
@@ -131,8 +131,36 @@ Response
     }
 
 <h2>Message controller</h2>
+This controller allows you to generate a message - ID pair.
+Additionally, it allows you to retrieve a specific message using the ID related to that message.
 
-TODO
+<h3>Message generator</h3>
+
+Request
+
+    POST http://crypto2.us-east-2.elasticbeanstalk.com/api/message
+
+Response
+
+    HTTP 200
+    {
+      "id": "4cbac67a-d96a-41af-8384-bd2ed5f64225",
+      "message": "offend soft sloppy ..."
+    }
+
+<h3>Retrieving a message</h3>
+
+Request
+
+    GET http://crypto2.us-east-2.elasticbeanstalk.com/api/message/{x}
+
+Response
+
+    HTTP 200
+    {
+      "id": "4cbac67a-d96a-41af-8384-bd2ed5f64225",
+      "message": "offend soft sloppy ..."
+    }
 
 <h2>Simulation controller</h2>
 This controller allows you to start a simulation.
