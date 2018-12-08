@@ -78,14 +78,13 @@ public class HillClimber {
         // keyGenerator.printKey(key);
 
         // compute ciphertext digraph
-        double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
+        // double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
         // create a deep copy
         HashMap<String, ArrayList<Integer>> result = SerializationUtils.clone(key);
 
-        // TODO - why 12 rounds?
-        for (int i = 0; i < 12; i++) {
-            result = climbHill(result, plaintext, cipher, ciphertext);
+        for (int i : ciphertext) {
+            result = climbHill(result, plaintext, ciphertext);
         }
 
         levenshteiner.distanceSwap(result, ciphertext);
@@ -97,9 +96,7 @@ public class HillClimber {
     }
 
     private HashMap<String, ArrayList<Integer>> climbHill(HashMap<String, ArrayList<Integer>> key,
-                                                           double[][] plaintext, double[][] cipher, int[] ciphertext) {
-
-        // create a deep copy
+                                                           double[][] plaintext, int[] ciphertext) {
 
         // we start by computing the initial putative digraph
         String putativeText = decryptor.decrypt(key, ciphertext);
@@ -107,47 +104,77 @@ public class HillClimber {
 
         //compute our initial score
         double score = score(plaintext, putative);
-        // logger.info("initial score: " + score);
 
-        // next we iterate over the ciphertext digraph to find the closest % match to the plaintext digraph
-        for (int i = 0; i < cipher.length; i++) {
-            for (int j = 0; j < cipher[i].length; j++) {
-                // choose two random letters
-                String firstLetter = "";
-                String secondLetter = "";
-                while (firstLetter.equals(secondLetter)) {
-                    firstLetter = alphabet[random.nextInt(alphabet.length)];
-                    secondLetter = alphabet[random.nextInt(alphabet.length)];
+        double max = 0;
+        int row = 0;
+        int column = 0;
+
+        // TODO - store additional state here! :)
+
+        // next we iterate over the putative digraph to find the biggest % match diff to the dictionary digraph
+        for (int i = 0; i < putative.length; i++) {
+            for (int j = 0; j < putative[i].length; j++) {
+                double value = Math.abs(putative[i][j] - plaintext[i][j]);
+                if (value > max) {
+                    max = value;
+                    row = i;
+                    column = j;
                 }
 
-                // TODO - find biggest offenders in putative vs dictionary digraph and swap with each other!
-                // get two random numbers from the letters' keyspace and swap them
-                Integer k = key.get(firstLetter).get(random.nextInt(key.get(firstLetter).size()));
-                Integer n = key.get(secondLetter).get(random.nextInt(key.get(secondLetter).size()));
-
-                // logger.info(firstLetter + " : " + k + " <-> " + secondLetter + " : " + n);
-                key = swap(key, firstLetter, secondLetter, k, n);
-
-                // compute the new score
-                putativeText = decryptor.decrypt(key, ciphertext);
-                putative = digrapher.computePutativeDigraph(putativeText);
-                double current = score(plaintext, putative);
-
-                // if the new score is greater than the old score, unswap
-                if (current > score) {
-                    // logger.info("unswap!");
-                    key = swap(key, firstLetter, secondLetter, n, k);
-                    // keyGenerator.printKey(result);
-                    continue;
-                }
-
-                score = current;
-                // logger.info("updated score: " + score);
-                // keyGenerator.printKey(result);
             }
         }
-        // logger.info("final key: ");
-        // keyGenerator.printKey(result);
+
+        String firstLetter = "";
+        String secondLetter = "";
+        Integer x;
+        Integer y;
+
+        // if i = j, swap two random letters instead
+        if (row == column) {
+
+            // choose two random letters
+            while (firstLetter.equals(secondLetter)) {
+                firstLetter = alphabet[random.nextInt(alphabet.length)];
+                secondLetter = alphabet[random.nextInt(alphabet.length)];
+            }
+
+            // get two random numbers from the letters' keyspace and swap them
+            x = key.get(firstLetter).get(random.nextInt(key.get(firstLetter).size()));
+            y = key.get(secondLetter).get(random.nextInt(key.get(secondLetter).size()));
+
+            logger.info("random swap | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
+            key = swap(key, firstLetter, secondLetter, x, y);
+        }
+
+        // swap keys with one another
+        else {
+
+            firstLetter = getLetterAssociation(key, row).get();
+            secondLetter = getLetterAssociation(key, column).get();
+
+            // FIXME - no randomness here, try to store a state and clear the state when new letters are picked
+            // issue is useless attempts being made
+            ArrayList<Integer> firstList = key.get(firstLetter);
+            x = firstList.get(random.nextInt(firstList.size()));
+
+            ArrayList<Integer> secondList = key.get(secondLetter);
+            y = secondList.get(random.nextInt(secondList.size()));
+
+            logger.info("optimal swap | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
+            key = swap(key, firstLetter, secondLetter, x, y);
+        }
+
+        // compute the new score
+        putativeText = decryptor.decrypt(key, ciphertext);
+        putative = digrapher.computePutativeDigraph(putativeText);
+        double current = score(plaintext, putative);
+
+        // if the new score is greater than the old score, unswap
+        if (current > score) {
+            logger.info("un-swap!");
+            key = swap(key, firstLetter, secondLetter, y, x);
+        }
+
         return key;
     }
 

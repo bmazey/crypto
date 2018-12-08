@@ -101,7 +101,7 @@ public class HillClimberTest {
         int positive = 0;
         int negative = 0;
 
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < 3; j++) {
             Simulation simulation = simulator.createSimulation();
             String plaintext = simulation.getMessage();
 
@@ -115,11 +115,11 @@ public class HillClimberTest {
             HashMap<String, ArrayList<Integer>> ikey = climb.getInitialKey();
             HashMap<String, ArrayList<Integer>> pkey = climb.getPutativeKey();
 
-            logger.info("initial key: ");
-            keyGenerator.printKey(ikey);
+            //logger.info("initial key: ");
+            //keyGenerator.printKey(ikey);
 
-            logger.info("putative key: ");
-            keyGenerator.printKey(pkey);
+            //logger.info("putative key: ");
+            //keyGenerator.printKey(pkey);
 
 
             // score of initial key guess against actual key
@@ -129,7 +129,7 @@ public class HillClimberTest {
                 ArrayList<Integer> list = key.get(keyval);
                 for (Integer i : ilist) {
                     if (list.contains(i)) {
-                        logger.info("matched <" + keyval + " : " + i + "> in initial");
+                        //logger.info("matched <" + keyval + " : " + i + "> in initial");
                         iscore++;
                     }
                 }
@@ -142,18 +142,18 @@ public class HillClimberTest {
                 ArrayList<Integer> list = key.get(keyval);
                 for (Integer i : plist) {
                     if (list.contains(i)) {
-                        logger.info("matched <" + keyval + " : " + i + "> in putative");
+                        //logger.info("matched <" + keyval + " : " + i + "> in putative");
                         pscore++;
                     }
                 }
             }
 
             // score of putative key should always be greater or equal to the initial key
-            logger.info("initial key score: " + iscore);
-            logger.info("putative key score: " + pscore);
+            //logger.info("initial key score: " + iscore);
+            //logger.info("putative key score: " + pscore);
 
-            logger.info("putative : " + putative);
-            logger.info("plaintext: " + plaintext);
+            //logger.info("putative : " + putative);
+            //logger.info("plaintext: " + plaintext);
 
             if (pscore > iscore) positive++;
             else negative++;
@@ -162,5 +162,7 @@ public class HillClimberTest {
         logger.info(positive + " | " + negative);
         assert positive > negative;
     }
+
+    // TODO - write a test to measure which portions of the key are the most accurate.
 
 }
