@@ -120,6 +120,7 @@ public class HillClimber {
                     secondLetter = alphabet[random.nextInt(alphabet.length)];
                 }
 
+                // TODO - find biggest offenders in putative vs dictionary digraph and swap with each other!
                 // get two random numbers from the letters' keyspace and swap them
                 Integer k = key.get(firstLetter).get(random.nextInt(key.get(firstLetter).size()));
                 Integer n = key.get(secondLetter).get(random.nextInt(key.get(secondLetter).size()));
