@@ -30,12 +30,12 @@ http://crypto2.us-east-2.elasticbeanstalk.com/swagger-ui.html
 
 The various controllers available in the API are listed below.
 
-<h2>Ciphertext controller</h2>
+<h2>Ciphertext Controller</h2>
 
 This controller allows you to generate a ciphertext.
 The ciphertext can be generated two different ways.
 
-<h3>Mod calculation</h3>
+<h3>Mod Calculation</h3>
 
 Request
 
@@ -53,7 +53,7 @@ Response
        ]
     }
 
-<h3>Random calculation</h3>
+<h3>Random Calculation</h3>
 
 Request
 
@@ -71,7 +71,7 @@ Response
        ]
     }
 
-<h2>Dictionary controller</h2>
+<h2>Dictionary Controller</h2>
 This controller allows you to generate a ciphertext.
 The ciphertext can be generated two different ways.
 
@@ -93,7 +93,7 @@ Response
         ]
     }
 
-<h3>Chosen size</h3>
+<h3>Chosen Size</h3>
 
 Request
 
@@ -111,9 +111,9 @@ Response
         ]
     }
 
-<h2>Key controller</h2>
+<h2>Key Controller</h2>
 This controller allows you to generate a random key.
-
+&nbsp;
 Request
 
     GET http://crypto2.us-east-2.elasticbeanstalk.com/api/key
@@ -130,11 +130,11 @@ Response
         ]
     }
 
-<h2>Message controller</h2>
+<h2>Message Controller</h2>
 This controller allows you to generate a message - ID pair.
 Additionally, it allows you to retrieve a specific message using the ID related to that message.
 
-<h3>Message generator</h3>
+<h3>Message Generator</h3>
 
 Request
 
@@ -148,7 +148,7 @@ Response
       "message": "offend soft sloppy ..."
     }
 
-<h3>Retrieving a message</h3>
+<h3>Retrieving A Message</h3>
 
 Request
 
@@ -162,11 +162,11 @@ Response
       "message": "offend soft sloppy ..."
     }
 
-<h2>Simulation controller</h2>
+<h2>Simulation Controller</h2>
 This controller allows you to start a simulation.
 It generates a random key as well as a random plaintext (using the default dictionary of 70 words).
 Finally, the respective ciphertext is created using the key over the plaintext.
-
+&nbsp;
 Request
 
     GET http://crypto2.us-east-2.elasticbeanstalk.com/api/simulation
