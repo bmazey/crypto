@@ -164,5 +164,6 @@ public class HillClimberTest {
     }
 
     // TODO - write a test to measure which portions of the key are the most accurate.
+    // TODO - perform chosen plaintext attack!
 
 }
