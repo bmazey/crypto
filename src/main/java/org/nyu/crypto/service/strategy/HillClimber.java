@@ -144,8 +144,8 @@ public class HillClimber {
 
             key = swap(key, firstLetter, secondLetter, x, y);
 
-            String letter = getLetterAssociation(key, row).get();
-            logger.info("random swap (" + letter + ") | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
+            //String letter = getLetterAssociation(key, row).get();
+            logger.info("random swap  | " + firstLetter + " : " + x + " <-> " + secondLetter + " : " + y);
         }
 
         // swap keys with one another
