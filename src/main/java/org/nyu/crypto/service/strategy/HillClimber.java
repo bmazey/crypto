@@ -1,6 +1,8 @@
 package org.nyu.crypto.service.strategy;
 
 
+import org.apache.commons.lang3.SerializationUtils;
+import org.nyu.crypto.dto.Climb;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.FrequencyGenerator;
 import org.nyu.crypto.service.KeyGenerator;
@@ -10,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
@@ -22,6 +22,9 @@ public class HillClimber {
 
     @Value("${key.space}")
     private int keyspace;
+
+    @Value("${charset.length}")
+    private int charset;
 
     @Autowired
     private Decryptor decryptor;
@@ -35,8 +38,13 @@ public class HillClimber {
     @Autowired
     private KeyGenerator keyGenerator;
 
+    @Autowired
+    private Levenshteiner levenshteiner;
+
     private final String[] alphabet = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p",
                                         "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "space"};
+
+    private Random random = new Random();
 
     private Logger logger = LoggerFactory.getLogger(HillClimber.class);
 
@@ -56,144 +64,94 @@ public class HillClimber {
      *
      */
 
-    public String climb(int[] ciphertext, double[][] plaintext) {
+    public Climb climb(int[] ciphertext, double[][] plaintext) {
 
-        // TODO - apply optimal heuristic key guess strategy as well
+        Climb climb = new Climb();
+        climb.setCiphertext(ciphertext);
+
         // start by generating a random key
         HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
 
-        for (String keyval : key.keySet()) {
-            ArrayList<Integer> list = key.get(keyval);
-            System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
-        }
+        // TODO - apply optimal heuristic key guess strategy as well
+        // here it is!
+        // HashMap<String, ArrayList<Integer>> key = keyGenerator.generatePutativeKey(ciphertext);
+
+        climb.setInitialKey(key);
+
+        // logger.info("initial key: ");
+        // keyGenerator.printKey(key);
 
         // compute ciphertext digraph
         double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
-        key = climbHill(key, plaintext, cipher, ciphertext);
+        // create a deep copy
+        HashMap<String, ArrayList<Integer>> result = SerializationUtils.clone(key);
 
-        return decryptor.decrypt(key, ciphertext);
+        // TODO - why 12 rounds?
+        for (int i = 0; i < 12; i++) {
+            result = climbHill(result, plaintext, cipher, ciphertext);
+        }
+
+        levenshteiner.distanceSwap(result, ciphertext);
+
+        // build Climb dto
+        climb.setPutativeKey(result);
+        climb.setPutative(decryptor.decrypt(result, ciphertext));
+        return climb;
     }
 
     private HashMap<String, ArrayList<Integer>> climbHill(HashMap<String, ArrayList<Integer>> key,
                                                            double[][] plaintext, double[][] cipher, int[] ciphertext) {
-        // we start by computing the putative digraph
-        String text = decryptor.decrypt(key, ciphertext);
-        double[][] putative = digrapher.computePutativeDigraph(text);
+
+        // create a deep copy
+
+        // we start by computing the initial putative digraph
+        String putativeText = decryptor.decrypt(key, ciphertext);
+        double[][] putative = digrapher.computePutativeDigraph(putativeText);
 
         //compute our initial score
         double score = score(plaintext, putative);
+        // logger.info("initial score: " + score);
 
         // next we iterate over the ciphertext digraph to find the closest % match to the plaintext digraph
         for (int i = 0; i < cipher.length; i++) {
             for (int j = 0; j < cipher[i].length; j++) {
-
-                // if the cell is 0, that means these two numbers never show up next to each other,
-                // there's nothing we can do
-                if(cipher[i][j] == 0) continue;
-
-                // initialize an optimal compare score
-                double subscore = Double.MAX_VALUE;
-                int cipherrow = 0;
-                int ciphercolumn = 0;
-
-                int kval = 0;
-                int nval = 0;
-
-                String kletter = "";
-                String nletter = "";
-
-                // inner nested loop to iterate over plaintext digraph
-                for (int k = 0; k < plaintext.length; k ++) {
-                    for (int n = 0; n < plaintext[k].length; n++) {
-                        double current = Math.abs(plaintext[k][n] - cipher[i][j]);
-                        if (current < subscore) {
-                            subscore = current;
-                            cipherrow = i;
-                            ciphercolumn = j;
-
-                            kval = k;
-                            nval = n;
-
-                            kletter = convert(k);
-                            nletter = convert(n);
-                        }
-                    }
+                // choose two random letters
+                String firstLetter = "";
+                String secondLetter = "";
+                while (firstLetter.equals(secondLetter)) {
+                    firstLetter = alphabet[random.nextInt(alphabet.length)];
+                    secondLetter = alphabet[random.nextInt(alphabet.length)];
                 }
 
-                // now we have a cipher digraph row # and column # of the most similar plaintext digraph occurrence
-                // k letter and n letter taken from the perfect digraph 'should' share these keys in their corresponding keyspaces
-                // get the current corresponding letter values in the putative key - these are the letters that are
-                // currently holding the numbers (cipherrow and ciphercolumn) we want to swap with k and n
-                String fletter = getLetterAssociation(key, cipherrow).get();
+                // TODO - find biggest offenders in putative vs dictionary digraph and swap with each other!
+                // get two random numbers from the letters' keyspace and swap them
+                Integer k = key.get(firstLetter).get(random.nextInt(key.get(firstLetter).size()));
+                Integer n = key.get(secondLetter).get(random.nextInt(key.get(secondLetter).size()));
 
-                // now we need to find the numbers in the k and n letters' keyspaces which are causing the most
-                // inaccurate scores ... we want to give those numbers up in exchange
-                // kletter number <-> fletter number / nletter number <-> sletter number
+                // logger.info(firstLetter + " : " + k + " <-> " + secondLetter + " : " + n);
+                key = swap(key, firstLetter, secondLetter, k, n);
 
-                // reset subscore to 0
-                subscore = 0;
-                Integer kswapval = 0;
+                // compute the new score
+                putativeText = decryptor.decrypt(key, ciphertext);
+                putative = digrapher.computePutativeDigraph(putativeText);
+                double current = score(plaintext, putative);
 
-                ArrayList<Integer> klist = key.get(kletter);
-                for (int w : klist) {
-                    // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[w]).sum() - Arrays.stream(putative[kval]).sum());
-                    if (current >= subscore) {
-                        subscore = current;
-                        kswapval = w;
-                    }
-                }
-
-                key = swap(key, kletter, fletter, kswapval, cipherrow);
-
-                String sletter = getLetterAssociation(key, ciphercolumn).get();
-
-                // reset subscore to 0
-                subscore = 0;
-                Integer nswapval = 0;
-
-                ArrayList<Integer> nlist = key.get(nletter);
-                for (int x : nlist) {
-                    // TODO - this might not be the best way to calculate the bad score
-                    double current = Math.abs(Arrays.stream(cipher[x]).sum() - Arrays.stream(putative[nval]).sum());
-                    if (current >= subscore) {
-                        subscore = current;
-                        nswapval = x;
-                    }
-                }
-
-                key = swap(key, nletter, sletter, nswapval, ciphercolumn);
-
-                logger.info(kletter + " : " + kswapval + " <-> " + fletter + " : " + cipherrow);
-
-                logger.info(nletter + " : " + nswapval + " <-> " + sletter + " : " + ciphercolumn);
-
-                text = decryptor.decrypt(key, ciphertext);
-                double[][] newputative = digrapher.computePutativeDigraph(text);
-
-                double current = score(plaintext, newputative);
-
-                // this is the bad case we want our matrices to be very similar - our swaps have moved us away
-                // from the 'ideal' solution ... un-swap
+                // if the new score is greater than the old score, unswap
                 if (current > score) {
-                    key = swap(key, nletter, sletter, ciphercolumn, nswapval);
-                    key = swap(key, kletter, fletter, cipherrow, kswapval);
+                    // logger.info("unswap!");
+                    key = swap(key, firstLetter, secondLetter, n, k);
+                    // keyGenerator.printKey(result);
                     continue;
                 }
 
-                putative = newputative;
                 score = current;
-                logger.info("updated putative score: " + score);
+                // logger.info("updated score: " + score);
+                // keyGenerator.printKey(result);
             }
         }
-
-        // TODO - move this to keygenerator as printKey() method;
-        for (String keyval : key.keySet()) {
-            ArrayList<Integer> list = key.get(keyval);
-            System.out.println(keyval + " : " + Arrays.toString(list.toArray()));
-        }
-
+        // logger.info("final key: ");
+        // keyGenerator.printKey(result);
         return key;
     }
 
@@ -247,7 +205,6 @@ public class HillClimber {
         return score;
     }
 
-    // TODO - check this to make sure it's converting correctly
     private String convert(int i) {
         assert i <= alphabet.length;
         return alphabet[i];
