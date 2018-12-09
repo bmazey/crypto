@@ -38,7 +38,6 @@ public class ChosenPlaintextAttack {
 
     private Logger logger = LoggerFactory.getLogger(ChosenPlaintextAttack.class);
 
-    @Test
     public void ChosenPlaintextAttackGen(){
 
         HashMap<String, ArrayList<Integer>> actualMap = keyGenerator.generateKey();
@@ -93,6 +92,20 @@ public class ChosenPlaintextAttack {
             round++;
         }
 
+        // Creating an ArrayList with all the values of the new key
+        ArrayList<Integer> allValues = new ArrayList<>();
+        for (String key: newMap.keySet())
+            allValues.addAll(newMap.get(key));
+
+        // Finding the value for the letter 'q'
+        ArrayList<Integer> qValue = new ArrayList<>();
+        for (int i = 0; i < 106; i++){
+            if (!allValues.contains(i)){
+                qValue.add(i);
+                newMap.put("q", qValue);
+            }
+        }
+
         logger.info("Number of rounds needed to discover full key: " + round);
 
         String plaintext = messageGenerator.generateMessage();
@@ -107,7 +120,7 @@ public class ChosenPlaintextAttack {
 
         // Asserting whether the number of keys in the new keymap is equal to 27
 
-        //assert (newMap.size() == charsetLength);
+        assert (newMap.size() == charsetLength);
 
         // Asserting whether the keyspace for each character is correct
         for (String key: newMap.keySet()){
