@@ -67,8 +67,32 @@ public class Levenshteiner {
     // TODO - implement!
     // call this at very end - find and replace all close matches
     public String generatePlaintext(String putative) {
+
         StringBuilder builder = new StringBuilder();
-        return "";
+        String[] putatives = putative.split(" ");
+        String[] words = dictionaryGenerator.generateDictionaryDto().getWords();
+        String plaintext;
+
+        int score;
+        String chosenWord = "";
+        String space = " ";
+
+        for (int i = 0; i < putatives.length; i++){
+            score = Integer.MAX_VALUE;
+            for (int j = 0; j < words.length; j++){
+                int temp = calculate(putatives[i], words[j]);
+                if (temp < score){
+                    score = temp;
+                    chosenWord = words[j];
+                }
+            }
+            builder.append(chosenWord);
+            builder.append(space);
+        }
+
+        plaintext = builder.toString();
+
+        return plaintext;
     }
 
 
