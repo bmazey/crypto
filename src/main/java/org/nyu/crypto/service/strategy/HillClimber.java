@@ -88,11 +88,13 @@ public class HillClimber {
         HashMap<String, ArrayList<Integer>> result = SerializationUtils.clone(key);
 
         // TODO - why 12 rounds?
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < keyspace; i++) {
+            if (i % 10 == 0) {
+                result = levenshteiner.distanceSwap(result, ciphertext);
+            }
             result = climbHill(result, plaintext, cipher, ciphertext);
-        }
 
-        levenshteiner.distanceSwap(result, ciphertext);
+        }
 
         // build Climb dto
         climb.setPutativeKey(result);
@@ -113,9 +115,9 @@ public class HillClimber {
         double score = score(plaintext, putative);
         // logger.info("initial score: " + score);
 
-        // next we iterate over the ciphertext digraph to find the closest % match to the plaintext digraph
-        for (int i = 0; i < cipher.length; i++) {
-            for (int j = 0; j < cipher[i].length; j++) {
+        // next we iterate to find the closest % match to the plaintext digraph
+        for (int i = 0; i < keyspace; i++) {
+            for (int j = 0; j < keyspace; j++) {
                 // choose two random letters
                 String firstLetter = "";
                 String secondLetter = "";
@@ -155,8 +157,9 @@ public class HillClimber {
         return key;
     }
 
+    // TODO - move this into KeyGenerator?
     // we use a key to track associations in the digraph matrix
-    private Optional<String> getLetterAssociation(HashMap<String, ArrayList<Integer>> map, Integer x) {
+    public Optional<String> getLetterAssociation(HashMap<String, ArrayList<Integer>> map, Integer x) {
         for (String key : map.keySet()) {
             ArrayList<Integer> list = map.get(key);
             if (list.contains(x)) return Optional.of(key);
@@ -165,7 +168,9 @@ public class HillClimber {
     }
 
     // given two numbers and two letters, swap the keyspace a <-> x and b <-> y
-    private HashMap<String, ArrayList<Integer>> swap(HashMap<String, ArrayList<Integer>> map,
+    // public for testing / levenshtein purposes
+    // TODO - move this into KeyGenerator?
+    public HashMap<String, ArrayList<Integer>> swap(HashMap<String, ArrayList<Integer>> map,
                                                      String a, String b, Integer x, Integer y) {
 
         // if the two letters are the same, swapping will not affect the result

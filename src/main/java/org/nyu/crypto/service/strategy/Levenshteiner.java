@@ -1,5 +1,6 @@
 package org.nyu.crypto.service.strategy;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.DictionaryGenerator;
 import org.slf4j.Logger;
@@ -7,9 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.IntStream;
 
 @Service
 public class Levenshteiner {
@@ -18,7 +18,12 @@ public class Levenshteiner {
     private DictionaryGenerator dictionaryGenerator;
 
     @Autowired
+    private HillClimber hillClimber;
+
+    @Autowired
     private Decryptor decryptor;
+
+    private Random random = new Random();
 
     private Logger logger = LoggerFactory.getLogger(Levenshteiner.class);
 
@@ -33,7 +38,7 @@ public class Levenshteiner {
         // split the putative into "words"
         String[] putatives = text.split(" ");
 
-        int max = Integer.MAX_VALUE;
+        int min = Integer.MAX_VALUE;
         int size = 0;
         String original = "";
         String swap = "";
@@ -41,14 +46,15 @@ public class Levenshteiner {
         for (String putative: putatives) {
             int currentSize = putative.length();
             for(String word: words) {
-                int i = calculate(word, putative);
+                if (word.length() != putative.length()) {
+                    continue;
+                }
 
-                // if the score is 0 it's a perfect match ... ignore it!
-                if (i == 0) continue;
+                int i = calculate(putative, word);
 
                 // FIXME - do we actually care about taking the largest all the time?
-                if (i <= max && currentSize >= size) {
-                    max = i;
+                if (i < min && currentSize > size) {
+                    min = i;
                     size = currentSize;
                     swap = word;
                     original = putative;
@@ -58,13 +64,55 @@ public class Levenshteiner {
 
         logger.info("original putative: " + original + " | swap word: " + swap);
 
-        // TODO - align by LCS and swap! don't forget to add space swap at beginning and end ...
+        int[] originalCiphers = Arrays.copyOfRange(ciphertext, text.indexOf(original), text.indexOf(original) + original.length());
+        logger.info(text);
+        logger.info(Arrays.toString(ciphertext));
+        logger.info(original);
+        logger.info(String.valueOf(text.indexOf(original)));
+        logger.info(String.valueOf(text.lastIndexOf(original)));
+        logger.info(Arrays.toString(originalCiphers));
 
+        assert originalCiphers.length == original.length();
+
+
+        // TODO - align by LCS and swap! don't forget to add space swap at beginning and end ...
+        // crazy case here: don't give up keyspace values that are being mapped correctly!
+        // ignore the space case, it's correct as far as we know
+        for (int i = 0; i < original.length(); i++) {
+            if (original.charAt(i) != swap.charAt(i)) {
+                String originalLetter = Character.toString(original.charAt(i));
+                String swapLetter = Character.toString(swap.charAt(i));
+
+                // originalCiphers[i] is the value we need to give up, we want to find a value to trade for, but it can't
+                // be mapped 'correctly' already
+                Integer swapval = 0;
+                ArrayList<Integer> plist = key.get(swapLetter);
+
+                swapval = plist.get(random.nextInt(plist.size()));
+
+                logger.info("trying to swap " + originalCiphers[i] + " from " + originalLetter + " and " + swapval + " from " + swapLetter);
+
+                key = hillClimber.swap(key, originalLetter, swapLetter, originalCiphers[i], swapval);
+
+
+                // FIXME!
+                // duplicates in the original ciphers array could mess things up after swap, so replace them
+                for(int n = 0; n < originalCiphers.length; n++) {
+                    if (originalCiphers[n] == swapval) {
+                        originalCiphers[n] = originalCiphers[i];
+                    }
+                }
+                logger.info("new ciphers: " + Arrays.toString(originalCiphers));
+            }
+        }
+
+        String newputative = decryptor.decrypt(key, ciphertext);
+        logger.info("new putative: " + newputative);
+        // assert newputative.contains(swap);
 
         return key;
     }
 
-    // TODO - implement!
     // call this at very end - find and replace all close matches
     public String generatePlaintext(String putative) {
 

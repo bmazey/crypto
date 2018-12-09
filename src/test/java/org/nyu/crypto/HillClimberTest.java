@@ -9,6 +9,7 @@ import org.nyu.crypto.service.KeyGenerator;
 import org.nyu.crypto.service.Simulator;
 import org.nyu.crypto.service.strategy.Digrapher;
 import org.nyu.crypto.service.strategy.HillClimber;
+import org.nyu.crypto.service.strategy.Levenshteiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +29,7 @@ public class HillClimberTest {
     private int spaceval;
 
     @Autowired
-    KeyGenerator keyGenerator;
+    private KeyGenerator keyGenerator;
 
     @Autowired
     private Simulator simulator;
@@ -38,6 +39,9 @@ public class HillClimberTest {
 
     @Autowired
     private Digrapher digrapher;
+
+    @Autowired
+    private Levenshteiner levenshteiner;
 
     private ObjectMapper mapper = new ObjectMapper();
 
@@ -101,7 +105,7 @@ public class HillClimberTest {
         int positive = 0;
         int negative = 0;
 
-        for (int j = 0; j < 10; j++) {
+        for (int j = 0; j < 5; j++) {
             Simulation simulation = simulator.createSimulation();
             String plaintext = simulation.getMessage();
 
@@ -153,6 +157,7 @@ public class HillClimberTest {
             logger.info("putative key score: " + pscore);
 
             logger.info("putative : " + putative);
+            logger.info("levenshtein: " + levenshteiner.generatePlaintext(putative));
             logger.info("plaintext: " + plaintext);
 
             if (pscore > iscore) positive++;
