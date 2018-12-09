@@ -1,6 +1,7 @@
 package org.nyu.crypto.service.strategy;
 
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.nyu.crypto.dto.Climb;
 import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.FrequencyGenerator;
@@ -69,11 +70,14 @@ public class HillClimber {
         // compute ciphertext digraph
         double[][] cipher = digrapher.computeCipherDigraph(ciphertext);
 
-        key = climbHill(key, plaintext, cipher, ciphertext);
+        // create a deep copy
+        HashMap<String, ArrayList<Integer>> result = SerializationUtils.clone(key);
+
+        result = climbHill(result, plaintext, cipher, ciphertext);
 
         // build Climb dto
-        climb.setPutativeKey(key);
-        climb.setPutative(decryptor.decrypt(key, ciphertext));
+        climb.setPutativeKey(result);
+        climb.setPutative(decryptor.decrypt(result, ciphertext));
         return climb;
     }
 
