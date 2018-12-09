@@ -72,8 +72,8 @@ Response
     }
 
 <h2>Dictionary Controller</h2>
-This controller allows you to generate a ciphertext.
-The ciphertext can be generated two different ways.
+This controller allows you to generate a dictionary.
+The dictionary can be generated two different ways.
 
 <h3>Fixed size (70 words)</h3>
 
@@ -132,7 +132,7 @@ Response
 
 <h2>Message Controller</h2>
 This controller allows you to generate a message - ID pair.
-Additionally, it allows you to retrieve a specific message using the ID related to that message.
+Additionally, it allows you to retrieve a specific message using the ID related to that particular message.
 
 <h3>Message Generator</h3>
 
@@ -165,7 +165,7 @@ Response
 <h2>Simulation Controller</h2>
 This controller allows you to start a simulation.
 It generates a random key as well as a random plaintext (using the default dictionary of 70 words).
-Finally, the respective ciphertext is created using the key over the plaintext.
+Finally, the respective ciphertext is created using the generated key over the generated plaintext.
 
 Request
 
