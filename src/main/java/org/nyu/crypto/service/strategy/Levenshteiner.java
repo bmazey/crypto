@@ -60,7 +60,15 @@ public class Levenshteiner {
 
         // TODO - align by LCS and swap! don't forget to add space swap at beginning and end ...
 
+
         return key;
+    }
+
+    // TODO - implement!
+    // call this at very end - find and replace all close matches
+    public String generatePlaintext(String putative) {
+        StringBuilder builder = new StringBuilder();
+        return "";
     }
 
 
