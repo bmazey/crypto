@@ -163,4 +163,6 @@ public class HillClimberTest {
          // assert positive > negative;
     }
 
+    // TODO test with perfect plaintext digraph
+
 }
