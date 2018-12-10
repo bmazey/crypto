@@ -120,6 +120,37 @@ public class GuessKey {
         return false;
     }
 
+    public boolean checkForBadGuessStrict(int[] ciphertext, PutativeKey[] keyList) {
+
+        /**
+         * Check if the first letter is being assigned as space. If it is rejects it
+         * immediately
+         */
+
+        if (keyList[ciphertext[0]].getAlphabet().equalsIgnoreCase("space"))
+            return true;
+        else {
+            HashMap<Integer, String> keysMap = new HashMap<Integer, String>();
+            for (int loop = 0; loop < keyList.length; loop++) {
+                keysMap.put(loop, keyList[loop].getAlphabet());
+            }
+            String plaintext = decryptor.decrypt(ciphertext, keysMap);
+            int space = 0;
+            for (int i = 0; i < plaintext.length() - 1; i++) {
+                int space1 = 0;
+                if (plaintext.charAt(i) == ' ' && plaintext.charAt(i + 1) == ' ')
+                    return true;
+                if (plaintext.charAt(i) == ' ') {
+                    space1 = i;
+                    if (space1 - space > 12)
+                        return true;
+                }
+                space = space1;
+            }
+        }
+        return false;
+    }
+
     public void swapKey(int[] ciphertext, PutativeKey[] key, int distance, int[][] message_digraph) throws Exception {
 
         // System.out.println("\nDistance " + distance + " -- > ");
@@ -174,7 +205,7 @@ public class GuessKey {
                 String val = key[i].getAlphabet();
                 key[i].setAlphabet(key[i + distance].getAlphabet());
                 key[i + distance].setAlphabet(val);
-                if (checkForBadGuess(ciphertext, key)) {
+                if (checkForBadGuessStrict(ciphertext, key)) {
                     key = copyArray(tempKey, key);
                 } else {
                     messages = new String[1];
@@ -182,7 +213,7 @@ public class GuessKey {
                     double score = calculateScore(digraphService.createFrequencyDigraph(messages),
                             message_digraph);
                     //score <= initval+0.07 || score <= initval + 0.0059
-                    if (score <= initval + 0.07 || score <= initval + 0.3) {
+                    if (score <= initval + 0.065 || score <= initval + 0.35) {
                         initval = score;
                         swaps++;
                         tempKey = copyArray(key, tempKey);

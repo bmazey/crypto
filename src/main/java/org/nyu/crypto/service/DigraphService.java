@@ -4,10 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,12 +80,14 @@ public class DigraphService {
         return finalFrequency;
     }
 
-    protected double[][] getFrequencyDigraph() {
+    public double[][] getFrequencyDigraph() {
 
         double[][] finalFrequency = new double[dimension][dimension];
         BufferedReader br = null;
         try {
-            br = new BufferedReader(new FileReader(new File("resources/frequency_digraph.txt")));
+            InputStream frequencyStream = new ClassPathResource("frequency_digraph.txt").getInputStream();
+            //br = new BufferedReader(new FileReader(new File("resources/frequency_digraph.txt")));
+            br = new BufferedReader(new InputStreamReader(frequencyStream));
             String value = br.readLine();
             int row = 0;
             while (null != value) {
