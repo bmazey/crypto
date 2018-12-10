@@ -186,7 +186,7 @@ public class GuessKey {
         }
     }
 
-    public void swapKey(int[] ciphertext, PutativeKey[] key, int distance, double[][] message_digraph)
+    public void swapKey(int[] ciphertext, PutativeKey[] key, int distance, double[][] message_digraph, boolean strict)
             throws Exception {
 
         PutativeKey[] tempKey = new PutativeKey[key.length];
@@ -205,7 +205,12 @@ public class GuessKey {
                 String val = key[i].getAlphabet();
                 key[i].setAlphabet(key[i + distance].getAlphabet());
                 key[i + distance].setAlphabet(val);
-                if (checkForBadGuessStrict(ciphertext, key)) {
+                if (strict) {
+                    strict = checkForBadGuessStrict(ciphertext, key);
+                } else {
+                    strict = checkForBadGuess(ciphertext, key);
+                }
+                if (strict) {
                     key = copyArray(tempKey, key);
                 } else {
                     messages = new String[1];

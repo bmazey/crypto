@@ -87,7 +87,7 @@ public class HillClimberPaperSimulationTest {
                 System.out.println(guessvalue);
                 // Changed the distance value from 26 to 106
                 for (int distance = 1; distance < 106; distance++) {
-                    guessKey.swapKey(cipher, keyGuess, distance, digraphService.getFrequencyDigraph());
+                    guessKey.swapKey(cipher, keyGuess, distance, digraphService.getFrequencyDigraph(), false);
                 }
                 System.out.println("Key Guess After ");
                 guessKey.printKey(keyGuess);
