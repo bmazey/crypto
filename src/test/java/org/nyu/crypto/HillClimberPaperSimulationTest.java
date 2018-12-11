@@ -118,7 +118,8 @@ public class HillClimberPaperSimulationTest {
                         digraphService.getFrequencyDigraph());
                 System.out.println(guessvalue);
             }
-            System.out.println(decrypt.decrypt(cipher, keyGuess));
+            System.out.println("Least Score:" + least);
+            System.out.println(decrypt.decrypt(cipher, bestKeyGuess));
             System.out.println(message);
             // Changed the distance value from 26 to 106
         }catch (Exception e) {
