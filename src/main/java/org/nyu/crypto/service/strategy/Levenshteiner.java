@@ -98,8 +98,9 @@ public class Levenshteiner {
                 // FIXME!
                 // duplicates in the original ciphers array could mess things up after swap, so replace them
                 for(int n = 0; n < originalCiphers.length; n++) {
-                    if (originalCiphers[n] == swapval) {
-                        originalCiphers[n] = originalCiphers[i];
+                    if (originalCiphers[n] == originalCiphers[i]) {
+                        logger.info("updating ciphers at position " + n + ": " + originalCiphers[n] + " becoming " + swapval);
+                        originalCiphers[n] = swapval;
                     }
                 }
                 logger.info("new ciphers: " + Arrays.toString(originalCiphers));
