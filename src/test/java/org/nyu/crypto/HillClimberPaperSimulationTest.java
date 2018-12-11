@@ -88,6 +88,9 @@ public class HillClimberPaperSimulationTest {
                     digraphService.getFrequencyDigraph());
             double least = guessvalue;
             PutativeKey[] bestKeyGuess = new PutativeKey[106];
+            for (int loop = 0; loop < 106; loop++) {
+                bestKeyGuess[loop] = new PutativeKey();
+            }
             guessKey.copyArray(keyGuess, bestKeyGuess);
             System.out.println(guessvalue);
             for (int i = 1; i < 250; i++) {
