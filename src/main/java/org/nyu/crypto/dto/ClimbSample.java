@@ -3,7 +3,8 @@ package org.nyu.crypto.dto;
 public class ClimbSample {
 
     private int[] ciphertext;
-    private String message;
+
+    private int[][] digraph;
 
     public int[] getCiphertext() {
         return ciphertext;
@@ -13,12 +14,11 @@ public class ClimbSample {
         this.ciphertext = ciphertext;
     }
 
-    public String getMessage() {
-        return message;
+    public int[][] getDigraph() {
+        return digraph;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setDigraph(int[][] digraph) {
+        this.digraph = digraph;
     }
-
 }

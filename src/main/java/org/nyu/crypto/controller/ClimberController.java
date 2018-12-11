@@ -1,8 +1,10 @@
 package org.nyu.crypto.controller;
 
 import org.nyu.crypto.dto.Ciphertext;
+import org.nyu.crypto.dto.ClimbPaper;
 import org.nyu.crypto.dto.ClimbSample;
 import org.nyu.crypto.dto.Simulation;
+import org.nyu.crypto.service.DigraphService;
 import org.nyu.crypto.service.KeyGenerator;
 import org.nyu.crypto.service.Simulator;
 import org.nyu.crypto.service.strategy.HillClimberPaper;
@@ -20,6 +22,9 @@ public class ClimberController {
     private Simulator simulator;
 
     @Autowired
+    private DigraphService digraphService;
+
+    @Autowired
     private HillClimberPaper hillClimberPaper;
 
     @RequestMapping(value = "/api/climb", method = RequestMethod.GET)
@@ -29,7 +34,7 @@ public class ClimberController {
         ClimbSample sample = new ClimbSample();
         Simulation simulation = simulator.createSimulation();
         sample.setCiphertext(simulation.getCiphertext());
-        sample.setMessage(simulation.getMessage());
+        sample.setDigraph(digraphService.getDigraphArray(simulation.getMessage()));
 
         return ResponseEntity.ok(sample);
     }
@@ -37,7 +42,8 @@ public class ClimberController {
     @RequestMapping(value = "/api/climb/plaintext", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<?> performPerfectPlainText(@RequestBody ClimbSample sample) {
-        return ResponseEntity.ok(hillClimberPaper.climbPlaintextDigraph(sample.getCiphertext(), sample.getMessage()));
+        ClimbPaper climb = hillClimberPaper.climbPlaintextDigraph(sample.getCiphertext(), sample.getDigraph());
+        return ResponseEntity.ok(climb.getPutative());
     }
 
     @RequestMapping(value = "/api/climb/frequency", method = RequestMethod.POST)

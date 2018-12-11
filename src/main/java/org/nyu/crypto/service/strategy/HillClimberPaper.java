@@ -27,24 +27,24 @@ public class HillClimberPaper {
     @Autowired
     private DigraphService digraphService;
 
-    public ClimbPaper climbPlaintextDigraph(int[] ciphertext, String plaintext) {
-            String message = plaintext;
+    public ClimbPaper climbPlaintextDigraph(int[] ciphertext, int[][] plaintext) {
+
             int[] cipher = ciphertext;
             PutativeKey[] keyGuess = guessKey.getKey(cipher);
             System.out.print(cipher);
             for (int i = 0; i < 50; i++) {
                 int guessvalue = guessKey.calculateScore(digraphService.getDigraphArray(decrypt.decrypt(cipher, keyGuess)),
-                        digraphService.getDigraphArray(message));
+                        plaintext);
                 // Changed the distance value from 26 to 106
                 for (int distance = 1; distance < 106; distance++) {
                     try {
-                        guessKey.swapKey(cipher, keyGuess, distance, digraphService.getDigraphArray(message));
+                        guessKey.swapKey(cipher, keyGuess, distance, plaintext);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 guessvalue = guessKey.calculateScore(digraphService.getDigraphArray(decrypt.decrypt(cipher, keyGuess)),
-                        digraphService.getDigraphArray(message));
+                        plaintext);
                 if (guessvalue == 0)
                     break;
             }
