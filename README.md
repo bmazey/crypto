@@ -207,17 +207,28 @@ Response
         <ul>
           <li>
             <b>Hill Climbing with Hueristic Guess and Levenshtein feedback</b>
-            This approach found took the putative key guess to a closer match in 75% of the simulations.
+            This approach found took the putative key guess to a closer match in 75% of the simulations. Approach was implemented by using perfect plaintext digraph as well as the average english language digraph.
           </li>
           <li>
             <b>Hill Climbing with Random key guess with mninor restriction</b>
-            This approach found took the putative key guess to a closer match in 75% of the simulations.
-
+            This approach found took the putative key guess to a closer match in 65% of the simulations. Approach was implemented by using perfect plaintext digraph as well as the average english language digraph.
           </li>
         </ul>
       </p>
     </li>
-    
+    <li>
+      <h3>Hill Climbing as mentioned in Paper</h3>
+      <p>This strategy was implemented with a minor modification to the traditional hill climbing and produced results and tested against both perfect plaintext digraphs and the average frequency digraphs. The foundations of the approach was based on the a research paper <i>Homophonic Substitution Ciphers</i> which can be found here <a href="http://www.cs.sjsu.edu/~stamp/RUA/homophonic.pdf">Homophonic Substitution Cipher</a>
+        <ul>
+          <li><h4>With perfect Digraph frequency</h4>
+            The modified hill climbing approach was used to modify the hill climbing with a "nudge", at the right positions to make it reach the global maxima and cracking the <b>100%</b> decrypt <b>95%</b> of the times and in <b>all</b> cases, the approach is able to get more than 95% of the key. 
+          </li>
+          <li><h4>With average English language digraph</h4>
+            After generating 500 random messages and calculating the digraphs in percentage of total occurrence, a percentage digraph was pre-computed. It guesses 70% of the key, resulting in a substantial amount of partial decrypts in most of the cases.
+          </li>
+        </ul>
+      </p>
+    </li>
   </ol>
 </p>
 Please direct any issues or questions to b.mazey@nyu.edu / sb6856@nyu.edu / fvl209@nyu.edu / ys3334@nyu.edu
