@@ -101,63 +101,61 @@ public class HillClimberTest {
         int positive = 0;
         int negative = 0;
 
-        for (int j = 0; j < 10; j++) {
-            Simulation simulation = simulator.createSimulation();
-            String plaintext = simulation.getMessage();
+        Simulation simulation = simulator.createSimulation();
+        String plaintext = simulation.getMessage();
 
-            // now compute plaintext digraph for our experiment
-            double[][] digraph = digrapher.computeDictionaryDigraph();
+        // now compute plaintext digraph for our experiment
+        double[][] digraph = digrapher.computeDictionaryDigraph();
 
-            Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
-            String putative = climb.getPutative();
+        Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
+        String putative = climb.getPutative();
 
-            HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
-            HashMap<String, ArrayList<Integer>> ikey = climb.getInitialKey();
-            HashMap<String, ArrayList<Integer>> pkey = climb.getPutativeKey();
+        HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
+        HashMap<String, ArrayList<Integer>> ikey = climb.getInitialKey();
+        HashMap<String, ArrayList<Integer>> pkey = climb.getPutativeKey();
 
-            logger.info("initial key: ");
-            keyGenerator.printKey(ikey);
+        logger.info("initial key: ");
+        keyGenerator.printKey(ikey);
 
-            logger.info("putative key: ");
-            keyGenerator.printKey(pkey);
+        logger.info("putative key: ");
+        keyGenerator.printKey(pkey);
 
 
-            // score of initial key guess against actual key
-            int iscore = 0;
-            for (String keyval : ikey.keySet()) {
-                ArrayList<Integer> ilist = ikey.get(keyval);
-                ArrayList<Integer> list = key.get(keyval);
-                for (Integer i : ilist) {
-                    if (list.contains(i)) {
-                        logger.info("matched <" + keyval + " : " + i + "> in initial");
-                        iscore++;
-                    }
+        // score of initial key guess against actual key
+        int iscore = 0;
+        for (String keyval : ikey.keySet()) {
+            ArrayList<Integer> ilist = ikey.get(keyval);
+            ArrayList<Integer> list = key.get(keyval);
+            for (Integer i : ilist) {
+                if (list.contains(i)) {
+                    logger.info("matched <" + keyval + " : " + i + "> in initial");
+                    iscore++;
                 }
             }
-
-            // score of putative key against actual key
-            int pscore = 0;
-            for (String keyval : pkey.keySet()) {
-                ArrayList<Integer> plist = pkey.get(keyval);
-                ArrayList<Integer> list = key.get(keyval);
-                for (Integer i : plist) {
-                    if (list.contains(i)) {
-                        logger.info("matched <" + keyval + " : " + i + "> in putative");
-                        pscore++;
-                    }
-                }
-            }
-
-            // score of putative key should always be greater or equal to the initial key
-            logger.info("initial key score: " + iscore);
-            logger.info("putative key score: " + pscore);
-
-            logger.info("putative : " + putative);
-            logger.info("plaintext: " + plaintext);
-
-            if (pscore > iscore) positive++;
-            else negative++;
         }
+
+        // score of putative key against actual key
+        int pscore = 0;
+        for (String keyval : pkey.keySet()) {
+            ArrayList<Integer> plist = pkey.get(keyval);
+            ArrayList<Integer> list = key.get(keyval);
+            for (Integer i : plist) {
+                if (list.contains(i)) {
+                    logger.info("matched <" + keyval + " : " + i + "> in putative");
+                    pscore++;
+                }
+            }
+        }
+
+        // score of putative key should always be greater or equal to the initial key
+        logger.info("initial key score: " + iscore);
+        logger.info("putative key score: " + pscore);
+
+        logger.info("putative : " + putative);
+        logger.info("plaintext: " + plaintext);
+
+        if (pscore > iscore) positive++;
+        else negative++;
 
         logger.info(positive + " | " + negative);
          // assert positive > negative;

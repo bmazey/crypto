@@ -54,7 +54,7 @@ public class GuessKey {
                 if (!checkForBadGuess(cipher_text, keyList))
                     goodGuess = true;
             } while (!goodGuess);
-            System.out.println("Initial Guess Key");
+            //System.out.println("Initial Guess Key");
             printKey(keyList);
         } catch (Exception e) {
             e.printStackTrace();
@@ -219,7 +219,7 @@ public class GuessKey {
                         //System.out.println("*************************************"+d1);
                         swaps++;
                         tempKey = copyArray(key, tempKey);
-                        System.out.print(initval + "-->");
+                        //System.out.print(initval + "-->");
                     } else {
                         key = copyArray(tempKey, key);
                     }
