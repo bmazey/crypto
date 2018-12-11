@@ -213,8 +213,11 @@ public class GuessKey {
                     double score = calculateScore(digraphService.createFrequencyDigraph(messages),
                             message_digraph);
                     //score <= initval+0.07 || score <= initval + 0.0059
-                    if (score <= initval+0.07123456789 || score <= initval + 0.35987){
+                    //0.35276
+                    if (
+                            score <= initval + 0.35276){
                         initval = score;
+                        //System.out.println("*************************************"+d1);
                         swaps++;
                         tempKey = copyArray(key, tempKey);
                         System.out.print(initval + "-->");

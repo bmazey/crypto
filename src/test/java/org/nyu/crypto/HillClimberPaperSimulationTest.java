@@ -78,8 +78,8 @@ public class HillClimberPaperSimulationTest {
             PutativeKey[] keyGuess = guessKey.getKey(cipher);
             System.out.print(cipher);
             double d2=0.0;
-            double d1=0.0;
-            for (int i = 0; i < 100; i++) {
+            double d1=0.35276;
+            for (int i = 0; i < 250; i++) {
                 System.out.println("Guess " + (i + 1));
                 System.out.println("Key Guess Before");
                 guessKey.printKey(keyGuess);
@@ -89,43 +89,17 @@ public class HillClimberPaperSimulationTest {
                         digraphService.getFrequencyDigraph());
                 System.out.println(guessvalue);
                 // Changed the distance value from 26 to 106
+
                 for (int distance = 1; distance < 106; distance++) {
 
-                    guessKey.swapKey(cipher, keyGuess, distance, digraphService.getFrequencyDigraph(),0,0);
+                    guessKey.swapKey(cipher, keyGuess, distance, digraphService.getFrequencyDigraph(),d1,0);
                 }
                 System.out.println("Key Guess After ");
                 guessKey.printKey(keyGuess);
                 carry[0] = decrypt.decrypt(cipher, keyGuess);
                 guessvalue = guessKey.calculateScore(digraphService.createFrequencyDigraph(carry),
                         digraphService.getFrequencyDigraph());
-                if(guessvalue<=85 && guessvalue>=60)
-                {
-                    d1=0.1;
-                    System.out.println("CASE:1>>>> "+guessvalue);
-                }
-                else if(guessvalue<=60 && guessvalue>=55)
-                {
-                    d1=0.45;
-                    System.out.println("STUCk");
-                    d2=0.0;
-                    System.out.println("CASE:2>>>> "+guessvalue);
-                }
-                else if(guessvalue<=55 && guessvalue>=45)
-                {
-                    d1=0.35;
-                    d2=0.0;
-                    System.out.println("CASE:3>>>> "+guessvalue);
-                }
-                else if(guessvalue<=45)
-                {
-                    d1=0.3;
-                    d2=0.0;
-                    System.out.println("CASE:4>>>> "+guessvalue);
-                }
-                else{
-                    System.out.println("STRICT "+guessvalue);
-                    d1=0;d2=0;
-                }
+
                 System.out.println(decrypt.decrypt(cipher, keyGuess));
                 System.out.println(guessvalue + "\n=====================================");
             }
