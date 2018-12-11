@@ -260,7 +260,7 @@ public class GuessKey {
         return sum;
     }
 
-    private PutativeKey[] copyArray(PutativeKey[] srcs, PutativeKey[] dests) {
+    public PutativeKey[] copyArray(PutativeKey[] srcs, PutativeKey[] dests) {
 
         for (int loop = 0; loop < srcs.length; loop++) {
             dests[loop].setAlphabet(srcs[loop].getAlphabet());

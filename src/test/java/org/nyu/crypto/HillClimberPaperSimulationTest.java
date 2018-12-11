@@ -79,19 +79,19 @@ public class HillClimberPaperSimulationTest {
             System.out.print(cipher);
             double d2=0.0;
             double d1=0.35276;
-            for (int i = 0; i < 250; i++) {
-                System.out.println("Guess " + (i + 1));
-                System.out.println("Key Guess Before");
-                guessKey.printKey(keyGuess);
-                String[] carry = new String[1];
-                carry[0] = decrypt.decrypt(cipher, keyGuess);
-                double guessvalue = guessKey.calculateScore(digraphService.createFrequencyDigraph(carry),
-                        digraphService.getFrequencyDigraph());
-                System.out.println(guessvalue);
-                // Changed the distance value from 26 to 106
-
+            System.out.println("Guess 1");
+            System.out.println("Key Guess Before");
+            guessKey.printKey(keyGuess);
+            String[] carry = new String[1];
+            carry[0] = decrypt.decrypt(cipher, keyGuess);
+            double guessvalue = guessKey.calculateScore(digraphService.createFrequencyDigraph(carry),
+                    digraphService.getFrequencyDigraph());
+            double least = guessvalue;
+            PutativeKey[] bestKeyGuess = new PutativeKey[106];
+            guessKey.copyArray(keyGuess, bestKeyGuess);
+            System.out.println(guessvalue);
+            for (int i = 1; i < 250; i++) {
                 for (int distance = 1; distance < 106; distance++) {
-
                     guessKey.swapKey(cipher, keyGuess, distance, digraphService.getFrequencyDigraph(),d1,0);
                 }
                 System.out.println("Key Guess After ");
@@ -102,9 +102,22 @@ public class HillClimberPaperSimulationTest {
 
                 System.out.println(decrypt.decrypt(cipher, keyGuess));
                 System.out.println(guessvalue + "\n=====================================");
+                if (guessvalue < least) {
+                    least = guessvalue;
+                    guessKey.copyArray(keyGuess, bestKeyGuess);
+                }
+                System.out.println("Guess " + (i + 1));
+                System.out.println("Key Guess Before");
+                guessKey.printKey(keyGuess);
+                carry = new String[1];
+                carry[0] = decrypt.decrypt(cipher, keyGuess);
+                guessvalue = guessKey.calculateScore(digraphService.createFrequencyDigraph(carry),
+                        digraphService.getFrequencyDigraph());
+                System.out.println(guessvalue);
             }
             System.out.println(decrypt.decrypt(cipher, keyGuess));
             System.out.println(message);
+            // Changed the distance value from 26 to 106
         }catch (Exception e) {
             e.printStackTrace();
         }
