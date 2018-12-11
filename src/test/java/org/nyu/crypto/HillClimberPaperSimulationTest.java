@@ -76,7 +76,8 @@ public class HillClimberPaperSimulationTest {
             int[] cipher = encryptor.encrypt(keyGenerator.generateKey(), message);
             PutativeKey[] keyGuess = guessKey.getKey(cipher);
             System.out.print(cipher);
-            for (int i = 0; i < 50; i++) {
+            int tolerance = 2;
+            for (int i = 0; i < 100; i++) {
                 System.out.println("Guess " + (i + 1));
                 System.out.println("Key Guess Before");
                 guessKey.printKey(keyGuess);
