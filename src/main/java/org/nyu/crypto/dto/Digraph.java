@@ -2,14 +2,23 @@ package org.nyu.crypto.dto;
 
 public class Digraph {
 
-    // FIXME - this is not what we need
-    private double[][] digraph;
+    private String plaintext;
 
-    public double[][] getDigraph() {
+    private int[][] digraph;
+
+    public int[][] getDigraph() {
         return digraph;
     }
 
-    public void setDigraph(double[][] digraph) {
+    public void setDigraph(int[][] digraph) {
         this.digraph = digraph;
+    }
+
+    public String getPlaintext() {
+        return plaintext;
+    }
+
+    public void setPlaintext(String plaintext) {
+        this.plaintext = plaintext;
     }
 }
