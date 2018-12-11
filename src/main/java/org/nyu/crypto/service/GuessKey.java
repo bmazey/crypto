@@ -214,8 +214,7 @@ public class GuessKey {
                             message_digraph);
                     //score <= initval+0.07 || score <= initval + 0.0059
                     //0.35276
-                    if (
-                            score <= initval + 0.35276){
+                    if (score <= initval + 0.35276){
                         initval = score;
                         //System.out.println("*************************************"+d1);
                         swaps++;
