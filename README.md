@@ -212,7 +212,6 @@ Response
           <li>
             <b>Hill Climbing with Random key guess with mninor restriction</b>
             This approach found took the putative key guess to a closer match in 75% of the simulations.
-
           </li>
         </ul>
       </p>
