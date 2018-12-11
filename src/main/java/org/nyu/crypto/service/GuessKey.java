@@ -215,7 +215,7 @@ public class GuessKey {
                     //score <= initval+0.07 || score <= initval + 0.0059
                     //0.35276
                     if (
-                            score <= initval + 0.35276){
+                            score <= initval + 0.3529){
                         initval = score;
                         //System.out.println("*************************************"+d1);
                         swaps++;
