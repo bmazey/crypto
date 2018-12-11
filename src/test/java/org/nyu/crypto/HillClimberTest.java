@@ -3,10 +3,12 @@ package org.nyu.crypto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.nyu.crypto.dto.Climb;
 import org.nyu.crypto.dto.Simulation;
-import org.nyu.crypto.service.Decryptor;
 import org.nyu.crypto.service.KeyGenerator;
 import org.nyu.crypto.service.Simulator;
+import org.nyu.crypto.service.strategy.Digrapher;
+import org.nyu.crypto.service.strategy.HillClimber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,105 +17,150 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes=CryptoApplication.class)
 public class HillClimberTest {
 
-    @Value("${key.space}")
-    private int keyspace;
-
-    @Value("${charset.length}")
-    private int charset;
-
     @Value("${space.value}")
     private int spaceval;
+
+    @Autowired
+    KeyGenerator keyGenerator;
 
     @Autowired
     private Simulator simulator;
 
     @Autowired
-    private Decryptor decryptor;
+    private HillClimber hillClimber;
 
     @Autowired
-    private KeyGenerator keyGenerator;
+    private Digrapher digrapher;
 
     private ObjectMapper mapper = new ObjectMapper();
 
     private Logger logger = LoggerFactory.getLogger(HillClimberTest.class);
 
+    // TODO - change the digraph generation from dictionary to randomly generated messages!
+
     @Test
     @SuppressWarnings("unchecked")
-    public void simulateHillClimbing() {
-
+    public void simulateHillClimbingPlaintextDigraph() {
         Simulation simulation = simulator.createSimulation();
 
-        // unpack the contents into key, plaintext, ciphertext
-        HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
+        // now compute plaintext digraph for our experiment
+        double[][] digraph = digrapher.computePutativeDigraph(simulation.getMessage());
+
         String plaintext = simulation.getMessage();
-        int[] ciphertext = simulation.getCiphertext();
 
-        logger.info(plaintext);
-        logger.info(Arrays.toString(ciphertext));
+        Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
+        String putative = climb.getPutative();
 
-        // let's invoke the hill climbing function
-        climbHill(ciphertext);
+        logger.info("putative : " + putative);
+        logger.info("plaintext: " + simulation.getMessage());
 
-
-    }
-
-    private void climbHill(int[] ciphertext) {
-        // generate a random key
-        HashMap<String, ArrayList<Integer>> key = keyGenerator.generateKey();
-
-        int[][] encrypted = new int[keyspace][keyspace];
-        int[][] putative = new int[charset][charset];
-
-        encrypted = calculateCipherAdjacency(encrypted, ciphertext);
-        //Stream.of(encrypted).map(Arrays::toString).forEach(System.out::println);
-
-        // attempt to decrypt the ciphertext with a random key to get a putative plaintext
-        String text = decryptor.decrypt(key, ciphertext);
-        logger.info(text);
-
-        putative = calculatePutativeAdjacency(putative, text);
-        Stream.of(putative).map(Arrays::toString).forEach(System.out::println);
-
-        logger.info(score(encrypted) + " / " + score(putative));
-
-    }
-
-    // this method calculates the adjacency of numbers within ciphertext
-    private int[][] calculateCipherAdjacency(int[][] encrypted, int[] ciphertext) {
-        // we don't have to check the last value, so we stop at length - 1
-        for (int i = 0; i < ciphertext.length - 1; i++) {
-            encrypted[ciphertext[i]][ciphertext[i + 1]] += 1;
+        int score = 0;
+        for (int i = 0; i < plaintext.length(); i++) {
+            if (putative.charAt(i) == plaintext.charAt(i)) score++;
         }
-        return encrypted;
+        logger.info("score: " + score);
     }
 
-    // this method calculates the adjacency of letters in a putative plaintext
-    private int[][] calculatePutativeAdjacency(int[][] putative, String text) {
-        // again, no need to check the last value
-        for (int i = 0; i < text.length() - 1; i++) {
-            putative[convert(text.charAt(i))][convert(text.charAt(i + 1))] += 1;
+    @Test
+    @SuppressWarnings("unchecked")
+    public void simulateHillClimbingDictionaryDigraph() {
+        Simulation simulation = simulator.createSimulation();
+
+        // now compute plaintext digraph for our experiment
+        double[][] digraph = digrapher.computeDictionaryDigraph();
+
+        String plaintext = simulation.getMessage();
+
+        Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
+        String putative = climb.getPutative();
+
+        logger.info("putative : " + putative);
+        logger.info("plaintext: " + simulation.getMessage());
+
+        int score = 0;
+        for (int i = 0; i < plaintext.length(); i++) {
+            if (putative.charAt(i) == plaintext.charAt(i)) score++;
         }
-        return putative;
+        logger.info("score: " + score);
     }
 
-    // this method converts chars to ints so we can use character-based indexing in the putative array
-    private int convert(char c) {
-        if (c == ' ') return spaceval;
-        else return (c - 'a');
+    /**
+     * TODO - write tests to compare key and putative key similarity!
+     */
+    @Test
+    @SuppressWarnings("unchecked")
+    public void validateClimbingKeyScorePlaintextDigraph() {
+
+        int positive = 0;
+        int negative = 0;
+
+        for (int j = 0; j < 10; j++) {
+            Simulation simulation = simulator.createSimulation();
+            String plaintext = simulation.getMessage();
+
+            // now compute plaintext digraph for our experiment
+            double[][] digraph = digrapher.computeDictionaryDigraph();
+
+            Climb climb = hillClimber.climb(simulation.getCiphertext(), digraph);
+            String putative = climb.getPutative();
+
+            HashMap<String, ArrayList<Integer>> key = mapper.convertValue(simulation.getKey(), HashMap.class);
+            HashMap<String, ArrayList<Integer>> ikey = climb.getInitialKey();
+            HashMap<String, ArrayList<Integer>> pkey = climb.getPutativeKey();
+
+            logger.info("initial key: ");
+            keyGenerator.printKey(ikey);
+
+            logger.info("putative key: ");
+            keyGenerator.printKey(pkey);
+
+
+            // score of initial key guess against actual key
+            int iscore = 0;
+            for (String keyval : ikey.keySet()) {
+                ArrayList<Integer> ilist = ikey.get(keyval);
+                ArrayList<Integer> list = key.get(keyval);
+                for (Integer i : ilist) {
+                    if (list.contains(i)) {
+                        logger.info("matched <" + keyval + " : " + i + "> in initial");
+                        iscore++;
+                    }
+                }
+            }
+
+            // score of putative key against actual key
+            int pscore = 0;
+            for (String keyval : pkey.keySet()) {
+                ArrayList<Integer> plist = pkey.get(keyval);
+                ArrayList<Integer> list = key.get(keyval);
+                for (Integer i : plist) {
+                    if (list.contains(i)) {
+                        logger.info("matched <" + keyval + " : " + i + "> in putative");
+                        pscore++;
+                    }
+                }
+            }
+
+            // score of putative key should always be greater or equal to the initial key
+            logger.info("initial key score: " + iscore);
+            logger.info("putative key score: " + pscore);
+
+            logger.info("putative : " + putative);
+            logger.info("plaintext: " + plaintext);
+
+            if (pscore > iscore) positive++;
+            else negative++;
+        }
+
+        logger.info(positive + " | " + negative);
+         // assert positive > negative;
     }
 
-    private int score(int[][] vector) {
-        return Arrays.stream(vector)
-                .flatMapToInt(Arrays::stream)
-                .sum();
-    }
 }
