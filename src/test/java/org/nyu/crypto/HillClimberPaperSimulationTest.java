@@ -78,8 +78,8 @@ public class HillClimberPaperSimulationTest {
             PutativeKey[] keyGuess = guessKey.getKey(cipher);
             System.out.print(cipher);
             double d2=0.0;
-            double d1=0.35876;
-            for (int i = 0; i < 500; i++) {
+            double d1=0.35276;
+            for (int i = 0; i < 250; i++) {
                 System.out.println("Guess " + (i + 1));
                 System.out.println("Key Guess Before");
                 guessKey.printKey(keyGuess);
