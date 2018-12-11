@@ -193,5 +193,31 @@ Response
             ...
         ]
     }
+<h1>Implementations of Strategy</h1>
+<p>
+  The strategies which were devised at attacking the hill climbing cipher, the implementations and the success rate observed with various level of knowledge of the attacker.
+  <ol>
+    <li>
+      <h3>Hill Climbing Cipher with based on ciphertext digraph mapping</h3>
+      <p>
+      This strategy was implemented using a round of random guessing and swapping the keys which produce a plaintext from a ciphertext, and swapping keyspaces according to the length of the keylist. THis strategy was implemented and tested with an intial random keyguess with some educated restrictions on the chosen key (such as that spaces cannot be doubled up). Later, on an approach defined by an optimal feedback key chosen by Levenshtein distance.
+      </p>
+      <p>
+        Below discusses the results of the approach.
+        <ul>
+          <li>
+            <b>Hill Climbing with Hueristic Guess and Levenshtein feedback</b>
+            This approach found took the putative key guess to a closer match in 75% of the simulations.
+          </li>
+          <li>
+            <b>Hill Climbing with Random key guess with mninor restriction</b>
+            This approach found took the putative key guess to a closer match in 75% of the simulations.
 
+          </li>
+        </ul>
+      </p>
+    </li>
+    
+  </ol>
+</p>
 Please direct any issues or questions to b.mazey@nyu.edu / sb6856@nyu.edu / fvl209@nyu.edu / ys3334@nyu.edu

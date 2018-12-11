@@ -186,7 +186,7 @@ public class GuessKey {
         }
     }
 
-    public void swapKey(int[] ciphertext, PutativeKey[] key, int distance, double[][] message_digraph)
+    public void swapKey(int[] ciphertext, PutativeKey[] key, int distance, double[][] message_digraph,double d1,double d2)
             throws Exception {
 
         PutativeKey[] tempKey = new PutativeKey[key.length];
@@ -205,7 +205,7 @@ public class GuessKey {
                 String val = key[i].getAlphabet();
                 key[i].setAlphabet(key[i + distance].getAlphabet());
                 key[i + distance].setAlphabet(val);
-                if (checkForBadGuessStrict(ciphertext, key)) {
+                if (checkForBadGuess(ciphertext, key)) {
                     key = copyArray(tempKey, key);
                 } else {
                     messages = new String[1];
@@ -213,7 +213,7 @@ public class GuessKey {
                     double score = calculateScore(digraphService.createFrequencyDigraph(messages),
                             message_digraph);
                     //score <= initval+0.07 || score <= initval + 0.0059
-                    if (score <= initval + 0.065 || score <= initval + 0.35) {
+                    if (score <= initval+0.07123456789 || score <= initval + 0.35987){
                         initval = score;
                         swaps++;
                         tempKey = copyArray(key, tempKey);
