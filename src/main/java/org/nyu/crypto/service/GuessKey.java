@@ -3,6 +3,7 @@ package org.nyu.crypto.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.nyu.crypto.dto.PutativeKey;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,10 @@ public class GuessKey {
 
     @Autowired
     private DigraphService digraphService;
+
+    @Value("${guess.nudge}")
+    private double nudge_value;
+
 
     public PutativeKey[] getKey(int[] cipher_text) {
 
@@ -214,7 +219,7 @@ public class GuessKey {
                             message_digraph);
                     //score <= initval+0.07 || score <= initval + 0.0059
                     //0.35276
-                    if (score <= initval + 0.35276){
+                    if ((initval>=45 && score <= initval + d2) || (initval<45 && score <= initval + nudge_value)){
                         initval = score;
                         //System.out.println("*************************************"+d1);
                         swaps++;

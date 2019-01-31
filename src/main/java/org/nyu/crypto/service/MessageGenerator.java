@@ -40,6 +40,19 @@ public class MessageGenerator {
         return messageBuilder.subSequence(0, messageSpace).toString();
     }
 
+    public String generateMessage(int length) {
+        r = new Random();
+        StringBuilder messageBuilder = new StringBuilder();
+        Dictionary dictionary = dictionaryGenerator.generateDictionaryDto();
+
+        while(messageBuilder.length() < length) {
+            messageBuilder.append(dictionary.getWords()[r.nextInt(dictionary.getWords().length)]);
+            messageBuilder.append(" ");
+        }
+
+        return messageBuilder.subSequence(0, length).toString();
+    }
+
     public Message generateMessageDto() {
         Message message = new Message();
         message.setMessage(generateMessage());

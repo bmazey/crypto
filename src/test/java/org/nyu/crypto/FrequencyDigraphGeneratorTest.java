@@ -17,6 +17,6 @@ public class FrequencyDigraphGeneratorTest {
     @Test
     public void generateFrequencyDigraphMatrix() {
 
-        frequencyDiGraphGenerator.generateFrequencyDigraph(100000);
+        frequencyDiGraphGenerator.generateFrequencyDigraph(10000);
     }
 }

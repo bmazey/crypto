@@ -78,7 +78,7 @@ public class HillClimberPaperSimulationTest {
             PutativeKey[] keyGuess = guessKey.getKey(cipher);
             System.out.print(cipher);
             double d2=0.0;
-            double d1=0.35276;
+            double d1=0.35726;
             System.out.println("Guess 1");
             System.out.println("Key Guess Before");
             guessKey.printKey(keyGuess);
@@ -93,9 +93,9 @@ public class HillClimberPaperSimulationTest {
             }
             guessKey.copyArray(keyGuess, bestKeyGuess);
             System.out.println(guessvalue);
-            for (int i = 1; i < 250; i++) {
+            for (int i = 1; i <= 250; i++) {
                 for (int distance = 1; distance < 106; distance++) {
-                    guessKey.swapKey(cipher, keyGuess, distance, digraphService.getFrequencyDigraph(),d1,0);
+                    guessKey.swapKey(cipher, keyGuess, distance, digraphService.getFrequencyDigraph(),d2,d1);
                 }
                 System.out.println("Key Guess After ");
                 guessKey.printKey(keyGuess);

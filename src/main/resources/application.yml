@@ -25,3 +25,6 @@ space:
 alphabet:
   length: 26
 
+guess:
+  nudge: 0.35276
+
